@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
+}
+
+model Payment {
+  id        String       @id @default(cuid())
+  amount    Float
+  status    String       @default("pending")
+  pixId     String?      @unique
+  attempts  Int          @default(1)
+  createdAt DateTime     @default(now())
+  session   GameSession?
+}
+
+model GameSession {
+  id        String   @id @default(cuid())
+  paymentId String   @unique
+  payment   Payment  @relation(fields: [paymentId], references: [id])
+  results   String   // JSON: boolean[]
+  revealed  String   @default("[]") // JSON: number[]
+  isWinner  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Config {
+  id             String  @id @default("default")
+  precoTentativa Float   @default(2.50)
+  custoPremio    Float   @default(50.00)
+  lucroMinimo    Float   @default(20.00)
+  probabilidade  Float   @default(0.10)
+  modoManual     Boolean @default(false)
+  forcarPremio   Boolean @default(false)
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  event     String
+  data      String?
+  createdAt DateTime @default(now())
+}
