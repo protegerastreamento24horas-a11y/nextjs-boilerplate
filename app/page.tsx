@@ -6,6 +6,7 @@ import PixModal from "@/components/PixModal";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import BannerCarousel from "@/components/BannerCarousel";
 import { useToast } from "@/components/ToastContext";
+import PlayerCounter from "@/components/PlayerCounter";
 
 const PRICE_PER_ATTEMPT = 5; // R$ 5,00 (mínimo do Asaas)
 
@@ -115,12 +116,17 @@ export default function LandingPage() {
         <BannerCarousel images={BANNER_IMAGES} autoPlayInterval={6000} />
 
         {/* Urgency banner */}
-        <div className="mb-6 inline-flex items-center gap-2 bg-red-500/10 border border-red-500/30 text-red-400 rounded-full px-4 py-1.5 text-sm font-medium">
+        <div className="mb-4 inline-flex items-center gap-2 bg-red-500/10 border border-red-500/30 text-red-400 rounded-full px-4 py-1.5 text-sm font-medium">
           <span className="animate-pulse">🔴</span>
           Oferta por tempo limitado! &nbsp;
           <span className="font-mono font-bold">
             {pad(timeLeft.h)}:{pad(timeLeft.m)}:{pad(timeLeft.s)}
           </span>
+        </div>
+
+        {/* Player Counter - Live indicator */}
+        <div className="mb-4">
+          <PlayerCounter baseCount={1247} />
         </div>
 
         {/* Title */}
