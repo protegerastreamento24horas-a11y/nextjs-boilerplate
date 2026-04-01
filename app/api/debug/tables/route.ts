@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-// API para verificar status das tabelas
+// API para verificar status das tabelas no banco de dados
 export async function GET(request: NextRequest) {
   try {
     // Listar todas as tabelas
