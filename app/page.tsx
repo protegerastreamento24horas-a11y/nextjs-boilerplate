@@ -11,6 +11,7 @@ import PlayerCounter from "@/components/PlayerCounter";
 import FloatingBeers from "@/components/FloatingBeers";
 import RecentWinnersTicker from "@/components/RecentWinnersTicker";
 import PromoPopup from "@/components/PromoPopup";
+import SocialProofSection from "@/components/SocialProofSection";
 
 const PRICE_PER_ATTEMPT = 5; // R$ 5,00 (mínimo do Asaas)
 
@@ -410,6 +411,11 @@ function LandingPageContent() {
         {/* Recent Winners Ticker - AUTO SCROLLING */}
         <div className="mt-10 w-full flex justify-center">
           <RecentWinnersTicker />
+        </div>
+
+        {/* Social Proof Section */}
+        <div className="mt-10 w-full">
+          <SocialProofSection />
         </div>
       </main>
 
