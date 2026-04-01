@@ -47,7 +47,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       where: { id: dbPayment.id },
       data: {
         status: "paid",
-        paidAt: new Date(),
       },
     });
 
@@ -57,10 +56,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const gameSession = await prisma.gameSession.create({
       data: {
         paymentId: dbPayment.id,
-        status: "active",
-        attemptsLeft: dbPayment.attempts,
-        totalAttempts: dbPayment.attempts,
-        prize: null,
+        results: JSON.stringify([]),
+        revealed: "[]",
+        isWinner: false,
       },
     });
 
