@@ -153,47 +153,54 @@ function LandingPageContent() {
       />
 
       <main className="relative flex-1 flex flex-col items-center justify-center px-4 py-12 text-center">
-        {/* Banner Carousel */}
-        <BannerCarousel images={BANNER_IMAGES} autoPlayInterval={6000} />
+        <div className="w-full -mt-4 mb-6">
+          <BannerCarousel images={BANNER_IMAGES} autoPlayInterval={6000} />
+        </div>
 
-        {/* Urgency banner - PROFISSIONAL */}
-        <div className="mb-4 inline-flex items-center gap-2 bg-gradient-to-r from-red-600/20 via-red-500/20 to-red-600/20 border border-red-500/40 text-red-300 rounded-full px-5 py-2 text-sm font-semibold shadow-lg shadow-red-500/10">
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
-          </span>
-          <span>Promoção exclusiva termina em</span>
-          <span className="font-mono font-bold text-white bg-red-500/30 px-2 py-0.5 rounded">
+        {/* Urgency Banner - ABAIXO DO CARROSSEL */}
+        <div className="w-full max-w-2xl bg-gradient-to-r from-red-600/20 via-red-500/20 to-red-600/20 border border-red-500/40 rounded-xl px-4 py-3 mb-4 flex items-center justify-center gap-2 text-sm animate-pulse">
+          <span className="text-red-400">🔥</span>
+          <span className="font-semibold text-red-200">Promoção exclusiva termina em</span>
+          <span className="font-mono font-bold text-white bg-red-500/40 px-3 py-1 rounded-lg text-base">
             {pad(timeLeft.h)}:{pad(timeLeft.m)}:{pad(timeLeft.s)}
           </span>
         </div>
 
-        {/* Player Counter - Live indicator */}
-        <div className="mb-4">
+        {/* Player Counter */}
+        <div className="mb-3">
           <PlayerCounter baseCount={1247} />
         </div>
 
-        {/* Title - PROFISSIONAL */}
-        <div className="text-5xl md:text-6xl mb-2">🍺</div>
-        <h1
-          className="text-4xl md:text-5xl font-black mb-2 leading-tight tracking-tight"
-          style={{
-            background: "linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-          }}
-        >
-          Raspadinha da Sorte
-        </h1>
-        <h2 className="text-lg md:text-xl font-medium text-zinc-300 mb-3">
-          Concorra a prêmios incríveis instantaneamente
-        </h2>
-        <p className="text-zinc-400 text-sm mb-8 max-w-md">
-          A partir de{" "}
-          <span className="text-yellow-400 font-bold text-lg">R$ 5,00</span>{" "}
-          por raspadinha. Resultado imediato, pagamento via PIX.
-        </p>
+        {/* Title - FONTE POPPINS REFINADA */}
+        <div className="text-center mb-6">
+          <div className="text-5xl md:text-6xl mb-3">🍺</div>
+          <h1
+            className="text-4xl md:text-6xl font-bold mb-2 leading-tight tracking-tight"
+            style={{
+              background: "linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              fontFamily: "var(--font-poppins), sans-serif",
+            }}
+          >
+            Raspadinha da Sorte
+          </h1>
+          <h2 
+            className="text-xl md:text-2xl font-medium text-zinc-300 mb-3"
+            style={{ fontFamily: "var(--font-poppins), sans-serif" }}
+          >
+            Concorra a prêmios incríveis instantaneamente
+          </h2>
+          <p 
+            className="text-zinc-400 text-base md:text-lg max-w-lg mx-auto"
+            style={{ fontFamily: "var(--font-poppins), sans-serif" }}
+          >
+            A partir de{" "}
+            <span className="text-yellow-400 font-bold text-xl">R$ 5,00</span>{" "}
+            por raspadinha. Resultado imediato, pagamento via PIX.
+          </p>
+        </div>
 
         {/* Packages selector - BOTÕES PROFISSIONAIS */}
         <div className="mb-8 w-full max-w-md">
