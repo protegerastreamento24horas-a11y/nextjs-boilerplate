@@ -1,7 +1,7 @@
 "use client";
 // Deploy Vercel v2
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import PixModal from "@/components/PixModal";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -33,7 +33,7 @@ const recentWinners = [
   { name: "Carlos R.", time: "há 31 min" },
 ];
 
-export default function LandingPage() {
+function LandingPageContent() {
   const { addToast } = useToast();
   const [selectedPackage, setSelectedPackage] = useState(PACKAGES[0]);
   const [quantity, setQuantity] = useState(1);
@@ -387,5 +387,18 @@ export default function LandingPage() {
         />
       )}
     </div>
+  );
+}
+
+// Export principal com Suspense boundary
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
+      </div>
+    }>
+      <LandingPageContent />
+    </Suspense>
   );
 }
