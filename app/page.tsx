@@ -17,6 +17,8 @@ export default function LandingPage() {
   const [quantity, setQuantity] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
+  const [qrCode, setQrCode] = useState<string | null>(null);
+  const [qrCodeText, setQrCodeText] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ h: 5, m: 43, s: 21 });
 
@@ -48,6 +50,8 @@ export default function LandingPage() {
       });
       const data = await res.json();
       setPaymentId(data.paymentId);
+      setQrCode(data.qrCode || null);
+      setQrCodeText(data.qrCodeText || null);
       setShowModal(true);
     } catch {
       alert("Erro ao gerar pagamento. Tente novamente.");
@@ -218,6 +222,8 @@ export default function LandingPage() {
         <PixModal
           paymentId={paymentId}
           amount={total}
+          qrCode={qrCode}
+          qrCodeText={qrCodeText}
           onClose={() => setShowModal(false)}
         />
       )}

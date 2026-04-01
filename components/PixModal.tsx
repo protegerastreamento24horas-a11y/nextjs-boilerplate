@@ -2,20 +2,23 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface PixModalProps {
   paymentId: string;
   amount: number;
+  qrCode?: string | null;
+  qrCodeText?: string | null;
   onClose: () => void;
 }
 
-export default function PixModal({ paymentId, amount, onClose }: PixModalProps) {
+export default function PixModal({ paymentId, amount, qrCode, qrCodeText, onClose }: PixModalProps) {
   const router = useRouter();
   const [status, setStatus] = useState<"pending" | "paid">("pending");
   const [simulating, setSimulating] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const pixKey = process.env.NEXT_PUBLIC_PIX_KEY ?? "raspadinha@exemplo.com";
+  const isRealPix = !!qrCode && !!qrCodeText;
 
   const checkStatus = useCallback(async () => {
     try {
@@ -51,8 +54,9 @@ export default function PixModal({ paymentId, amount, onClose }: PixModalProps) 
     }
   }
 
-  function copyKey() {
-    navigator.clipboard.writeText(pixKey);
+  function copyPixCode() {
+    const codeToCopy = isRealPix ? qrCodeText : "raspadinha@exemplo.com";
+    navigator.clipboard.writeText(codeToCopy || "");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
@@ -63,17 +67,29 @@ export default function PixModal({ paymentId, amount, onClose }: PixModalProps) 
         <div className="text-4xl mb-2">📲</div>
         <h3 className="text-xl font-black text-white mb-1">Pague com Pix</h3>
         <p className="text-zinc-400 text-sm mb-5">
-          Escaneie o QR Code ou use a chave
+          {isRealPix ? "Escaneie o QR Code ou copie o código" : "Use a chave Pix simulada"}
         </p>
 
-        {/* QR Code placeholder */}
-        <div className="mx-auto mb-4 w-44 h-44 bg-white rounded-2xl flex flex-col items-center justify-center shadow-inner">
-          <div className="text-4xl mb-1">📱</div>
-          <div className="text-zinc-500 text-xs text-center px-3 leading-snug">
-            QR Code Pix
-            <br />
-            <span className="font-mono text-[10px] break-all">{paymentId.slice(0, 12)}...</span>
-          </div>
+        {/* QR Code */}
+        <div className="mx-auto mb-4 w-44 h-44 bg-white rounded-2xl flex items-center justify-center shadow-inner overflow-hidden">
+          {isRealPix ? (
+            <Image
+              src={`data:image/png;base64,${qrCode}`}
+              alt="QR Code Pix"
+              width={160}
+              height={160}
+              className="w-full h-full object-contain p-2"
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center p-3">
+              <div className="text-4xl mb-1">📱</div>
+              <div className="text-zinc-500 text-xs text-center">
+                QR Code Simulado
+                <br />
+                <span className="font-mono text-[10px] break-all">{paymentId.slice(0, 12)}...</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Amount */}
@@ -81,15 +97,26 @@ export default function PixModal({ paymentId, amount, onClose }: PixModalProps) 
           R$ {amount.toFixed(2).replace(".", ",")}
         </div>
 
-        {/* Pix key */}
+        {/* Pix Code */}
         <button
-          onClick={copyKey}
+          onClick={copyPixCode}
           className="w-full mb-5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-xl p-3 text-sm text-zinc-300 font-mono break-all transition-colors text-center"
         >
-          {pixKey}
-          <span className="block text-xs text-zinc-500 mt-1">
-            {copied ? "✅ Copiado!" : "👆 Toque para copiar"}
-          </span>
+          {isRealPix ? (
+            <>
+              {qrCodeText?.slice(0, 40)}...
+              <span className="block text-xs text-zinc-500 mt-1">
+                {copied ? "✅ Copiado!" : "👆 Toque para copiar código Pix"}
+              </span>
+            </>
+          ) : (
+            <>
+              raspadinha@exemplo.com
+              <span className="block text-xs text-zinc-500 mt-1">
+                {copied ? "✅ Copiado!" : "👆 Toque para copiar"}
+              </span>
+            </>
+          )}
         </button>
 
         {/* Status */}
@@ -107,14 +134,16 @@ export default function PixModal({ paymentId, amount, onClose }: PixModalProps) 
           )}
         </div>
 
-        {/* Simular (dev) */}
-        <button
-          onClick={simulatePayment}
-          disabled={simulating || status === "paid"}
-          className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-800 disabled:opacity-50 text-white font-bold rounded-xl transition-colors mb-3"
-        >
-          {simulating ? "⏳ Processando..." : "✅ Simular Pagamento"}
-        </button>
+        {/* Simular (apenas em modo simulado) */}
+        {!isRealPix && (
+          <button
+            onClick={simulatePayment}
+            disabled={simulating || status === "paid"}
+            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-800 disabled:opacity-50 text-white font-bold rounded-xl transition-colors mb-3"
+          >
+            {simulating ? "⏳ Processando..." : "✅ Simular Pagamento"}
+          </button>
+        )}
 
         <button
           onClick={onClose}
