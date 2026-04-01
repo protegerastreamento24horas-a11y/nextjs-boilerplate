@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import type { AdminStats } from "@/types";
 
 function formatBRL(value: number) {
@@ -22,6 +23,8 @@ function formatDate(dateStr: string) {
 export default function AdminDashboardClient() {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [unauthorized, setUnauthorized] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     fetchStats();
@@ -32,6 +35,11 @@ export default function AdminDashboardClient() {
   async function fetchStats() {
     try {
       const res = await fetch("/api/admin/stats");
+      if (res.status === 401) {
+        setUnauthorized(true);
+        router.push("/admin/login");
+        return;
+      }
       if (res.ok) {
         const data: AdminStats = await res.json();
         setStats(data);
@@ -39,6 +47,22 @@ export default function AdminDashboardClient() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (unauthorized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-400 mb-4">Acesso não autorizado</p>
+          <button
+            onClick={() => router.push("/admin/login")}
+            className="px-4 py-2 bg-yellow-500 text-black rounded font-bold"
+          >
+            Ir para Login
+          </button>
+        </div>
+      </div>
+    );
   }
 
   if (loading) {
