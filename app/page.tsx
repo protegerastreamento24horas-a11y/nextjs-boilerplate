@@ -207,13 +207,6 @@ function LandingPageContent() {
             Raspe e concorra na hora a uma caixa de Corona, Stella ou Heineken long neck.<br />
             Pagou via PIX, já descobre se ganhou!
           </h2>
-          <p 
-            className="text-zinc-400 text-base md:text-lg max-w-lg mx-auto"
-            style={{ fontFamily: "var(--font-poppins), sans-serif" }}
-          >
-            Ao comprar sua raspadinha, você já descobre instantaneamente se ganhou uma caixa de cerveja <span className="text-yellow-400 font-bold">Corona</span>, <span className="text-yellow-400 font-bold">Stella Artois</span> ou <span className="text-yellow-400 font-bold">Heineken long neck</span>.<br /><br />
-            Tudo rápido, seguro e com pagamento via <span className="text-emerald-400 font-bold">PIX</span> — é comprar, raspar e ganhar!
-          </p>
         </div>
 
         {/* Packages selector - CARDS PROFISSIONAIS DE VENDAS */}
