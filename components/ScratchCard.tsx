@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 
 interface ScratchCardProps {
   index: number;
@@ -8,6 +8,12 @@ interface ScratchCardProps {
   result?: boolean;
   canReveal: boolean;
   onReveal: (index: number) => void;
+}
+
+interface TiltState {
+  rotateX: number;
+  rotateY: number;
+  scale: number;
 }
 
 export default function ScratchCard({
@@ -18,9 +24,11 @@ export default function ScratchCard({
   onReveal,
 }: ScratchCardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const isScratching = useRef(false);
   const hasTriggered = useRef(false);
   const [localRevealed, setLocalRevealed] = useState(false);
+  const [tilt, setTilt] = useState<TiltState>({ rotateX: 0, rotateY: 0, scale: 1 });
 
   useEffect(() => {
     if (isRevealed) {
@@ -130,6 +138,29 @@ export default function ScratchCard({
   const handleMouseUp = () => {
     isScratching.current = false;
   };
+
+  // 3D Tilt effect handlers
+  const handleTiltMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current || localRevealed) return;
+    
+    const card = cardRef.current;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    // Calculate rotation (max 15 degrees)
+    const rotateX = ((y - centerY) / centerY) * -15;
+    const rotateY = ((x - centerX) / centerX) * 15;
+    
+    setTilt({ rotateX, rotateY, scale: 1.05 });
+  }, [localRevealed]);
+
+  const handleTiltMouseLeave = useCallback(() => {
+    setTilt({ rotateX: 0, rotateY: 0, scale: 1 });
+    handleMouseUp();
+  }, []);
   const handleTouchStart = (e: React.TouchEvent) => {
     e.preventDefault();
     if (!canReveal || localRevealed) return;
@@ -146,15 +177,25 @@ export default function ScratchCard({
   };
 
   return (
-    <div
-      className={`relative aspect-square rounded-xl overflow-hidden border transition-all duration-300 ${
-        localRevealed && result
-          ? "border-emerald-500/60 shadow-lg shadow-emerald-900/30"
-          : localRevealed && result === false
-          ? "border-red-900/40"
-          : "border-yellow-600/40 shadow-md shadow-yellow-900/20"
-      }`}
+    <div 
+      className="perspective-1000"
+      onMouseMove={handleTiltMouseMove}
+      onMouseLeave={handleTiltMouseLeave}
     >
+      <div
+        ref={cardRef}
+        className={`relative aspect-square rounded-xl overflow-hidden border transition-all duration-200 transform-style-3d ${
+          localRevealed && result
+            ? "border-emerald-500/60 shadow-lg shadow-emerald-900/30"
+            : localRevealed && result === false
+            ? "border-red-900/40"
+            : "border-yellow-600/40 shadow-md shadow-yellow-900/20 hover:shadow-lg hover:shadow-yellow-900/30"
+        }`}
+        style={{
+          transform: `perspective(1000px) rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg) scale(${tilt.scale})`,
+          transformStyle: "preserve-3d",
+        }}
+      >
       {/* Result underneath */}
       <div
         className={`absolute inset-0 flex flex-col items-center justify-center gap-1 transition-colors ${
@@ -210,6 +251,7 @@ export default function ScratchCard({
           </span>
         </div>
       )}
+    </div>
     </div>
   );
 }
