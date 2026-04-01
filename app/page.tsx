@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import PixModal from "@/components/PixModal";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import BannerCarousel from "@/components/BannerCarousel";
 
 const PRICE_PER_ATTEMPT = 5; // R$ 5,00 (mínimo do Asaas)
 
@@ -12,6 +13,12 @@ const PACKAGES = [
   { id: 1, quantity: 1, price: 5, label: "1 Tentativa", popular: false },
   { id: 2, quantity: 3, price: 12, label: "3 Tentativas", popular: true, save: 3 },
   { id: 3, quantity: 5, price: 20, label: "5 Tentativas", popular: false, save: 5 },
+];
+
+// Configuração das imagens do banner
+const BANNER_IMAGES = [
+  { src: "/images/banner1.jpg", alt: "Raspadinha da Sorte - A sorte está em suas mãos!" },
+  { src: "/images/banner2.jpg", alt: "Raspadinha da Sorte - Concorra a prêmios incríveis!" },
 ];
 
 const recentWinners = [
@@ -101,6 +108,9 @@ export default function LandingPage() {
       />
 
       <main className="relative flex-1 flex flex-col items-center justify-center px-4 py-12 text-center">
+        {/* Banner Carousel */}
+        <BannerCarousel images={BANNER_IMAGES} autoPlayInterval={6000} />
+
         {/* Urgency banner */}
         <div className="mb-6 inline-flex items-center gap-2 bg-red-500/10 border border-red-500/30 text-red-400 rounded-full px-4 py-1.5 text-sm font-medium">
           <span className="animate-pulse">🔴</span>
