@@ -38,4 +38,31 @@ export interface AdminStats {
     amount: number;
     createdAt: string;
   }>;
+  // Dados para gráficos
+  salesData: Array<{
+    date: string;
+    amount: number;
+    count: number;
+  }>;
+  paymentsByStatus: {
+    pending: number;
+    paid: number;
+    expired: number;
+  };
+  recentPayments: Array<{
+    id: string;
+    amount: number;
+    status: string;
+    attempts: number;
+    createdAt: string;
+    session?: {
+      isWinner: boolean;
+    } | null;
+  }>;
+  topStats: {
+    avgTicket: number;
+    conversionRate: number;
+    winRate: number;
+    todayRevenue: number;
+  };
 }
