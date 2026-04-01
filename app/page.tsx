@@ -8,6 +8,7 @@ import BannerCarousel from "@/components/BannerCarousel";
 import { useToast } from "@/components/ToastContext";
 import PlayerCounter from "@/components/PlayerCounter";
 import FloatingBeers from "@/components/FloatingBeers";
+import RecentWinnersTicker from "@/components/RecentWinnersTicker";
 
 const PRICE_PER_ATTEMPT = 5; // R$ 5,00 (mínimo do Asaas)
 
@@ -325,27 +326,9 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Recent winners - PROFISSIONAL */}
-        <div className="mt-10 w-full max-w-sm">
-          <div className="flex items-center justify-center gap-2 text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-4">
-            <span>🏆</span>
-            <span>Ganhadores recentes</span>
-          </div>
-          <div className="space-y-2">
-            {recentWinners.map((w, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between bg-zinc-900/50 border border-zinc-800/50 rounded-xl px-4 py-3 text-sm"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-yellow-500">●</span>
-                  <span className="text-zinc-300 font-medium">{w.name}</span>
-                  <span className="text-emerald-400 text-xs">ganhou!</span>
-                </div>
-                <span className="text-zinc-600 text-xs font-medium">{w.time}</span>
-              </div>
-            ))}
-          </div>
+        {/* Recent Winners Ticker - AUTO SCROLLING */}
+        <div className="mt-10 w-full flex justify-center">
+          <RecentWinnersTicker />
         </div>
       </main>
 
