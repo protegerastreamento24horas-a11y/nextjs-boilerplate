@@ -1,4 +1,6 @@
 import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import AdminSidebar from "@/components/AdminSidebar";
 
 export default async function AdminLayout({
@@ -7,6 +9,14 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
+  const headersList = await headers();
+  const pathname = headersList.get("x-invoke-path") || "";
+  const isLoginPage = pathname === "/admin/login";
+
+  // Se não está logado e não é a página de login, redireciona
+  if (!session && !isLoginPage) {
+    redirect("/admin/login");
+  }
 
   // Login page: no sidebar
   if (!session) {
