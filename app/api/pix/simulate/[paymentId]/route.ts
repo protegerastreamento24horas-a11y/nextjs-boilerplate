@@ -2,6 +2,64 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { calculateShouldWin, generateGameResults, getOrCreateConfig } from "@/lib/game-logic";
 
+// Função para gerar comissão do afiliado
+async function generateAffiliateCommission(payment: any) {
+  if (!payment.affiliateId || !payment.affiliateCode) {
+    console.log("[Commission] Pagamento sem afiliado");
+    return null;
+  }
+
+  try {
+    // Buscar afiliado
+    const affiliate = await prisma.affiliate.findUnique({
+      where: { id: payment.affiliateId },
+    });
+
+    if (!affiliate || affiliate.status !== "active") {
+      console.log("[Commission] Afiliado não encontrado ou inativo");
+      return null;
+    }
+
+    // Calcular comissão (10% do valor)
+    const commissionRate = affiliate.commissionRate || 10;
+    const commissionAmount = (payment.amount * commissionRate) / 100;
+
+    // Criar registro de comissão
+    const commission = await prisma.affiliateCommission.create({
+      data: {
+        affiliateId: affiliate.id,
+        paymentId: payment.id,
+        amount: payment.amount,
+        commission: commissionAmount,
+        rate: commissionRate,
+        status: "pending",
+      },
+    });
+
+    // Atualizar saldo pendente do afiliado
+    await prisma.affiliate.update({
+      where: { id: affiliate.id },
+      data: {
+        pendingBalance: {
+          increment: commissionAmount,
+        },
+        totalSales: {
+          increment: 1,
+        },
+        conversions: {
+          increment: 1,
+        },
+      },
+    });
+
+    console.log(`[Commission] Comissão de R$ ${commissionAmount.toFixed(2)} gerada para ${affiliate.name}`);
+    return commission;
+  } catch (error) {
+    console.error("[Commission] Erro ao gerar comissão:", error);
+    return null;
+  }
+}
+
 export async function POST(
   _req: NextRequest,
   { params }: { params: Promise<{ paymentId: string }> }
@@ -34,6 +92,9 @@ export async function POST(
     data: { status: "paid" },
   });
 
+  // Gerar comissão para afiliado (se houver)
+  const commission = await generateAffiliateCommission(payment);
+
   const session = await prisma.gameSession.create({
     data: {
       paymentId,
@@ -52,6 +113,8 @@ export async function POST(
         sessionId: session.id,
         shouldWin,
         amount: payment.amount,
+        affiliateId: payment.affiliateId,
+        commissionId: commission?.id,
       }),
     },
   });
