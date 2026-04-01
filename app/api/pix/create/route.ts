@@ -21,11 +21,14 @@ export async function POST(req: NextRequest) {
 
     if (hasMP) {
       // Criar pagamento real no Mercado Pago
+      console.log("[API] Tentando criar pagamento no MP...");
       const mpResult = await createPixPayment(
         Number(amount),
         `Raspadinha - ${quantity} tentativa(s)`,
         payment.id
       );
+      
+      console.log("[API] Resultado MP:", JSON.stringify(mpResult, null, 2));
 
       if (mpResult.success && mpResult.mpPaymentId) {
         // Atualizar com dados do MP
@@ -48,8 +51,10 @@ export async function POST(req: NextRequest) {
           isReal: true,
         });
       } else {
-        console.warn("Falha ao criar Pix no MP, usando modo simulação:", mpResult.error);
+        console.warn("[API] Falha ao criar Pix no MP:", mpResult.error);
       }
+    } else {
+      console.log("[API] Token MP não configurado");
     }
 
     // Modo simulação (fallback ou sem MP configurado)
