@@ -107,12 +107,15 @@ export async function createAsaasPixPayment(
 
 async function createOrGetCustomer(apiKey: string, externalReference: string) {
   try {
-    // Criar cliente genérico
+    // Criar cliente com CPF (necessário para Asaas)
     const customerBody = {
       name: `Cliente ${externalReference.slice(-8)}`,
       email: `cliente-${externalReference.slice(-8)}@temp.com`,
+      cpfCnpj: "11111111111", // CPF genérico para testes
       externalReference,
     };
+
+    console.log("[Asaas] Criando cliente:", JSON.stringify(customerBody, null, 2));
 
     const res = await fetch(`${ASAAS_API_URL}/customers`, {
       method: "POST",
@@ -126,7 +129,7 @@ async function createOrGetCustomer(apiKey: string, externalReference: string) {
     const data = await res.json();
 
     if (!res.ok) {
-      // Se erro for email duplicado, pode buscar cliente existente
+      // Se erro for email ou CPF duplicado, buscar cliente existente
       if (data.errors?.some((e: any) => e.code === "DUPLICATED_VALUE")) {
         // Buscar cliente por externalReference
         const searchRes = await fetch(
@@ -137,6 +140,7 @@ async function createOrGetCustomer(apiKey: string, externalReference: string) {
         );
         const searchData = await searchRes.json();
         if (searchData.data?.length > 0) {
+          console.log("[Asaas] Cliente existente encontrado:", searchData.data[0].id);
           return { success: true, customerId: searchData.data[0].id };
         }
       }
@@ -145,6 +149,7 @@ async function createOrGetCustomer(apiKey: string, externalReference: string) {
       return { success: false, error: data };
     }
 
+    console.log("[Asaas] Cliente criado:", data.id);
     return { success: true, customerId: data.id };
   } catch (error: any) {
     console.error("[Asaas] Erro ao criar cliente:", error);
