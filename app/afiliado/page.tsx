@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
-export default function AffiliatePage() {
+// Componente principal que usa useSearchParams
+function AffiliatePageContent() {
   const searchParams = useSearchParams();
   const [code, setCode] = useState(searchParams?.get("code") || "");
   const [view, setView] = useState<"register" | "dashboard">("register");
@@ -375,5 +376,18 @@ export default function AffiliatePage() {
         )}
       </div>
     </div>
+  );
+}
+
+// Export principal com Suspense boundary
+export default function AffiliatePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
+      </div>
+    }>
+      <AffiliatePageContent />
+    </Suspense>
   );
 }
