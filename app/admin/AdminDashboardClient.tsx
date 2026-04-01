@@ -121,7 +121,11 @@ export default function AdminDashboardClient() {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [unauthorized, setUnauthorized] = useState(false);
-  const [activeTab, setActiveTab] = useState<"overview" | "payments" | "sessions">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "payments" | "sessions" | "logs" | "backup">("overview");
+  const [logs, setLogs] = useState<Array<{ id: string; event: string; data: unknown; ip: string | null; createdAt: string }>>([]);
+  const [logsLoading, setLogsLoading] = useState(false);
+  const [backupStats, setBackupStats] = useState<{ total: { payments: number; sessions: number; configs: number; auditLogs: number; transactions: number }; paid: number; pending: number } | null>(null);
+  const [backupLoading, setBackupLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -129,6 +133,14 @@ export default function AdminDashboardClient() {
     const interval = setInterval(fetchStats, 10_000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (activeTab === "logs") {
+      fetchLogs();
+    } else if (activeTab === "backup") {
+      fetchBackupStats();
+    }
+  }, [activeTab]);
 
   async function fetchStats() {
     try {
@@ -144,6 +156,51 @@ export default function AdminDashboardClient() {
       }
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchLogs() {
+    setLogsLoading(true);
+    try {
+      const res = await fetch("/api/admin/logs?limit=50");
+      if (res.ok) {
+        const data = await res.json();
+        setLogs(data.logs);
+      }
+    } finally {
+      setLogsLoading(false);
+    }
+  }
+
+  async function fetchBackupStats() {
+    setBackupLoading(true);
+    try {
+      const res = await fetch("/api/admin/backup");
+      if (res.ok) {
+        const data = await res.json();
+        setBackupStats(data.stats);
+      }
+    } finally {
+      setBackupLoading(false);
+    }
+  }
+
+  async function downloadBackup() {
+    try {
+      const res = await fetch("/api/admin/backup?download=true");
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `backup_${new Date().toISOString().split("T")[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }
+    } catch (error) {
+      console.error("Erro ao baixar backup:", error);
     }
   }
 
@@ -251,11 +308,13 @@ export default function AdminDashboardClient() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6">
+      <div className="flex flex-wrap gap-2 mb-6">
         {[
           { id: "overview", label: "📊 Visão Geral" },
           { id: "payments", label: "💳 Pagamentos" },
           { id: "sessions", label: "🎮 Jogos" },
+          { id: "logs", label: "📋 Logs" },
+          { id: "backup", label: "💾 Backup" },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -450,6 +509,72 @@ export default function AdminDashboardClient() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {activeTab === "logs" && (
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+          <h2 className="text-lg font-bold text-white mb-4">
+            📋 Logs de Auditoria
+          </h2>
+          {logsLoading ? (
+            <div className="text-zinc-500 animate-pulse">Carregando logs...</div>
+          ) : (
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {logs.map((log) => (
+                <div key={log.id} className="flex items-start gap-3 py-2 border-b border-zinc-800 last:border-0 text-sm">
+                  <span className="text-zinc-500 text-xs">{formatDate(log.createdAt)}</span>
+                  <span className="px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 text-xs">{log.event}</span>
+                  <span className="text-zinc-400 font-mono text-xs">{log.ip || "-"}</span>
+                  {log.data && (
+                    <span className="text-zinc-500 text-xs truncate max-w-xs">
+                      {JSON.stringify(log.data).slice(0, 50)}...
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === "backup" && (
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+          <h2 className="text-lg font-bold text-white mb-4">
+            💾 Backup do Banco de Dados
+          </h2>
+          {backupLoading ? (
+            <div className="text-zinc-500 animate-pulse">Carregando estatísticas...</div>
+          ) : backupStats ? (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-zinc-800 rounded-xl p-4">
+                  <div className="text-2xl font-bold text-yellow-400">{backupStats.total.payments}</div>
+                  <div className="text-zinc-500 text-sm">Pagamentos</div>
+                </div>
+                <div className="bg-zinc-800 rounded-xl p-4">
+                  <div className="text-2xl font-bold text-blue-400">{backupStats.total.sessions}</div>
+                  <div className="text-zinc-500 text-sm">Sessões</div>
+                </div>
+                <div className="bg-zinc-800 rounded-xl p-4">
+                  <div className="text-2xl font-bold text-purple-400">{backupStats.total.auditLogs}</div>
+                  <div className="text-zinc-500 text-sm">Logs</div>
+                </div>
+                <div className="bg-zinc-800 rounded-xl p-4">
+                  <div className="text-2xl font-bold text-emerald-400">{backupStats.paid}</div>
+                  <div className="text-zinc-500 text-sm">Pagos</div>
+                </div>
+              </div>
+              <button
+                onClick={downloadBackup}
+                className="w-full py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-black font-bold rounded-xl hover:opacity-90 transition-opacity"
+              >
+                📥 Baixar Backup Completo (JSON)
+              </button>
+            </div>
+          ) : (
+            <div className="text-red-400">Erro ao carregar estatísticas</div>
+          )}
         </div>
       )}
     </div>

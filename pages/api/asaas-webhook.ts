@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/lib/prisma";
+import { logWebhookReceived, logPaymentPaid, logGameSessionCreated } from "@/lib/audit";
 
 // Webhook para receber notificações do Asaas
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -18,6 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const event = req.body;
+    const ip = (req.headers["x-forwarded-for"] as string) || req.socket.remoteAddress || "unknown";
 
     console.log("[Asaas Webhook] Evento recebido:", JSON.stringify(event, null, 2));
 
@@ -28,6 +30,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const payment = event.payment;
+    
+    // Log webhook recebido
+    await logWebhookReceived("asaas", event.event, payment?.id, ip);
     
     if (!payment || !payment.id) {
       console.error("[Asaas Webhook] Dados de pagamento inválidos");
@@ -58,6 +63,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     });
 
+    // Log pagamento confirmado
+    await logPaymentPaid(dbPayment.id, dbPayment.amount, payment.id, ip);
+
     console.log("[Asaas Webhook] Pagamento atualizado:", dbPayment.id);
 
     // Criar sessão de jogo
@@ -71,6 +79,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     console.log("[Asaas Webhook] Sessão de jogo criada:", gameSession.id);
+
+    // Log sessão criada
+    await logGameSessionCreated(gameSession.id, dbPayment.id, ip);
 
     return res.status(200).json({
       received: true,

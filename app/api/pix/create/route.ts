@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createAsaasPixPayment } from "@/lib/asaas";
+import { logPaymentCreated } from "@/lib/audit";
 
 export async function POST(req: NextRequest) {
   try {
     const { quantity, amount, cpf, name } = await req.json();
+
+    // Pegar IP do header
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
 
     // Criar registro no banco
     const payment = await prisma.payment.create({
@@ -15,6 +19,9 @@ export async function POST(req: NextRequest) {
         expiresAt: new Date(Date.now() + 30 * 60 * 1000), // 30 minutos
       },
     });
+
+    // Log pagamento criado
+    await logPaymentCreated(payment.id, payment.amount, payment.attempts, ip);
 
     // Verificar se tem API key do Asaas configurada
     const hasAsaas = !!process.env.ASAAS_API_KEY;
