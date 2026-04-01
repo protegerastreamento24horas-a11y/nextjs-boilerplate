@@ -143,26 +143,6 @@ export default function LandingPage() {
           tentativa • Raspe e ganhe na hora!
         </p>
 
-        {/* Prize card */}
-        <div
-          className="mb-8 p-6 rounded-2xl max-w-xs w-full border"
-          style={{
-            background:
-              "linear-gradient(135deg, rgba(255,215,0,0.08) 0%, rgba(255,165,0,0.05) 100%)",
-            borderColor: "rgba(255,215,0,0.25)",
-            boxShadow: "0 0 40px rgba(255,215,0,0.06)",
-          }}
-        >
-          <div className="text-5xl mb-3">🍻</div>
-          <div className="text-yellow-500 font-bold text-sm uppercase tracking-widest mb-1">
-            🏆 Prêmio
-          </div>
-          <div className="text-white font-black text-xl">
-            Caixa Heineken 24 latas
-          </div>
-          <div className="text-zinc-500 text-sm mt-1">Valor: R$ 89,90</div>
-        </div>
-
         {/* Packages selector */}
         <div className="mb-8 w-full max-w-sm">
           <p className="text-zinc-400 text-sm font-medium mb-4">
