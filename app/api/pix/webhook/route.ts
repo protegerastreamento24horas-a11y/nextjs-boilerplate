@@ -4,10 +4,25 @@ import { calculateShouldWin, generateGameResults, getOrCreateConfig } from "@/li
 
 // Webhook do Mercado Pago - confirmação de pagamento Pix
 // IMPORTANTE: Não deve ter autenticação - MP envia diretamente
+
+// Handler para OPTIONS (preflight requests)
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, x-signature",
+    },
+  });
+}
+
+// Handler principal para POST
 export async function POST(req: NextRequest) {
   try {
     // Log para debug
     console.log("Webhook recebido:", {
+      method: req.method,
       headers: Object.fromEntries(req.headers.entries()),
       url: req.url,
     });
