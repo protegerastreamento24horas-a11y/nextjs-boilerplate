@@ -2,8 +2,24 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 // API temporária para aplicar migração manual das tabelas de afiliado
+// Versão 2 - Forçar deploy
 export async function GET(request: NextRequest) {
   try {
+    // Verificar se tabela Affiliate já existe
+    const affiliateTable = await prisma.$queryRaw`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public' AND table_name = 'Affiliate'
+    `;
+
+    if (Array.isArray(affiliateTable) && affiliateTable.length > 0) {
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Tabela Affiliate já existe',
+        tables: affiliateTable
+      });
+    }
+
     // Criar tabela Affiliate
     await prisma.$executeRaw`
       CREATE TABLE IF NOT EXISTS "Affiliate" (
