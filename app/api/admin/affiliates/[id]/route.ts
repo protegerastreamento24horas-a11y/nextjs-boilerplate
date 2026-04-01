@@ -6,10 +6,10 @@ const prisma = new PrismaClient();
 // GET /api/admin/affiliates/[id] - Detalhes de um afiliado
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const affiliate = await prisma.affiliate.findUnique({
       where: { id },
@@ -49,10 +49,10 @@ export async function GET(
 // PATCH /api/admin/affiliates/[id] - Atualizar afiliado
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
     const { status, name, email, phone, pixKey, pixKeyType, commissionRate } = body;
 
@@ -90,10 +90,10 @@ export async function PATCH(
 // DELETE /api/admin/affiliates/[id] - Remover afiliado
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     await prisma.affiliate.delete({
       where: { id },
