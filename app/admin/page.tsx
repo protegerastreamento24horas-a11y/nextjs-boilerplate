@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import type { AdminStats } from "@/types";
 
 function formatBRL(value: number) {
@@ -22,6 +23,7 @@ function formatDate(dateStr: string) {
 export default function AdminDashboard() {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     fetchStats();
@@ -32,6 +34,10 @@ export default function AdminDashboard() {
   async function fetchStats() {
     try {
       const res = await fetch("/api/admin/stats");
+      if (res.status === 401) {
+        router.push("/admin/login");
+        return;
+      }
       if (res.ok) {
         const data: AdminStats = await res.json();
         setStats(data);
