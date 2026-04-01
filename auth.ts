@@ -40,18 +40,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return session;
     },
-    async authorized({ request, auth }) {
-      // Permitir webhook do Mercado Pago sem autenticação
-      if (request.nextUrl.pathname.startsWith("/api/pix/webhook")) {
-        return true;
-      }
-      // Permitir rotas públicas
-      if (request.nextUrl.pathname === "/" || 
-          request.nextUrl.pathname === "/game" ||
-          request.nextUrl.pathname.startsWith("/api/pix/create")) {
-        return true;
-      }
-      return !!auth;
-    },
   },
 });
