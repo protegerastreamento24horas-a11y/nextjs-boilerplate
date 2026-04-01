@@ -15,7 +15,7 @@ interface GameSession {
 function GameContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const sessionId = searchParams.get("session");
+  const sessionId = searchParams?.get("session") || null;
 
   const [session, setSession] = useState<GameSession | null>(null);
   const [cardResults, setCardResults] = useState<Record<number, boolean>>({});
