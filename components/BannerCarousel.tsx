@@ -6,6 +6,7 @@ import Image from "next/image";
 interface BannerImage {
   src: string;
   alt: string;
+  type?: "image" | "video";
 }
 
 interface BannerCarouselProps {
@@ -56,14 +57,25 @@ export default function BannerCarousel({
               index === currentIndex ? "opacity-100" : "opacity-0"
             }`}
           >
-            <Image
-              src={image.src}
-              alt={image.alt}
-              fill
-              className="object-cover"
-              priority={index === 0}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1024px"
-            />
+            {image.type === "video" ? (
+              <video
+                src={image.src}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            ) : (
+              <Image
+                src={image.src}
+                alt={image.alt}
+                fill
+                className="object-cover"
+                priority={index === 0}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1024px"
+              />
+            )}
             {/* Gradient overlay for better text visibility if needed */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
           </div>
