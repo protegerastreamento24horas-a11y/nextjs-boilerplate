@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import LoadingSpinner from "./LoadingSpinner";
 
 interface PixModalProps {
   paymentId: string;
@@ -14,22 +15,28 @@ interface PixModalProps {
 
 export default function PixModal({ paymentId, amount, qrCode, qrCodeText, onClose }: PixModalProps) {
   const router = useRouter();
-  const [status, setStatus] = useState<"pending" | "paid">("pending");
+  const [status, setStatus] = useState<"pending" | "paid" | "confirmed">("pending");
   const [simulating, setSimulating] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [lastChecked, setLastChecked] = useState<Date>(new Date());
 
   const isRealPix = !!qrCode && !!qrCodeText;
 
   const checkStatus = useCallback(async () => {
     try {
+      setLastChecked(new Date());
       const res = await fetch(`/api/pix/status/${paymentId}`);
       const data = await res.json();
+      
       if (data.status === "paid" && data.sessionId) {
-        setStatus("paid");
-        router.push(`/game?session=${data.sessionId}`);
+        setStatus("confirmed");
+        // Aguarda 1.5 segundos para mostrar a animação de confirmação antes de redirecionar
+        setTimeout(() => {
+          router.push(`/game?session=${data.sessionId}`);
+        }, 1500);
       }
-    } catch {
-      // ignore
+    } catch (err) {
+      console.error("[PixModal] Erro ao verificar status:", err);
     }
   }, [paymentId, router]);
 
@@ -120,16 +127,31 @@ export default function PixModal({ paymentId, amount, qrCode, qrCodeText, onClos
         </button>
 
         {/* Status */}
-        <div className="mb-4 flex items-center justify-center gap-2 text-sm min-h-[24px]">
+        <div className="mb-4 flex flex-col items-center justify-center gap-2 text-sm min-h-[60px]">
           {status === "pending" ? (
             <>
-              <span className="animate-pulse text-yellow-400">⏳</span>
-              <span className="text-zinc-400">Aguardando pagamento...</span>
+              <div className="flex items-center gap-2">
+                <span className="animate-pulse text-yellow-400 text-xl">⏳</span>
+                <span className="text-zinc-400">Aguardando pagamento...</span>
+              </div>
+              <span className="text-xs text-zinc-600">
+                Última verificação: {lastChecked.toLocaleTimeString()}
+              </span>
+            </>
+          ) : status === "confirmed" ? (
+            <>
+              <div className="flex items-center gap-2 animate-bounce">
+                <span className="text-emerald-400 text-2xl">🎉</span>
+                <span className="text-emerald-400 font-bold text-lg">Pagamento confirmado!</span>
+              </div>
+              <span className="text-emerald-500 text-xs">Redirecionando para o jogo...</span>
             </>
           ) : (
             <>
-              <span className="text-emerald-400">✅</span>
-              <span className="text-emerald-400">Pago! Redirecionando...</span>
+              <div className="flex items-center gap-2">
+                <span className="text-emerald-400 text-xl">✅</span>
+                <span className="text-emerald-400">Pago! Redirecionando...</span>
+              </div>
             </>
           )}
         </div>
@@ -139,9 +161,18 @@ export default function PixModal({ paymentId, amount, qrCode, qrCodeText, onClos
           <button
             onClick={simulatePayment}
             disabled={simulating || status === "paid"}
-            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-800 disabled:opacity-50 text-white font-bold rounded-xl transition-colors mb-3"
+            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-800 disabled:opacity-50 text-white font-bold rounded-xl transition-colors mb-3 flex items-center justify-center gap-2"
           >
-            {simulating ? "⏳ Processando..." : "✅ Simular Pagamento"}
+            {simulating ? (
+              <>
+                <LoadingSpinner size="sm" color="white" />
+                <span>Processando...</span>
+              </>
+            ) : (
+              <>
+                <span>✅ Simular Pagamento</span>
+              </>
+            )}
           </button>
         )}
 

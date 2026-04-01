@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ScratchCard from "@/components/ScratchCard";
+import Tutorial from "@/components/Tutorial";
 
 interface GameSession {
   sessionId: string;
@@ -125,6 +126,8 @@ function GameContent() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white px-4 py-8">
+      <Tutorial />
+      
       {/* Glow */}
       <div
         className="fixed inset-0 pointer-events-none"
@@ -136,9 +139,9 @@ function GameContent() {
 
       <div className="relative max-w-lg mx-auto">
         {/* Header */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-4 sm:mb-6">
           <h1
-            className="text-3xl font-black mb-1"
+            className="text-2xl sm:text-3xl font-black mb-1"
             style={{
               background:
                 "linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)",
@@ -184,7 +187,7 @@ function GameContent() {
         </div>
 
         {/* Progress dots */}
-        <div className="flex justify-center gap-3 mb-6">
+        <div className="flex justify-center gap-2 sm:gap-3 mb-4 sm:mb-6">
           {Array.from({ length: session?.maxReveals ?? 3 }).map((_, i) => (
             <div
               key={i}
@@ -205,7 +208,7 @@ function GameContent() {
         )}
 
         {/* Scratch cards grid */}
-        <div className="grid grid-cols-5 gap-2 mb-8">
+        <div className="grid grid-cols-4 sm:grid-cols-5 gap-1.5 sm:gap-2 mb-6 sm:mb-8 px-1 sm:px-0">
           {Array.from({ length: 10 }).map((_, i) => (
             <ScratchCard
               key={i}

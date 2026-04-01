@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from "react";
 import PixModal from "@/components/PixModal";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const PRICE_PER_ATTEMPT = 5; // R$ 5,00 (mínimo do Asaas)
 const MAX_TENTATIVAS = 10;
@@ -204,7 +205,7 @@ export default function LandingPage() {
               <button
                 onClick={handlePay}
                 disabled={loading || cpf.length < 11}
-                className="w-full py-4 font-black text-lg rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-4 font-black text-lg rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 style={{
                   background: loading || cpf.length < 11
                     ? "#B8860B"
@@ -212,7 +213,14 @@ export default function LandingPage() {
                   color: "#000",
                 }}
               >
-                {loading ? "⏳ Gerando Pix..." : "⚡ CONTINUAR"}
+                {loading ? (
+                  <>
+                    <LoadingSpinner size="sm" color="white" />
+                    <span>Gerando Pix...</span>
+                  </>
+                ) : (
+                  "⚡ CONTINUAR"
+                )}
               </button>
               
               <button
@@ -228,7 +236,7 @@ export default function LandingPage() {
           <button
             onClick={handlePay}
             disabled={loading}
-            className="w-full max-w-xs py-5 px-8 font-black text-lg rounded-2xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full max-w-xs py-5 px-8 font-black text-lg rounded-2xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             style={{
               background: loading
                 ? "#B8860B"
@@ -249,7 +257,14 @@ export default function LandingPage() {
                   "0 8px 32px rgba(255,215,0,0.3), 0 0 0 1px rgba(255,215,0,0.2)";
             }}
           >
-            {loading ? "⏳ Gerando Pix..." : "⚡ PAGAR COM PIX"}
+            {loading ? (
+              <>
+                <LoadingSpinner size="sm" color="white" />
+                <span>Gerando Pix...</span>
+              </>
+            ) : (
+              "⚡ PAGAR COM PIX"
+            )}
           </button>
         )}
 

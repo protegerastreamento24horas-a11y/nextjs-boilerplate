@@ -3,6 +3,14 @@ import { prisma } from "@/lib/prisma";
 
 // Webhook para receber notificações do Asaas
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Log de TODAS as requisições recebidas
+  console.log("[Asaas Webhook] ====== NOVA REQUISIÇÃO ======");
+  console.log("[Asaas Webhook] Método:", req.method);
+  console.log("[Asaas Webhook] URL:", req.url);
+  console.log("[Asaas Webhook] Headers:", JSON.stringify(req.headers, null, 2));
+  console.log("[Asaas Webhook] Body:", JSON.stringify(req.body, null, 2));
+  console.log("[Asaas Webhook] ====== FIM REQUISIÇÃO ======");
+
   // Aceitar apenas POST
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
