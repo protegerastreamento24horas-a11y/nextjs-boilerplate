@@ -225,7 +225,7 @@ function LandingPageContent() {
                 {/* Badge MAIS POPULAR */}
                 {pkg.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg shadow-emerald-500/30 animate-pulse">
-                    🔥 MAIS POPULAR
+                    ! MAIS POPULAR
                   </div>
                 )}
                 
@@ -302,7 +302,7 @@ function LandingPageContent() {
         {showCpfForm ? (
           <div className="w-full max-w-xs bg-zinc-900 border border-zinc-700 rounded-2xl p-6 mb-4">
             <h3 className="text-lg font-bold text-white mb-4 text-center">
-              📋 Complete seu cadastro
+              Complete seu cadastro
             </h3>
             
             <div className="space-y-4">
@@ -363,21 +363,20 @@ function LandingPageContent() {
             </div>
           </div>
         ) : (
-          {/* CTA - Botão COMPRAR AGORA - DESTAQUE MÁXIMO */}
-        <button
-          onClick={handlePay}
-          disabled={loading}
-          className="group w-full max-w-lg py-5 px-10 font-bold text-lg rounded-2xl transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-2xl hover:shadow-yellow-500/30"
-          style={{
-            background: loading
-              ? "linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%)"
-              : "linear-gradient(135deg, #FCD34D 0%, #F59E0B 40%, #D97706 100%)",
-            color: loading ? "#374151" : "#000",
-            boxShadow: loading
-              ? "none"
-              : "0 12px 40px rgba(245, 158, 11, 0.5), 0 0 0 2px rgba(251, 191, 36, 0.3), inset 0 1px 0 rgba(255,255,255,0.3)",
-          }}
-        >
+          <button
+            onClick={handlePay}
+            disabled={loading}
+            className="group w-full max-w-lg py-5 px-10 font-bold text-lg rounded-2xl transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-2xl hover:shadow-yellow-500/30"
+            style={{
+              background: loading
+                ? "linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%)"
+                : "linear-gradient(135deg, #FCD34D 0%, #F59E0B 40%, #D97706 100%)",
+              color: loading ? "#374151" : "#000",
+              boxShadow: loading
+                ? "none"
+                : "0 12px 40px rgba(245, 158, 11, 0.5), 0 0 0 2px rgba(251, 191, 36, 0.3), inset 0 1px 0 rgba(255,255,255,0.3)",
+            }}
+          >
           {loading ? (
             <>
               <LoadingSpinner size="sm" color="white" />
@@ -391,6 +390,7 @@ function LandingPageContent() {
             </>
           )}
         </button>
+        )}
         
         {/* Selos de segurança */}
         <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs text-zinc-500">
