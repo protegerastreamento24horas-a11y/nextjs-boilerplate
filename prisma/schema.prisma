@@ -20,6 +20,12 @@ model Payment {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   session      GameSession?
+  
+  // Campos de afiliado
+  affiliateId  String?      // ID do afiliado que indicou
+  affiliateCode String?      // Código usado na URL (?ref=CODE)
+  
+  @@index([affiliateId])
 }
 
 model GameSession {
@@ -61,4 +67,78 @@ model Transaction {
   description String?
   paymentId   String?
   createdAt   DateTime @default(now())
+}
+
+// ========== SISTEMA DE AFILIADOS ==========
+
+model Affiliate {
+  id               String              @id @default(cuid())
+  code             String              @unique // Código único do afiliado (ex: MARIA123)
+  name             String
+  email            String              @unique
+  phone            String?
+  cpf              String?             @unique
+  pixKey           String?             // Chave PIX para saques
+  pixKeyType       String?             // Tipo: cpf, email, phone, random
+  status           String              @default("pending") // pending, active, blocked
+  commissionRate   Float               @default(10.0) // % comissão (padrão 10%)
+  totalEarnings    Float               @default(0)
+  pendingBalance   Float               @default(0)
+  paidBalance      Float               @default(0)
+  totalSales       Int                 @default(0)
+  totalClicks      Int                 @default(0)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  
+  // Relações
+  commissions    AffiliateCommission[]
+  withdrawals    AffiliateWithdrawal[]
+  clicks         AffiliateClick[]
+}
+
+model AffiliateCommission {
+  id            String    @id @default(cuid())
+  affiliateId   String
+  affiliate     Affiliate @relation(fields: [affiliateId], references: [id])
+  paymentId     String?   // Referência ao pagamento que gerou a comissão
+  amount        Float     // Valor da venda
+  commission    Float     // Valor da comissão calculada
+  rate          Float     // Taxa aplicada (%)
+  status        String    @default("pending") // pending, approved, paid, cancelled
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([affiliateId])
+  @@index([status])
+}
+
+model AffiliateWithdrawal {
+  id          String    @id @default(cuid())
+  affiliateId String
+  affiliate   Affiliate @relation(fields: [affiliateId], references: [id])
+  amount      Float
+  status      String    @default("pending") // pending, approved, rejected, paid
+  pixKey      String    // Chave PIX usada para o saque
+  pixKeyType  String
+  paidAt      DateTime?
+  notes       String?   // Observações internas
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@index([affiliateId])
+  @@index([status])
+}
+
+model AffiliateClick {
+  id          String    @id @default(cuid())
+  affiliateId String
+  affiliate   Affiliate @relation(fields: [affiliateId], references: [id])
+  ip          String?   // IP do visitante
+  userAgent   String?   // Navegador
+  referrer    String?   // De onde veio o clique
+  converted   Boolean   @default(false) // Se virou venda
+  createdAt   DateTime  @default(now())
+  
+  @@index([affiliateId])
+  @@index([createdAt])
 }
