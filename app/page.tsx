@@ -202,56 +202,96 @@ function LandingPageContent() {
           </p>
         </div>
 
-        {/* Packages selector - BOTÕES PROFISSIONAIS */}
-        <div className="mb-8 w-full max-w-md">
-          <p className="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-4">
-            Selecione seu pacote
-          </p>
+        {/* Packages selector - CARDS PROFISSIONAIS DE VENDAS */}
+        <div className="mb-6 w-full max-w-lg">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <span className="text-yellow-400 text-xl">🎁</span>
+            <p className="text-zinc-300 text-sm font-medium">
+              Escolha seu pacote de raspadinhas
+            </p>
+          </div>
+          
           <div className="grid grid-cols-3 gap-3">
             {PACKAGES.map((pkg) => (
               <button
                 key={pkg.id}
                 onClick={() => handlePackageSelect(pkg)}
-                className={`relative p-4 rounded-2xl border-2 transition-all duration-300 hover:scale-105 ${
+                className={`relative group p-5 rounded-2xl border-2 transition-all duration-300 ${
                   selectedPackage.id === pkg.id
-                    ? "border-yellow-500 bg-gradient-to-b from-yellow-500/20 to-yellow-600/10 shadow-lg shadow-yellow-500/20"
-                    : "border-zinc-700 bg-zinc-900/80 hover:border-zinc-600 hover:bg-zinc-800"
+                    ? "border-yellow-400 bg-gradient-to-b from-yellow-500/30 via-yellow-500/20 to-yellow-600/10 shadow-xl shadow-yellow-500/30 scale-105"
+                    : "border-zinc-600/50 bg-gradient-to-b from-zinc-800/90 to-zinc-900/90 hover:border-yellow-500/50 hover:bg-zinc-800 hover:scale-102"
                 }`}
               >
+                {/* Badge MAIS POPULAR */}
                 {pkg.popular && (
-                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-[9px] font-bold px-2.5 py-1 rounded-full shadow-lg">
-                    MAIS POPULAR
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg shadow-emerald-500/30 animate-pulse">
+                    🔥 MAIS POPULAR
                   </div>
                 )}
-                <div className={`text-3xl font-black mb-1 ${
-                  selectedPackage.id === pkg.id ? "text-yellow-400" : "text-white"
+                
+                {/* Ícone de check para selecionado */}
+                {selectedPackage.id === pkg.id && (
+                  <div className="absolute top-2 right-2 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                )}
+                
+                {/* Quantidade */}
+                <div className={`text-4xl font-black mb-2 ${
+                  selectedPackage.id === pkg.id ? "text-yellow-300" : "text-white group-hover:text-yellow-200"
                 }`}>
                   {pkg.quantity}
                 </div>
-                <div className="text-[10px] text-zinc-500 font-medium mb-1">raspadinhas</div>
-                <div className={`text-sm font-bold ${
-                  selectedPackage.id === pkg.id ? "text-yellow-400" : "text-zinc-300"
+                
+                {/* Label */}
+                <div className="text-xs text-zinc-400 font-medium mb-2">
+                  {pkg.quantity === 1 ? "raspadinha" : "raspadinhas"}
+                </div>
+                
+                {/* Preço */}
+                <div className={`text-lg font-bold ${
+                  selectedPackage.id === pkg.id ? "text-yellow-300" : "text-white"
                 }`}>
                   R$ {pkg.price}
                 </div>
+                
+                {/* Economia */}
                 {pkg.save && (
-                  <div className="text-[9px] text-emerald-400 mt-1 font-medium">
-                    Economize R$ {pkg.save}
+                  <div className="mt-2 px-2 py-1 bg-emerald-500/20 border border-emerald-500/30 rounded-lg">
+                    <span className="text-[10px] text-emerald-400 font-semibold">
+                      Economize R$ {pkg.save}
+                    </span>
                   </div>
                 )}
+                
+                {/* Valor unitário */}
+                <div className="mt-2 text-[10px] text-zinc-500">
+                  {Math.round(pkg.price / pkg.quantity * 100) / 100}/un
+                </div>
               </button>
             ))}
           </div>
           
-          {/* Resumo do pacote - PROFISSIONAL */}
-          <div className="mt-5 p-4 bg-gradient-to-b from-zinc-900/80 to-zinc-900/40 border border-zinc-700/50 rounded-2xl backdrop-blur-sm">
-            <div className="flex justify-between items-center mb-3">
-              <span className="text-zinc-400 text-sm">Pacote selecionado</span>
-              <span className="text-white font-semibold">{selectedPackage.label}</span>
+          {/* Resumo do pedido - CARD DESTACADO */}
+          <div className="mt-6 p-5 bg-gradient-to-r from-zinc-900/90 via-zinc-800/90 to-zinc-900/90 border border-yellow-500/30 rounded-2xl backdrop-blur-sm shadow-lg">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <span className="text-yellow-400 text-lg">🛒</span>
+                <span className="text-zinc-300 font-medium">Resumo do pedido</span>
+              </div>
+              <span className="text-white font-semibold bg-yellow-500/20 px-3 py-1 rounded-full text-sm">
+                {selectedPackage.label}
+              </span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-zinc-400 text-sm">Valor total</span>
-              <span className="text-yellow-400 font-black text-2xl">
+            
+            <div className="flex items-center justify-between border-t border-zinc-700/50 pt-3">
+              <div className="text-zinc-400 text-sm">
+                <span>Total a pagar</span>
+                <div className="text-xs text-zinc-500 mt-0.5">Pagamento via PIX</div>
+              </div>
+              <span className="text-yellow-400 font-black text-3xl">
                 R$ {total.toFixed(2).replace(".", ",")}
               </span>
             </div>
@@ -323,48 +363,47 @@ function LandingPageContent() {
             </div>
           </div>
         ) : (
-          /* CTA - Botão Pagar com Pix - PROFISSIONAL */
-          <button
-            onClick={handlePay}
-            disabled={loading}
-            className="w-full max-w-sm py-4 px-8 font-bold text-base rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl"
-            style={{
-              background: loading
-                ? "linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%)"
-                : "linear-gradient(135deg, #FCD34D 0%, #F59E0B 50%, #D97706 100%)",
-              color: loading ? "#374151" : "#000",
-              boxShadow: loading
-                ? "none"
-                : "0 10px 40px rgba(245, 158, 11, 0.4), 0 0 0 1px rgba(251, 191, 36, 0.3)",
-            }}
-          >
-            {loading ? (
-              <>
-                <LoadingSpinner size="sm" color="white" />
-                <span>Processando...</span>
-              </>
-            ) : (
-              <>
-                <span className="text-lg">💳</span>
-                <span>Pagar com PIX</span>
-                <span className="text-sm opacity-70">→</span>
-              </>
-            )}
-          </button>
-        )}
-
-        {/* Trust - PROFISSIONAL */}
-        <div className="mt-6 flex flex-wrap justify-center gap-6 text-xs text-zinc-500">
-          <div className="flex items-center gap-1.5">
-            <span className="text-emerald-500">✓</span>
-            <span>Pagamento seguro</span>
+          {/* CTA - Botão COMPRAR AGORA - DESTAQUE MÁXIMO */}
+        <button
+          onClick={handlePay}
+          disabled={loading}
+          className="group w-full max-w-lg py-5 px-10 font-bold text-lg rounded-2xl transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-2xl hover:shadow-yellow-500/30"
+          style={{
+            background: loading
+              ? "linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%)"
+              : "linear-gradient(135deg, #FCD34D 0%, #F59E0B 40%, #D97706 100%)",
+            color: loading ? "#374151" : "#000",
+            boxShadow: loading
+              ? "none"
+              : "0 12px 40px rgba(245, 158, 11, 0.5), 0 0 0 2px rgba(251, 191, 36, 0.3), inset 0 1px 0 rgba(255,255,255,0.3)",
+          }}
+        >
+          {loading ? (
+            <>
+              <LoadingSpinner size="sm" color="white" />
+              <span>Processando...</span>
+            </>
+          ) : (
+            <>
+              <span className="text-2xl group-hover:scale-110 transition-transform">💳</span>
+              <span>COMPRAR AGORA</span>
+              <span className="text-base opacity-80 group-hover:translate-x-1 transition-transform">→</span>
+            </>
+          )}
+        </button>
+        
+        {/* Selos de segurança */}
+        <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs text-zinc-500">
+          <div className="flex items-center gap-1.5 bg-zinc-900/50 px-3 py-1.5 rounded-full">
+            <span className="text-emerald-400">🔒</span>
+            <span>Pagamento 100% seguro</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="text-emerald-500">✓</span>
+          <div className="flex items-center gap-1.5 bg-zinc-900/50 px-3 py-1.5 rounded-full">
+            <span className="text-emerald-400">⚡</span>
             <span>Resultado instantâneo</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="text-emerald-500">✓</span>
+          <div className="flex items-center gap-1.5 bg-zinc-900/50 px-3 py-1.5 rounded-full">
+            <span className="text-emerald-400">✓</span>
             <span>Sem burocracia</span>
           </div>
         </div>
