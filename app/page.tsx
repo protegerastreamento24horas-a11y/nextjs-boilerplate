@@ -1,7 +1,8 @@
 "use client";
 // Deploy Vercel v2
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import PixModal from "@/components/PixModal";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import BannerCarousel from "@/components/BannerCarousel";
@@ -50,6 +51,35 @@ export default function LandingPage() {
 
   const total = selectedPackage.price;
 
+  // Affiliate tracking
+  const [affiliateCode, setAffiliateCode] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+
+  // Affiliate tracking - read ref from URL and save to localStorage
+  useEffect(() => {
+    const ref = searchParams.get("ref");
+    if (ref) {
+      const data = { code: ref, timestamp: Date.now() };
+      localStorage.setItem("affiliate_ref", JSON.stringify(data));
+      setAffiliateCode(ref);
+      fetch("/api/affiliate/click", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: ref }),
+      }).catch(console.error);
+    } else {
+      const saved = localStorage.getItem("affiliate_ref");
+      if (saved) {
+        const data = JSON.parse(saved);
+        if (Date.now() - data.timestamp < 2592000000) {
+          setAffiliateCode(data.code);
+        } else {
+          localStorage.removeItem("affiliate_ref");
+        }
+      }
+    }
+  }, [searchParams]);
+
   // Countdown
   useEffect(() => {
     const t = setInterval(() => {
@@ -82,7 +112,13 @@ export default function LandingPage() {
       const res = await fetch("/api/pix/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ quantity, amount: total, cpf, name: name || undefined }),
+        body: JSON.stringify({ 
+          quantity, 
+          amount: total, 
+          cpf, 
+          name: name || undefined,
+          affiliateCode: affiliateCode || undefined,
+        }),
       });
       const data = await res.json();
       setPaymentId(data.paymentId);
