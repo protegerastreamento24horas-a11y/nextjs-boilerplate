@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 // API temporária para aplicar migração manual das tabelas de afiliado
-// Versão 2 - Forçar deploy
+// Versão 3 - Deploy forçado em 2026-04-01
 export async function GET(request: NextRequest) {
   try {
     // Verificar se tabela Affiliate já existe
