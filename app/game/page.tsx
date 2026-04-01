@@ -4,6 +4,8 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ScratchCard from "@/components/ScratchCard";
 import Tutorial from "@/components/Tutorial";
+import Confetti from "@/components/Confetti";
+import WinAnimation from "@/components/WinAnimation";
 
 interface GameSession {
   sessionId: string;
@@ -34,19 +36,11 @@ function GameContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId]);
 
+  const [showWinAnimation, setShowWinAnimation] = useState(false);
+
   useEffect(() => {
     if (session?.isWinner) {
-      import("canvas-confetti").then(({ default: confetti }) => {
-        confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 } });
-        setTimeout(() => {
-          confetti({
-            particleCount: 150,
-            spread: 120,
-            origin: { y: 0.6 },
-            colors: ["#FFD700", "#FFA500", "#22c55e"],
-          });
-        }, 400);
-      });
+      setShowWinAnimation(true);
     }
   }, [session?.isWinner]);
 
@@ -128,6 +122,10 @@ function GameContent() {
     <div className="min-h-screen bg-zinc-950 text-white px-4 py-8">
       <Tutorial />
       
+      {/* Win Animation and Confetti */}
+      <Confetti active={showWinAnimation} duration={5000} />
+      <WinAnimation active={showWinAnimation} />
+
       {/* Glow */}
       <div
         className="fixed inset-0 pointer-events-none"
