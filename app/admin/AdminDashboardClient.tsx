@@ -528,7 +528,9 @@ export default function AdminDashboardClient() {
                   <span className="text-zinc-400 font-mono text-xs">{log.ip || "-"}</span>
                   {log.data && (
                     <span className="text-zinc-500 text-xs truncate max-w-xs">
-                      {JSON.stringify(log.data).slice(0, 50)}...
+                      {typeof log.data === "object" && log.data !== null 
+                        ? JSON.stringify(log.data).slice(0, 50) + "..."
+                        : String(log.data).slice(0, 50)}
                     </span>
                   )}
                 </div>
