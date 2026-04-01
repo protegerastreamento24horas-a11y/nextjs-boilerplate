@@ -57,7 +57,14 @@ export default function BannerCarousel({
               index === currentIndex ? "opacity-100" : "opacity-0"
             }`}
           >
-            {image.type === "video" ? (
+            {image.src.endsWith('.gif') ? (
+              // GIF animado usa tag img
+              <img
+                src={image.src}
+                alt={image.alt}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            ) : image.type === "video" ? (
               <video
                 src={image.src}
                 autoPlay
