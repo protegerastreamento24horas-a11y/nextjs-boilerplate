@@ -87,6 +87,7 @@ model Affiliate {
   paidBalance      Float               @default(0)
   totalSales       Int                 @default(0)
   totalClicks      Int                 @default(0)
+  conversions      Int                 @default(0)
   createdAt        DateTime            @default(now())
   updatedAt        DateTime            @updatedAt
   
