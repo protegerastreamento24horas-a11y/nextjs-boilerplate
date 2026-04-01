@@ -21,20 +21,18 @@ export interface AuditLogData {
   event: AuditEvent;
   data?: Record<string, unknown>;
   ip?: string;
-  userId?: string;
 }
 
 /**
  * Registra um evento no log de auditoria
  */
-export async function logAudit(event: AuditEvent, data?: Record<string, unknown>, ip?: string, userId?: string) {
+export async function logAudit(event: AuditEvent, data?: Record<string, unknown>, ip?: string) {
   try {
     await prisma.auditLog.create({
       data: {
         event,
         data: data ? JSON.stringify(data) : null,
         ip: ip || null,
-        userId: userId || null,
       },
     });
   } catch (error) {
