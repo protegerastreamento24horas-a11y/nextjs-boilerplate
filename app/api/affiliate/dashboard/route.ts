@@ -64,8 +64,8 @@ export async function GET(request: NextRequest) {
       _count: { id: true },
     });
 
-    // Construir link de afiliado - usar domínio principal
-    const baseUrl = "https://seudominio.com";
+    // Construir link de afiliado - usar domínio correto
+    const baseUrl = "https://nextjs-boilerplate-qz9nwoyzb.vercel.app";
     const affiliateLink = `${baseUrl}/?ref=${affiliate.code}`;
 
     return NextResponse.json({
