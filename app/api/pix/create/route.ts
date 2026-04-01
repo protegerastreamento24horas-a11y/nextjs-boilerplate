@@ -4,7 +4,7 @@ import { createAsaasPixPayment } from "@/lib/asaas";
 
 export async function POST(req: NextRequest) {
   try {
-    const { quantity, amount } = await req.json();
+    const { quantity, amount, cpf, name } = await req.json();
 
     // Criar registro no banco
     const payment = await prisma.payment.create({
@@ -25,7 +25,9 @@ export async function POST(req: NextRequest) {
       const asaasResult = await createAsaasPixPayment(
         Number(amount),
         `Raspadinha - ${quantity} tentativa(s)`,
-        payment.id
+        payment.id,
+        cpf, // CPF do cliente
+        name // Nome do cliente
       );
       
       console.log("[API] Resultado Asaas:", JSON.stringify(asaasResult, null, 2));

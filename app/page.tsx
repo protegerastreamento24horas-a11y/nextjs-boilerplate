@@ -21,6 +21,11 @@ export default function LandingPage() {
   const [qrCodeText, setQrCodeText] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ h: 5, m: 43, s: 21 });
+  
+  // Pré-cadastro
+  const [showCpfForm, setShowCpfForm] = useState(false);
+  const [cpf, setCpf] = useState("");
+  const [name, setName] = useState("");
 
   const total = quantity * PRECO_UNIT;
 
@@ -41,18 +46,29 @@ export default function LandingPage() {
   const pad = (n: number) => String(n).padStart(2, "0");
 
   async function handlePay() {
+    if (!showCpfForm) {
+      setShowCpfForm(true);
+      return;
+    }
+    
+    if (!cpf || cpf.length < 11) {
+      alert("Por favor, digite um CPF válido com 11 dígitos.");
+      return;
+    }
+    
     setLoading(true);
     try {
       const res = await fetch("/api/pix/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ quantity, amount: total }),
+        body: JSON.stringify({ quantity, amount: total, cpf, name: name || undefined }),
       });
       const data = await res.json();
       setPaymentId(data.paymentId);
       setQrCode(data.qrCode || null);
       setQrCodeText(data.qrCodeText || null);
       setShowModal(true);
+      setShowCpfForm(false);
     } catch {
       alert("Erro ao gerar pagamento. Tente novamente.");
     } finally {
@@ -153,33 +169,89 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* CTA */}
-        <button
-          onClick={handlePay}
-          disabled={loading}
-          className="w-full max-w-xs py-5 px-8 font-black text-lg rounded-2xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{
-            background: loading
-              ? "#B8860B"
-              : "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
-            color: "#000",
-            boxShadow: loading
-              ? "none"
-              : "0 8px 32px rgba(255,215,0,0.3), 0 0 0 1px rgba(255,215,0,0.2)",
-          }}
-          onMouseEnter={(e) => {
-            if (!loading)
-              e.currentTarget.style.boxShadow =
-                "0 12px 40px rgba(255,215,0,0.45), 0 0 0 1px rgba(255,215,0,0.3)";
-          }}
-          onMouseLeave={(e) => {
-            if (!loading)
-              e.currentTarget.style.boxShadow =
-                "0 8px 32px rgba(255,215,0,0.3), 0 0 0 1px rgba(255,215,0,0.2)";
-          }}
-        >
-          {loading ? "⏳ Gerando Pix..." : "⚡ PAGAR COM PIX"}
-        </button>
+        {/* Formulário de CPF (pré-cadastro) */}
+        {showCpfForm ? (
+          <div className="w-full max-w-xs bg-zinc-900 border border-zinc-700 rounded-2xl p-6 mb-4">
+            <h3 className="text-lg font-bold text-white mb-4 text-center">
+              📋 Complete seu cadastro
+            </h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm text-zinc-400 mb-1">Nome (opcional)</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Seu nome"
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-yellow-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm text-zinc-400 mb-1">CPF *</label>
+                <input
+                  type="text"
+                  value={cpf}
+                  onChange={(e) => setCpf(e.target.value.replace(/\D/g, "").slice(0, 11))}
+                  placeholder="000.000.000-00"
+                  maxLength={11}
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-yellow-500"
+                />
+                <p className="text-xs text-zinc-500 mt-1">Digite apenas números (11 dígitos)</p>
+              </div>
+              
+              <button
+                onClick={handlePay}
+                disabled={loading || cpf.length < 11}
+                className="w-full py-4 font-black text-lg rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  background: loading || cpf.length < 11
+                    ? "#B8860B"
+                    : "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
+                  color: "#000",
+                }}
+              >
+                {loading ? "⏳ Gerando Pix..." : "⚡ CONTINUAR"}
+              </button>
+              
+              <button
+                onClick={() => setShowCpfForm(false)}
+                className="w-full py-2 text-zinc-500 text-sm hover:text-zinc-400 transition-colors"
+              >
+                ← Voltar
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* CTA - Botão Pagar com Pix */
+          <button
+            onClick={handlePay}
+            disabled={loading}
+            className="w-full max-w-xs py-5 px-8 font-black text-lg rounded-2xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{
+              background: loading
+                ? "#B8860B"
+                : "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
+              color: "#000",
+              boxShadow: loading
+                ? "none"
+                : "0 8px 32px rgba(255,215,0,0.3), 0 0 0 1px rgba(255,215,0,0.2)",
+            }}
+            onMouseEnter={(e) => {
+              if (!loading)
+                e.currentTarget.style.boxShadow =
+                  "0 12px 40px rgba(255,215,0,0.45), 0 0 0 1px rgba(255,215,0,0.3)";
+            }}
+            onMouseLeave={(e) => {
+              if (!loading)
+                e.currentTarget.style.boxShadow =
+                  "0 8px 32px rgba(255,215,0,0.3), 0 0 0 1px rgba(255,215,0,0.2)";
+            }}
+          >
+            {loading ? "⏳ Gerando Pix..." : "⚡ PAGAR COM PIX"}
+          </button>
+        )}
 
         {/* Trust */}
         <div className="mt-5 flex flex-wrap justify-center gap-4 text-xs text-zinc-600">

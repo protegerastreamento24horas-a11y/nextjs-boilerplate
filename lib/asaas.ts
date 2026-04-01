@@ -23,7 +23,8 @@ export async function createAsaasPixPayment(
   amount: number,
   description: string,
   externalReference: string,
-  customerId?: string
+  cpf?: string,
+  name?: string
 ) {
   try {
     const apiKey = process.env.ASAAS_API_KEY;
@@ -40,7 +41,7 @@ export async function createAsaasPixPayment(
 
     // Se não tiver customerId, precisa criar um cliente primeiro ou usar genérico
     // Vou criar um cliente genérico para cada cobrança
-    const customer = await createOrGetCustomer(apiKey, externalReference);
+    const customer = await createOrGetCustomer(apiKey, externalReference, cpf, name);
     
     if (!customer.success || !customer.customerId) {
       return {
@@ -105,13 +106,17 @@ export async function createAsaasPixPayment(
   }
 }
 
-async function createOrGetCustomer(apiKey: string, externalReference: string) {
+async function createOrGetCustomer(apiKey: string, externalReference: string, cpf?: string, name?: string) {
   try {
-    // Criar cliente com CPF (necessário para Asaas)
+    // Usar CPF do cliente ou fallback para teste
+    const customerCpf = cpf || "52998224725";
+    const customerName = name || `Cliente ${externalReference.slice(-8)}`;
+    
+    // Criar cliente com CPF do usuário
     const customerBody = {
-      name: `Cliente ${externalReference.slice(-8)}`,
+      name: customerName,
       email: `cliente-${externalReference.slice(-8)}@temp.com`,
-      cpfCnpj: "11111111111", // CPF genérico para testes
+      cpfCnpj: customerCpf,
       externalReference,
     };
 
