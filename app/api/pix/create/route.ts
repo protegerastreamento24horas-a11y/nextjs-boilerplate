@@ -40,16 +40,18 @@ export async function POST(req: NextRequest) {
 
     // Verificar se tem API key do Asaas configurada
     const hasAsaas = !!process.env.ASAAS_API_KEY;
+    console.log("[API] ASAAS_API_KEY configurada:", hasAsaas);
+    console.log("[API] ASAAS_SANDBOX:", process.env.ASAAS_SANDBOX);
 
     if (hasAsaas) {
       // Criar pagamento real no Asaas
-      console.log("[API] Tentando criar pagamento no Asaas...");
+      console.log("[API] Tentando criar pagamento no Asaas...", { amount: Number(amount), quantity });
       const asaasResult = await createAsaasPixPayment(
         Number(amount),
         `Raspadinha - ${quantity} tentativa(s)`,
         payment.id,
-        cpf, // CPF do cliente
-        name // Nome do cliente
+        cpf || undefined,
+        name || undefined
       );
       
       console.log("[API] Resultado Asaas:", JSON.stringify(asaasResult, null, 2));
@@ -82,6 +84,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Modo simulação (fallback ou sem Asaas configurado)
+    console.log("[API] Usando modo simulação (fallback)");
     const pixId = crypto.randomUUID();
     await prisma.payment.update({
       where: { id: payment.id },

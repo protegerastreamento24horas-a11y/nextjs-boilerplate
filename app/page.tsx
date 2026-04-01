@@ -110,6 +110,7 @@ function LandingPageContent() {
     
     setLoading(true);
     try {
+      console.log("[Frontend] Enviando request para /api/pix/create", { quantity, amount: total, cpf, name });
       const res = await fetch("/api/pix/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -122,13 +123,24 @@ function LandingPageContent() {
         }),
       });
       const data = await res.json();
+      console.log("[Frontend] Resposta da API:", data);
+      
+      if (!res.ok) {
+        throw new Error(data.error || "Erro ao criar pagamento");
+      }
+      
+      if (!data.qrCode && !data.pixId) {
+        throw new Error("QR Code não gerado. Verifique a configuração do Asaas.");
+      }
+      
       setPaymentId(data.paymentId);
       setQrCode(data.qrCode || null);
       setQrCodeText(data.qrCodeText || null);
       setShowModal(true);
       setShowCpfForm(false);
-    } catch {
-      addToast("Erro ao gerar pagamento. Tente novamente.", "error");
+    } catch (error: any) {
+      console.error("[Frontend] Erro:", error);
+      addToast(error.message || "Erro ao gerar pagamento. Tente novamente.", "error");
     } finally {
       setLoading(false);
     }
