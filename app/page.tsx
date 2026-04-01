@@ -10,6 +10,7 @@ import { useToast } from "@/components/ToastContext";
 import PlayerCounter from "@/components/PlayerCounter";
 import FloatingBeers from "@/components/FloatingBeers";
 import RecentWinnersTicker from "@/components/RecentWinnersTicker";
+import PromoPopup from "@/components/PromoPopup";
 
 const PRICE_PER_ATTEMPT = 5; // R$ 5,00 (mínimo do Asaas)
 
@@ -140,6 +141,9 @@ function LandingPageContent() {
 
   return (
     <div className="min-h-screen bg-zinc-950 flex flex-col">
+      {/* Pop-up Promocional - aparece imediatamente */}
+      <PromoPopup />
+
       {/* Floating beer particles background */}
       <FloatingBeers />
 
