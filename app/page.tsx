@@ -7,6 +7,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import BannerCarousel from "@/components/BannerCarousel";
 import { useToast } from "@/components/ToastContext";
 import PlayerCounter from "@/components/PlayerCounter";
+import FloatingBeers from "@/components/FloatingBeers";
 
 const PRICE_PER_ATTEMPT = 5; // R$ 5,00 (mínimo do Asaas)
 
@@ -102,6 +103,9 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950 flex flex-col">
+      {/* Floating beer particles background */}
+      <FloatingBeers />
+
       {/* Background glow */}
       <div
         className="fixed inset-0 pointer-events-none"
