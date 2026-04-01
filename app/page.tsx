@@ -57,7 +57,7 @@ export default function LandingPage() {
 
   // Affiliate tracking - read ref from URL and save to localStorage
   useEffect(() => {
-    const ref = searchParams.get("ref");
+    const ref = searchParams?.get("ref");
     if (ref) {
       const data = { code: ref, timestamp: Date.now() };
       localStorage.setItem("affiliate_ref", JSON.stringify(data));
