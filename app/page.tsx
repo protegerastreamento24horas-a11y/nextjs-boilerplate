@@ -204,7 +204,8 @@ function LandingPageContent() {
             className="text-xl md:text-2xl font-medium text-zinc-300 mb-3"
             style={{ fontFamily: "var(--font-poppins), sans-serif" }}
           >
-            Concorra a prêmios na hora com a Raspadinha da Sorte!
+            Raspe e concorra na hora a uma caixa de Corona, Stella ou Heineken long neck.<br />
+            Pagou via PIX, já descobre se ganhou!
           </h2>
           <p 
             className="text-zinc-400 text-base md:text-lg max-w-lg mx-auto"
