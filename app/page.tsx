@@ -159,7 +159,6 @@ function LandingPageContent() {
 
         {/* Urgency Banner - ABAIXO DO CARROSSEL */}
         <div className="w-full max-w-2xl bg-gradient-to-r from-red-600/20 via-red-500/20 to-red-600/20 border border-red-500/40 rounded-xl px-4 py-3 mb-4 flex items-center justify-center gap-2 text-sm animate-pulse">
-          <span className="text-red-400">!</span>
           <span className="font-semibold text-red-200">Promoção exclusiva termina em</span>
           <span className="font-mono font-bold text-white bg-red-500/40 px-3 py-1 rounded-lg text-base">
             {pad(timeLeft.h)}:{pad(timeLeft.m)}:{pad(timeLeft.s)}
@@ -173,7 +172,6 @@ function LandingPageContent() {
 
         {/* Title - FONTE POPPINS REFINADA */}
         <div className="text-center mb-6">
-          <div className="text-5xl md:text-6xl mb-3">R</div>
           <h1
             className="text-4xl md:text-6xl font-bold mb-2 leading-tight tracking-tight"
             style={{
@@ -205,7 +203,6 @@ function LandingPageContent() {
         {/* Packages selector - CARDS PROFISSIONAIS DE VENDAS */}
         <div className="mb-6 w-full max-w-lg">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <span className="text-yellow-400 text-xl">*</span>
             <p className="text-zinc-300 text-sm font-medium">
               Escolha seu pacote de raspadinhas
             </p>
@@ -225,7 +222,7 @@ function LandingPageContent() {
                 {/* Badge MAIS POPULAR */}
                 {pkg.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg shadow-emerald-500/30 animate-pulse">
-                    ! MAIS POPULAR
+                    MAIS POPULAR
                   </div>
                 )}
                 
@@ -277,10 +274,7 @@ function LandingPageContent() {
           {/* Resumo do pedido - CARD DESTACADO */}
           <div className="mt-6 p-5 bg-gradient-to-r from-zinc-900/90 via-zinc-800/90 to-zinc-900/90 border border-yellow-500/30 rounded-2xl backdrop-blur-sm shadow-lg">
             <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <span className="text-yellow-400 text-lg">C</span>
-                <span className="text-zinc-300 font-medium">Resumo do pedido</span>
-              </div>
+              <span className="text-zinc-300 font-medium">Resumo do pedido</span>
               <span className="text-white font-semibold bg-yellow-500/20 px-3 py-1 rounded-full text-sm">
                 {selectedPackage.label}
               </span>
@@ -384,7 +378,6 @@ function LandingPageContent() {
             </>
           ) : (
             <>
-              <span className="text-2xl group-hover:scale-110 transition-transform">P</span>
               <span>COMPRAR AGORA</span>
               <span className="text-base opacity-80 group-hover:translate-x-1 transition-transform">→</span>
             </>
@@ -395,15 +388,12 @@ function LandingPageContent() {
         {/* Selos de segurança */}
         <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs text-zinc-500">
           <div className="flex items-center gap-1.5 bg-zinc-900/50 px-3 py-1.5 rounded-full">
-            <span className="text-emerald-400">S</span>
             <span>Pagamento 100% seguro</span>
           </div>
           <div className="flex items-center gap-1.5 bg-zinc-900/50 px-3 py-1.5 rounded-full">
-            <span className="text-emerald-400">R</span>
             <span>Resultado instantâneo</span>
           </div>
           <div className="flex items-center gap-1.5 bg-zinc-900/50 px-3 py-1.5 rounded-full">
-            <span className="text-emerald-400">V</span>
             <span>Sem burocracia</span>
           </div>
         </div>
