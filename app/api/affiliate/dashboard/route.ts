@@ -64,10 +64,10 @@ export async function GET(request: NextRequest) {
       _count: { id: true },
     });
 
-    // Construir link de afiliado - DOMÍNIO OFICIAL
-    const baseUrl = "https://nextjs-boilerplate-qz9nwoyzb.vercel.app";
-    console.log("[API] Gerando link com domínio:", baseUrl);
-    const affiliateLink = `${baseUrl}/?ref=${affiliate.code}`;
+    // LINK DO AFILIADO - CONFIGURAÇÃO DO DOMÍNIO
+    // ==========================================
+    const DOMAIN = "https://nextjs-boilerplate-qz9nwoyzb.vercel.app";
+    const affiliateUrl = `${DOMAIN}/?ref=${affiliate.code}`;
 
     return NextResponse.json({
       affiliate: {
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
         pixKey: affiliate.pixKey,
         pixKeyType: affiliate.pixKeyType,
       },
-      affiliateLink,
+      affiliateLink: affiliateUrl,
       recentStats,
       recentCommissions: affiliate.commissions,
       recentWithdrawals: affiliate.withdrawals,
