@@ -5,10 +5,23 @@ import { logPaymentCreated } from "@/lib/audit";
 
 export async function POST(req: NextRequest) {
   try {
-    const { quantity, amount, cpf, name } = await req.json();
+    const { quantity, amount, cpf, name, affiliateCode } = await req.json();
 
     // Pegar IP do header
     const ip = req.headers.get("x-forwarded-for") || "unknown";
+
+    // Buscar afiliado se houver código
+    let affiliateId = null;
+    let savedAffiliateCode = null;
+    if (affiliateCode) {
+      const affiliate = await prisma.affiliate.findUnique({
+        where: { code: affiliateCode.toUpperCase() },
+      });
+      if (affiliate && affiliate.status === "active") {
+        affiliateId = affiliate.id;
+        savedAffiliateCode = affiliate.code;
+      }
+    }
 
     // Criar registro no banco
     const payment = await prisma.payment.create({
@@ -17,6 +30,8 @@ export async function POST(req: NextRequest) {
         attempts: Number(quantity) || 1,
         status: "pending",
         expiresAt: new Date(Date.now() + 30 * 60 * 1000), // 30 minutos
+        affiliateId,
+        affiliateCode: savedAffiliateCode,
       },
     });
 
