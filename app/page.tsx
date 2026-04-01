@@ -139,7 +139,7 @@ export default function LandingPage() {
         </h2>
         <p className="text-zinc-400 text-base mb-8">
           Por apenas{" "}
-          <span className="text-yellow-400 font-bold">R$ 2,50</span> por
+          <span className="text-yellow-400 font-bold">R$ 5,00</span> por
           tentativa • Raspe e ganhe na hora!
         </p>
 
