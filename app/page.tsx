@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import PixModal from "@/components/PixModal";
 
-const PRECO_UNIT = 2.5;
+const PRICE_PER_ATTEMPT = 5; // R$ 5,00 (mínimo do Asaas)
 const MAX_TENTATIVAS = 10;
 
 const recentWinners = [
