@@ -526,11 +526,18 @@ export default function AdminDashboardClient() {
                   <span className="text-zinc-500 text-xs">{formatDate(log.createdAt)}</span>
                   <span className="px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 text-xs">{log.event}</span>
                   <span className="text-zinc-400 font-mono text-xs">{log.ip || "-"}</span>
-                  {log.data && (
+                  {log.data !== null && log.data !== undefined && (
                     <span className="text-zinc-500 text-xs truncate max-w-xs">
-                      {typeof log.data === "object" && log.data !== null 
-                        ? JSON.stringify(log.data).slice(0, 50) + "..."
-                        : String(log.data).slice(0, 50)}
+                      {(() => {
+                        try {
+                          const str = typeof log.data === "object" 
+                            ? JSON.stringify(log.data).slice(0, 50) 
+                            : String(log.data).slice(0, 50);
+                          return str + "...";
+                        } catch {
+                          return "...";
+                        }
+                      })()}
                     </span>
                   )}
                 </div>
