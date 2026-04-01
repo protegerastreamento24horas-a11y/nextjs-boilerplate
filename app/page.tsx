@@ -115,11 +115,14 @@ export default function LandingPage() {
         {/* Banner Carousel */}
         <BannerCarousel images={BANNER_IMAGES} autoPlayInterval={6000} />
 
-        {/* Urgency banner */}
-        <div className="mb-4 inline-flex items-center gap-2 bg-red-500/10 border border-red-500/30 text-red-400 rounded-full px-4 py-1.5 text-sm font-medium">
-          <span className="animate-pulse">🔴</span>
-          Oferta por tempo limitado! &nbsp;
-          <span className="font-mono font-bold">
+        {/* Urgency banner - PROFISSIONAL */}
+        <div className="mb-4 inline-flex items-center gap-2 bg-gradient-to-r from-red-600/20 via-red-500/20 to-red-600/20 border border-red-500/40 text-red-300 rounded-full px-5 py-2 text-sm font-semibold shadow-lg shadow-red-500/10">
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+          </span>
+          <span>Promoção exclusiva termina em</span>
+          <span className="font-mono font-bold text-white bg-red-500/30 px-2 py-0.5 rounded">
             {pad(timeLeft.h)}:{pad(timeLeft.m)}:{pad(timeLeft.s)}
           </span>
         </div>
@@ -129,10 +132,10 @@ export default function LandingPage() {
           <PlayerCounter baseCount={1247} />
         </div>
 
-        {/* Title */}
-        <div className="text-5xl md:text-6xl mb-3">🍺</div>
+        {/* Title - PROFISSIONAL */}
+        <div className="text-5xl md:text-6xl mb-2">🍺</div>
         <h1
-          className="text-4xl md:text-6xl font-black mb-3 leading-tight"
+          className="text-4xl md:text-5xl font-black mb-2 leading-tight tracking-tight"
           style={{
             background: "linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)",
             WebkitBackgroundClip: "text",
@@ -142,49 +145,49 @@ export default function LandingPage() {
         >
           Raspadinha da Sorte
         </h1>
-        <h2 className="text-xl md:text-2xl font-bold text-zinc-200 mb-2">
-          Concorra a uma Caixa de Cerveja!
+        <h2 className="text-lg md:text-xl font-medium text-zinc-300 mb-3">
+          Concorra a prêmios incríveis instantaneamente
         </h2>
-        <p className="text-zinc-400 text-base mb-8">
-          Por apenas{" "}
-          <span className="text-yellow-400 font-bold">R$ 5,00</span> por
-          tentativa • Raspe e ganhe na hora!
+        <p className="text-zinc-400 text-sm mb-8 max-w-md">
+          A partir de{" "}
+          <span className="text-yellow-400 font-bold text-lg">R$ 5,00</span>{" "}
+          por raspadinha. Resultado imediato, pagamento via PIX.
         </p>
 
-        {/* Packages selector */}
-        <div className="mb-8 w-full max-w-sm">
-          <p className="text-zinc-400 text-sm font-medium mb-4">
-            Escolha seu pacote:
+        {/* Packages selector - BOTÕES PROFISSIONAIS */}
+        <div className="mb-8 w-full max-w-md">
+          <p className="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-4">
+            Selecione seu pacote
           </p>
           <div className="grid grid-cols-3 gap-3">
             {PACKAGES.map((pkg) => (
               <button
                 key={pkg.id}
                 onClick={() => handlePackageSelect(pkg)}
-                className={`relative p-4 rounded-xl border-2 transition-all duration-300 ${
+                className={`relative p-4 rounded-2xl border-2 transition-all duration-300 hover:scale-105 ${
                   selectedPackage.id === pkg.id
-                    ? "border-yellow-500 bg-yellow-500/10"
-                    : "border-zinc-700 bg-zinc-900 hover:border-zinc-600"
+                    ? "border-yellow-500 bg-gradient-to-b from-yellow-500/20 to-yellow-600/10 shadow-lg shadow-yellow-500/20"
+                    : "border-zinc-700 bg-zinc-900/80 hover:border-zinc-600 hover:bg-zinc-800"
                 }`}
               >
                 {pkg.popular && (
-                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                    POPULAR
+                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-[9px] font-bold px-2.5 py-1 rounded-full shadow-lg">
+                    MAIS POPULAR
                   </div>
                 )}
-                <div className={`text-2xl font-black mb-1 ${
+                <div className={`text-3xl font-black mb-1 ${
                   selectedPackage.id === pkg.id ? "text-yellow-400" : "text-white"
                 }`}>
-                  {pkg.quantity}x
+                  {pkg.quantity}
                 </div>
-                <div className="text-xs text-zinc-500 mb-2">tentativas</div>
-                <div className={`font-bold ${
+                <div className="text-[10px] text-zinc-500 font-medium mb-1">raspadinhas</div>
+                <div className={`text-sm font-bold ${
                   selectedPackage.id === pkg.id ? "text-yellow-400" : "text-zinc-300"
                 }`}>
                   R$ {pkg.price}
                 </div>
                 {pkg.save && (
-                  <div className="text-[10px] text-emerald-400 mt-1">
+                  <div className="text-[9px] text-emerald-400 mt-1 font-medium">
                     Economize R$ {pkg.save}
                   </div>
                 )}
@@ -192,15 +195,15 @@ export default function LandingPage() {
             ))}
           </div>
           
-          {/* Resumo do pacote */}
-          <div className="mt-4 p-4 bg-zinc-900/50 border border-zinc-800 rounded-xl">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-zinc-400 text-sm">Pacote selecionado:</span>
-              <span className="text-white font-bold">{selectedPackage.label}</span>
+          {/* Resumo do pacote - PROFISSIONAL */}
+          <div className="mt-5 p-4 bg-gradient-to-b from-zinc-900/80 to-zinc-900/40 border border-zinc-700/50 rounded-2xl backdrop-blur-sm">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-zinc-400 text-sm">Pacote selecionado</span>
+              <span className="text-white font-semibold">{selectedPackage.label}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-zinc-400 text-sm">Total a pagar:</span>
-              <span className="text-yellow-400 font-black text-xl">
+              <span className="text-zinc-400 text-sm">Valor total</span>
+              <span className="text-yellow-400 font-black text-2xl">
                 R$ {total.toFixed(2).replace(".", ",")}
               </span>
             </div>
@@ -242,21 +245,24 @@ export default function LandingPage() {
               <button
                 onClick={handlePay}
                 disabled={loading || cpf.length < 11}
-                className="w-full py-4 font-black text-lg rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-4 font-bold text-base rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg"
                 style={{
                   background: loading || cpf.length < 11
-                    ? "#B8860B"
-                    : "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
-                  color: "#000",
+                    ? "linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%)"
+                    : "linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%)",
+                  color: loading || cpf.length < 11 ? "#374151" : "#000",
                 }}
               >
                 {loading ? (
                   <>
                     <LoadingSpinner size="sm" color="white" />
-                    <span>Gerando Pix...</span>
+                    <span>Processando...</span>
                   </>
                 ) : (
-                  "⚡ CONTINUAR"
+                  <>
+                    <span>Continuar para pagamento</span>
+                    <span>→</span>
+                  </>
                 )}
               </button>
               
@@ -269,64 +275,70 @@ export default function LandingPage() {
             </div>
           </div>
         ) : (
-          /* CTA - Botão Pagar com Pix */
+          /* CTA - Botão Pagar com Pix - PROFISSIONAL */
           <button
             onClick={handlePay}
             disabled={loading}
-            className="w-full max-w-xs py-5 px-8 font-black text-lg rounded-2xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full max-w-sm py-4 px-8 font-bold text-base rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl"
             style={{
               background: loading
-                ? "#B8860B"
-                : "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
-              color: "#000",
+                ? "linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%)"
+                : "linear-gradient(135deg, #FCD34D 0%, #F59E0B 50%, #D97706 100%)",
+              color: loading ? "#374151" : "#000",
               boxShadow: loading
                 ? "none"
-                : "0 8px 32px rgba(255,215,0,0.3), 0 0 0 1px rgba(255,215,0,0.2)",
-            }}
-            onMouseEnter={(e) => {
-              if (!loading)
-                e.currentTarget.style.boxShadow =
-                  "0 12px 40px rgba(255,215,0,0.45), 0 0 0 1px rgba(255,215,0,0.3)";
-            }}
-            onMouseLeave={(e) => {
-              if (!loading)
-                e.currentTarget.style.boxShadow =
-                  "0 8px 32px rgba(255,215,0,0.3), 0 0 0 1px rgba(255,215,0,0.2)";
+                : "0 10px 40px rgba(245, 158, 11, 0.4), 0 0 0 1px rgba(251, 191, 36, 0.3)",
             }}
           >
             {loading ? (
               <>
                 <LoadingSpinner size="sm" color="white" />
-                <span>Gerando Pix...</span>
+                <span>Processando...</span>
               </>
             ) : (
-              "⚡ PAGAR COM PIX"
+              <>
+                <span className="text-lg">💳</span>
+                <span>Pagar com PIX</span>
+                <span className="text-sm opacity-70">→</span>
+              </>
             )}
           </button>
         )}
 
-        {/* Trust */}
-        <div className="mt-5 flex flex-wrap justify-center gap-4 text-xs text-zinc-600">
-          <span>🔒 Pagamento seguro</span>
-          <span>⚡ Resultado imediato</span>
-          <span>✅ Sem cadastro</span>
+        {/* Trust - PROFISSIONAL */}
+        <div className="mt-6 flex flex-wrap justify-center gap-6 text-xs text-zinc-500">
+          <div className="flex items-center gap-1.5">
+            <span className="text-emerald-500">✓</span>
+            <span>Pagamento seguro</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-emerald-500">✓</span>
+            <span>Resultado instantâneo</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-emerald-500">✓</span>
+            <span>Sem burocracia</span>
+          </div>
         </div>
 
-        {/* Recent winners */}
-        <div className="mt-12 w-full max-w-xs">
-          <div className="text-zinc-500 text-xs font-medium uppercase tracking-widest mb-3">
-            🏆 Ganhadores recentes
+        {/* Recent winners - PROFISSIONAL */}
+        <div className="mt-10 w-full max-w-sm">
+          <div className="flex items-center justify-center gap-2 text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-4">
+            <span>🏆</span>
+            <span>Ganhadores recentes</span>
           </div>
           <div className="space-y-2">
             {recentWinners.map((w, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between bg-zinc-900/60 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm"
+                className="flex items-center justify-between bg-zinc-900/50 border border-zinc-800/50 rounded-xl px-4 py-3 text-sm"
               >
-                <span className="text-zinc-300 font-medium">
-                  🎉 {w.name} ganhou!
-                </span>
-                <span className="text-zinc-600 text-xs">{w.time}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-yellow-500">●</span>
+                  <span className="text-zinc-300 font-medium">{w.name}</span>
+                  <span className="text-emerald-400 text-xs">ganhou!</span>
+                </div>
+                <span className="text-zinc-600 text-xs font-medium">{w.time}</span>
               </div>
             ))}
           </div>
