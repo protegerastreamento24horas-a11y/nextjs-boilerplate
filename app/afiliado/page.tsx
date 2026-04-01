@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 
 export default function AffiliatePage() {
   const searchParams = useSearchParams();
-  const [code, setCode] = useState(searchParams.get("code") || "");
+  const [code, setCode] = useState(searchParams?.get("code") || "");
   const [view, setView] = useState<"register" | "dashboard">("register");
   const [loading, setLoading] = useState(false);
   const [affiliateData, setAffiliateData] = useState<any>(null);
