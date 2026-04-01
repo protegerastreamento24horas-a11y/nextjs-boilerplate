@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
 export default async function middleware() {
-  // Apenas permite todas as requisições
-  // Autenticação é tratada individualmente em cada rota
+  // Permite todas as requisições passarem
+  // O NextAuth protege as rotas individualmente
   return NextResponse.next();
 }
 
