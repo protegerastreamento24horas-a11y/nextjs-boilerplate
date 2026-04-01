@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { createPixPayment } from "@/lib/mercado-pago";
+import { createAsaasPixPayment } from "@/lib/asaas";
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,48 +16,48 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Verificar se tem token do Mercado Pago configurado
-    const hasMP = !!process.env.MERCADO_PAGO_ACCESS_TOKEN;
+    // Verificar se tem API key do Asaas configurada
+    const hasAsaas = !!process.env.ASAAS_API_KEY;
 
-    if (hasMP) {
-      // Criar pagamento real no Mercado Pago
-      console.log("[API] Tentando criar pagamento no MP...");
-      const mpResult = await createPixPayment(
+    if (hasAsaas) {
+      // Criar pagamento real no Asaas
+      console.log("[API] Tentando criar pagamento no Asaas...");
+      const asaasResult = await createAsaasPixPayment(
         Number(amount),
         `Raspadinha - ${quantity} tentativa(s)`,
         payment.id
       );
       
-      console.log("[API] Resultado MP:", JSON.stringify(mpResult, null, 2));
+      console.log("[API] Resultado Asaas:", JSON.stringify(asaasResult, null, 2));
 
-      if (mpResult.success && mpResult.mpPaymentId) {
-        // Atualizar com dados do MP
+      if (asaasResult.success && asaasResult.paymentId) {
+        // Atualizar com dados do Asaas
         await prisma.payment.update({
           where: { id: payment.id },
           data: {
-            mpPaymentId: mpResult.mpPaymentId,
-            qrCode: mpResult.qrCode,
-            qrCodeText: mpResult.qrCodeText,
+            mpPaymentId: asaasResult.paymentId, // Reutilizando campo para Asaas ID
+            qrCode: asaasResult.qrCode,
+            qrCodeText: asaasResult.qrCodeText,
           },
         });
 
         return NextResponse.json({
           paymentId: payment.id,
-          mpPaymentId: mpResult.mpPaymentId,
-          qrCode: mpResult.qrCode,
-          qrCodeText: mpResult.qrCodeText,
-          ticketUrl: mpResult.ticketUrl,
+          mpPaymentId: asaasResult.paymentId,
+          qrCode: asaasResult.qrCode,
+          qrCodeText: asaasResult.qrCodeText,
+          ticketUrl: asaasResult.invoiceUrl,
           amount: payment.amount,
           isReal: true,
         });
       } else {
-        console.warn("[API] Falha ao criar Pix no MP:", mpResult.error);
+        console.warn("[API] Falha ao criar Pix no Asaas:", asaasResult.error);
       }
     } else {
-      console.log("[API] Token MP não configurado");
+      console.log("[API] API key Asaas não configurada");
     }
 
-    // Modo simulação (fallback ou sem MP configurado)
+    // Modo simulação (fallback ou sem Asaas configurado)
     const pixId = crypto.randomUUID();
     await prisma.payment.update({
       where: { id: payment.id },
@@ -69,9 +69,9 @@ export async function POST(req: NextRequest) {
       pixId,
       amount: payment.amount,
       isReal: false,
-      message: hasMP 
+      message: hasAsaas 
         ? "Pagamento criado em modo simulação (fallback)" 
-        : "Configure MERCADO_PAGO_ACCESS_TOKEN para Pix real",
+        : "Configure ASAAS_API_KEY para Pix real",
     });
 
   } catch (error: any) {
