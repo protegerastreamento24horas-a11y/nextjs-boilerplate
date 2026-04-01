@@ -3,23 +3,36 @@ import { prisma } from "@/lib/prisma";
 import { calculateShouldWin, generateGameResults, getOrCreateConfig } from "@/lib/game-logic";
 
 // Webhook do Mercado Pago - confirmação de pagamento Pix
+// IMPORTANTE: Não deve ter autenticação - MP envia diretamente
 export async function POST(req: NextRequest) {
   try {
-    // Verificar signature do webhook (opcional, mas recomendado)
-    const signature = req.headers.get("x-signature");
-    
+    // Log para debug
+    console.log("Webhook recebido:", {
+      headers: Object.fromEntries(req.headers.entries()),
+      url: req.url,
+    });
+
     // Parse do body
     const body = await req.json();
+    console.log("Body do webhook:", body);
     
     // Extrair dados do pagamento
     const { data, type } = body;
     
     // Apenas processar pagamentos
-    if (type !== "payment") {
+    if (type !== "payment" && !body.action?.includes("payment")) {
+      console.log("Ignorando - não é pagamento:", type);
       return NextResponse.json({ received: true });
     }
 
-    const mpPaymentId = String(data.id);
+    const mpPaymentId = String(data?.id || body.data?.id);
+    
+    if (!mpPaymentId || mpPaymentId === "undefined") {
+      console.log("MP Payment ID inválido, ignorando");
+      return NextResponse.json({ received: true, ignored: true });
+    }
+
+    console.log("Buscando pagamento:", mpPaymentId);
     
     // Buscar pagamento no banco pelo mpPaymentId
     const payment = await prisma.payment.findUnique({
@@ -29,17 +42,16 @@ export async function POST(req: NextRequest) {
 
     if (!payment) {
       console.error("Pagamento não encontrado:", mpPaymentId);
-      return NextResponse.json({ error: "Pagamento não encontrado" }, { status: 404 });
+      // Retorna 200 mesmo assim para MP parar de reenviar
+      return NextResponse.json({ received: true, error: "Not found" });
     }
 
     // Se já processado, ignorar
     if (payment.status === "paid" && payment.session) {
-      return NextResponse.json({ message: "Pagamento já processado" });
+      console.log("Pagamento já processado:", mpPaymentId);
+      return NextResponse.json({ received: true, alreadyProcessed: true });
     }
 
-    // Verificar status no Mercado Pago (opcional - pode confiar no webhook)
-    // const mpStatus = await checkPaymentStatus(mpPaymentId);
-    
     // Atualizar status
     await prisma.payment.update({
       where: { id: payment.id },
@@ -67,7 +79,7 @@ export async function POST(req: NextRequest) {
         paymentId: payment.id,
         results: JSON.stringify(results),
         revealed: "[]",
-        isWinner: false,
+        isWinner: shouldWin,
       },
     });
 
@@ -116,6 +128,12 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    console.log("Webhook processado com sucesso:", {
+      paymentId: payment.id,
+      shouldWin,
+      sessionId: gameSession.id,
+    });
+
     return NextResponse.json({
       success: true,
       paymentId: payment.id,
@@ -125,9 +143,10 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     console.error("Erro no webhook:", error);
+    // Sempre retorna 200 para MP não reenviar
     return NextResponse.json(
-      { error: "Erro ao processar webhook", details: error.message },
-      { status: 500 }
+      { error: "Erro interno", details: error.message, received: true },
+      { status: 200 }
     );
   }
 }
