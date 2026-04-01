@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import PixModal from "@/components/PixModal";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import BannerCarousel from "@/components/BannerCarousel";
+import { useToast } from "@/components/ToastContext";
 
 const PRICE_PER_ATTEMPT = 5; // R$ 5,00 (mínimo do Asaas)
 
@@ -29,6 +30,7 @@ const recentWinners = [
 ];
 
 export default function LandingPage() {
+  const { addToast } = useToast();
   const [selectedPackage, setSelectedPackage] = useState(PACKAGES[0]);
   const [quantity, setQuantity] = useState(1);
   const [showModal, setShowModal] = useState(false);
@@ -68,7 +70,7 @@ export default function LandingPage() {
     }
     
     if (!cpf || cpf.length < 11) {
-      alert("Por favor, digite um CPF válido com 11 dígitos.");
+      addToast("Por favor, digite um CPF válido com 11 dígitos.", "warning");
       return;
     }
     
@@ -86,7 +88,7 @@ export default function LandingPage() {
       setShowModal(true);
       setShowCpfForm(false);
     } catch {
-      alert("Erro ao gerar pagamento. Tente novamente.");
+      addToast("Erro ao gerar pagamento. Tente novamente.", "error");
     } finally {
       setLoading(false);
     }

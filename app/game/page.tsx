@@ -6,6 +6,7 @@ import ScratchCard from "@/components/ScratchCard";
 import Tutorial from "@/components/Tutorial";
 import Confetti from "@/components/Confetti";
 import WinAnimation from "@/components/WinAnimation";
+import { useToast } from "@/components/ToastContext";
 
 interface GameSession {
   sessionId: string;
@@ -16,6 +17,7 @@ interface GameSession {
 }
 
 function GameContent() {
+  const { addToast } = useToast();
   const searchParams = useSearchParams();
   const router = useRouter();
   const sessionId = searchParams?.get("session") || null;
@@ -50,6 +52,7 @@ function GameContent() {
       if (!res.ok) throw new Error("Sessão inválida");
       const data = await res.json();
       setSession(data);
+      addToast("Pagamento confirmado! Boa sorte! 🍀", "success");
     } catch {
       setError("Sessão inválida ou expirada. Volte e faça um novo pagamento.");
     } finally {
