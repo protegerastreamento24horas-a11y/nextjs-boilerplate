@@ -22,7 +22,7 @@ const PACKAGES = [
 
 // Configuração das imagens do banner
 const BANNER_IMAGES: { src: string; alt: string; type?: "video" | "image" }[] = [
-  { src: "/videos/banner-main.gif", alt: "Raspadinha da Sorte - Banner Animado", type: "video" },
+  { src: "/images/banner1.jpg", alt: "Raspadinha da Sorte - A sorte está em suas mãos!" },
   { src: "/images/banner2.jpg", alt: "Raspadinha da Sorte - Concorra a prêmios incríveis!" },
   { src: "/images/banner3.jpg", alt: "Raspadinha da Sorte - Heineken, Stella Artois e Corona!" },
 ];
