@@ -328,6 +328,13 @@ export default function AdminDashboardClient() {
             {tab.label}
           </button>
         ))}
+        {/* Link para Afiliados */}
+        <a
+          href="/admin/affiliates"
+          className="px-4 py-2 rounded-xl font-medium text-sm transition-all bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-emerald-400"
+        >
+          🎯 Afiliados
+        </a>
       </div>
 
       {activeTab === "overview" && (
