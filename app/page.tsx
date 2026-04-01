@@ -6,7 +6,13 @@ import PixModal from "@/components/PixModal";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 const PRICE_PER_ATTEMPT = 5; // R$ 5,00 (mínimo do Asaas)
-const MAX_TENTATIVAS = 10;
+
+// Pacotes com desconto
+const PACKAGES = [
+  { id: 1, quantity: 1, price: 5, label: "1 Tentativa", popular: false },
+  { id: 2, quantity: 3, price: 12, label: "3 Tentativas", popular: true, save: 3 },
+  { id: 3, quantity: 5, price: 20, label: "5 Tentativas", popular: false, save: 5 },
+];
 
 const recentWinners = [
   { name: "João M.", time: "há 5 min" },
@@ -15,6 +21,7 @@ const recentWinners = [
 ];
 
 export default function LandingPage() {
+  const [selectedPackage, setSelectedPackage] = useState(PACKAGES[0]);
   const [quantity, setQuantity] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
@@ -28,7 +35,7 @@ export default function LandingPage() {
   const [cpf, setCpf] = useState("");
   const [name, setName] = useState("");
 
-  const total = quantity * PRICE_PER_ATTEMPT;
+  const total = selectedPackage.price;
 
   // Countdown
   useEffect(() => {
@@ -76,6 +83,11 @@ export default function LandingPage() {
       setLoading(false);
     }
   }
+
+  const handlePackageSelect = (pkg: typeof PACKAGES[0]) => {
+    setSelectedPackage(pkg);
+    setQuantity(pkg.quantity);
+  };
 
   return (
     <div className="min-h-screen bg-zinc-950 flex flex-col">
@@ -140,33 +152,59 @@ export default function LandingPage() {
           <div className="text-zinc-500 text-sm mt-1">Valor: R$ 89,90</div>
         </div>
 
-        {/* Quantity selector */}
-        <div className="mb-6 flex flex-col items-center gap-3">
-          <span className="text-zinc-400 text-sm font-medium">
-            Quantidade de tentativas:
-          </span>
-          <div className="flex items-center gap-5">
-            <button
-              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              className="w-11 h-11 rounded-full bg-zinc-800 border border-zinc-700 text-white text-xl font-bold hover:bg-zinc-700 active:scale-95 transition-all"
-            >
-              −
-            </button>
-            <span className="text-4xl font-black text-yellow-400 w-14 text-center tabular-nums">
-              {quantity}
-            </span>
-            <button
-              onClick={() => setQuantity((q) => Math.min(MAX_TENTATIVAS, q + 1))}
-              className="w-11 h-11 rounded-full bg-zinc-800 border border-zinc-700 text-white text-xl font-bold hover:bg-zinc-700 active:scale-95 transition-all"
-            >
-              +
-            </button>
+        {/* Packages selector */}
+        <div className="mb-8 w-full max-w-sm">
+          <p className="text-zinc-400 text-sm font-medium mb-4">
+            Escolha seu pacote:
+          </p>
+          <div className="grid grid-cols-3 gap-3">
+            {PACKAGES.map((pkg) => (
+              <button
+                key={pkg.id}
+                onClick={() => handlePackageSelect(pkg)}
+                className={`relative p-4 rounded-xl border-2 transition-all duration-300 ${
+                  selectedPackage.id === pkg.id
+                    ? "border-yellow-500 bg-yellow-500/10"
+                    : "border-zinc-700 bg-zinc-900 hover:border-zinc-600"
+                }`}
+              >
+                {pkg.popular && (
+                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                    POPULAR
+                  </div>
+                )}
+                <div className={`text-2xl font-black mb-1 ${
+                  selectedPackage.id === pkg.id ? "text-yellow-400" : "text-white"
+                }`}>
+                  {pkg.quantity}x
+                </div>
+                <div className="text-xs text-zinc-500 mb-2">tentativas</div>
+                <div className={`font-bold ${
+                  selectedPackage.id === pkg.id ? "text-yellow-400" : "text-zinc-300"
+                }`}>
+                  R$ {pkg.price}
+                </div>
+                {pkg.save && (
+                  <div className="text-[10px] text-emerald-400 mt-1">
+                    Economize R$ {pkg.save}
+                  </div>
+                )}
+              </button>
+            ))}
           </div>
-          <div className="text-xl font-bold text-white">
-            Total:{" "}
-            <span className="text-yellow-400">
-              R$ {total.toFixed(2).replace(".", ",")}
-            </span>
+          
+          {/* Resumo do pacote */}
+          <div className="mt-4 p-4 bg-zinc-900/50 border border-zinc-800 rounded-xl">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-zinc-400 text-sm">Pacote selecionado:</span>
+              <span className="text-white font-bold">{selectedPackage.label}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-zinc-400 text-sm">Total a pagar:</span>
+              <span className="text-yellow-400 font-black text-xl">
+                R$ {total.toFixed(2).replace(".", ",")}
+              </span>
+            </div>
           </div>
         </div>
 
