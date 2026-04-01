@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import { redirect } from "next/navigation";
 import AdminSidebar from "@/components/AdminSidebar";
 
 export default async function AdminLayout({
@@ -9,9 +8,9 @@ export default async function AdminLayout({
 }) {
   const session = await auth();
 
-  // Se não está logado, redireciona para login
+  // Login page: no sidebar
   if (!session) {
-    redirect("/admin/login");
+    return <>{children}</>;
   }
 
   return (
