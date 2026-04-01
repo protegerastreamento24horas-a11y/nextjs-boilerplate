@@ -64,8 +64,9 @@ export async function GET(request: NextRequest) {
       _count: { id: true },
     });
 
-    // Construir link de afiliado - usar domínio correto do Vercel
+    // Construir link de afiliado - DOMÍNIO OFICIAL
     const baseUrl = "https://nextjs-boilerplate-qz9nwoyzb.vercel.app";
+    console.log("[API] Gerando link com domínio:", baseUrl);
     const affiliateLink = `${baseUrl}/?ref=${affiliate.code}`;
 
     return NextResponse.json({
