@@ -27,7 +27,7 @@ export default function LandingPage() {
   const [cpf, setCpf] = useState("");
   const [name, setName] = useState("");
 
-  const total = quantity * PRECO_UNIT;
+  const total = quantity * PRICE_PER_ATTEMPT;
 
   // Countdown
   useEffect(() => {
