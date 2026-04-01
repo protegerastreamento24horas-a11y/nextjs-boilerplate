@@ -192,15 +192,14 @@ function LandingPageContent() {
             className="text-xl md:text-2xl font-medium text-zinc-300 mb-3"
             style={{ fontFamily: "var(--font-poppins), sans-serif" }}
           >
-            Concorra a prêmios incríveis instantaneamente
+            Concorra a prêmios na hora com a Raspadinha da Sorte!
           </h2>
           <p 
             className="text-zinc-400 text-base md:text-lg max-w-lg mx-auto"
             style={{ fontFamily: "var(--font-poppins), sans-serif" }}
           >
-            A partir de{" "}
-            <span className="text-yellow-400 font-bold text-xl">R$ 5,00</span>{" "}
-            por raspadinha. Resultado imediato, pagamento via PIX.
+            Ao comprar sua raspadinha, você já descobre instantaneamente se ganhou uma caixa de cerveja <span className="text-yellow-400 font-bold">Corona</span>, <span className="text-yellow-400 font-bold">Stella Artois</span> ou <span className="text-yellow-400 font-bold">Heineken long neck</span>.<br /><br />
+            Tudo rápido, seguro e com pagamento via <span className="text-emerald-400 font-bold">PIX</span> — é comprar, raspar e ganhar!
           </p>
         </div>
 
