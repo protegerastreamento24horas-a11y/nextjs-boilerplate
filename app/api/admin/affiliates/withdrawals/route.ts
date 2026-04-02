@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { auth } from "@/auth";
 
 const prisma = new PrismaClient();
 
 // GET /api/admin/affiliates/withdrawals - Listar solicitações de saque
 export async function GET(request: NextRequest) {
+  // Verificar autenticação
+  const session = await auth();
+  if (!session) {
+    return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status") || "all";
@@ -41,6 +48,12 @@ export async function GET(request: NextRequest) {
 
 // PATCH /api/admin/affiliates/withdrawals - Aprovar/rejeitar saque
 export async function PATCH(request: NextRequest) {
+  // Verificar autenticação
+  const session = await auth();
+  if (!session) {
+    return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
     const { id, status, notes } = body;

@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { auth } from "@/auth";
 
 const prisma = new PrismaClient();
 
 // Listar todos os afiliados
 export async function GET(request: NextRequest) {
+  // Verificar autenticação
+  const session = await auth();
+  if (!session) {
+    return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
@@ -50,6 +57,12 @@ export async function GET(request: NextRequest) {
 
 // Criar novo afiliado
 export async function POST(request: NextRequest) {
+  // Verificar autenticação
+  const session = await auth();
+  if (!session) {
+    return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
     const { name, email, phone, cpf, pixKey, pixKeyType, commissionRate } = body;
