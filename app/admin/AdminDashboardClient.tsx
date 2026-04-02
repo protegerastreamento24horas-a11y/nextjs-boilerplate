@@ -427,6 +427,13 @@ export default function AdminDashboardClient() {
           >
             🎯 Afiliados
           </a>
+          {/* Link para Sorteios */}
+          <a
+            href="/admin/raffles"
+            className="px-5 py-2.5 rounded-xl font-semibold text-sm transition-all bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border border-blue-500/20"
+          >
+            🎰 Sorteios
+          </a>
         </div>
 
       {activeTab === "overview" && (
