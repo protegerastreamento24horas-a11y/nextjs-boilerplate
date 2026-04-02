@@ -60,17 +60,12 @@ const BADGES = [
 
 export default function SocialProofSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [prizeCount, setPrizeCount] = useState(2847);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [hoveredImage, setHoveredImage] = useState<number | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
-    const interval = setInterval(() => {
-      setPrizeCount((prev) => prev + Math.floor(Math.random() * 3) + 1);
-    }, 30000);
-    return () => clearInterval(interval);
   }, []);
 
   const nextSlide = useCallback(() => {
@@ -95,7 +90,7 @@ export default function SocialProofSection() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
-        {/* Header with animated counter */}
+        {/* Header */}
         <div className={`text-center mb-12 transition-all duration-700 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 border border-emerald-500/30 rounded-full px-5 py-2.5 mb-6">
             <span className="relative flex h-3 w-3">
@@ -106,11 +101,8 @@ export default function SocialProofSection() {
           </div>
 
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4">
-            <span className="inline-block bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400 bg-clip-text text-transparent animate-pulse">
-              +{prizeCount.toLocaleString()}
-            </span>
-            <span className="block md:inline text-2xl md:text-4xl lg:text-5xl md:ml-3 mt-2 md:mt-0">
-              prêmios entregues
+            <span className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400 bg-clip-text text-transparent">
+              Depoimentos de Ganhadores
             </span>
           </h2>
           
@@ -250,41 +242,6 @@ export default function SocialProofSection() {
                 ))}
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* CTA Section */}
-        <div className={`mt-16 text-center transition-all duration-700 delay-600 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <button
-            onClick={() => {
-              const element = document.getElementById("comprar");
-              element?.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="group relative inline-flex items-center gap-4 px-12 py-6 font-black text-xl rounded-2xl transition-all duration-300 hover:shadow-2xl hover:scale-105 active:scale-[0.98]"
-            style={{
-              background: "linear-gradient(135deg, #FCD34D 0%, #F59E0B 40%, #D97706 100%)",
-              color: "#000",
-              boxShadow: "0 12px 40px rgba(245, 158, 11, 0.5), 0 0 0 2px rgba(251, 191, 36, 0.3), inset 0 1px 0 rgba(255,255,255,0.3)",
-            }}
-          >
-            <span>Jogar Agora</span>
-            <span className="text-2xl animate-bounce">→</span>
-            <div className="absolute -top-3 -right-3 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-bold px-4 py-1.5 rounded-full shadow-lg animate-pulse">
-              🔥 AO VIVO
-            </div>
-          </button>
-          
-          <div className="mt-6 flex items-center justify-center gap-4 text-zinc-400">
-            <div className="flex -space-x-2">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-br from-zinc-700 to-zinc-600 border-2 border-zinc-800 flex items-center justify-center text-xs text-white font-bold">
-                  {i}
-                </div>
-              ))}
-            </div>
-            <p className="text-sm">
-              <span className="text-white font-bold">+150 pessoas</span> estão jogando agora
-            </p>
           </div>
         </div>
       </div>
