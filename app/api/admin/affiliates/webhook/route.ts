@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { calculateShouldWin, generateGameResults, getOrCreateConfig } from "@/lib/game-logic";
 
 // Webhook para receber notificações de pagamento do Asaas
 // Endpoint: POST /api/admin/affiliates/webhook
@@ -25,6 +26,12 @@ export async function POST(req: NextRequest) {
         });
 
         if (payment) {
+          // Se já existe sessão, não recria
+          if (payment.session) {
+            console.log(`[Webhook] Sessão já existe para pagamento ${payment.id}`);
+            return NextResponse.json({ received: true, message: "Sessão já existe" });
+          }
+
           // Atualizar status do pagamento e data de pagamento
           await prisma.payment.update({
             where: { id: payment.id },
@@ -35,12 +42,40 @@ export async function POST(req: NextRequest) {
             }
           });
 
+          // Criar GameSession com lógica inteligente de ganho
+          const config = await getOrCreateConfig();
+          const shouldWin = await calculateShouldWin(config);
+          const results = generateGameResults(shouldWin);
+
+          const session = await prisma.gameSession.create({
+            data: {
+              paymentId: payment.id,
+              results: JSON.stringify(results),
+              revealed: "[]",
+              isWinner: false,
+            }
+          });
+
+          // Log de auditoria
+          await prisma.auditLog.create({
+            data: {
+              event: "PAYMENT_CONFIRMED_WEBHOOK",
+              data: JSON.stringify({
+                paymentId: payment.id,
+                sessionId: session.id,
+                shouldWin,
+                amount: payment.amount,
+                asaasPaymentId: paymentId,
+              }),
+            }
+          });
+
           // Se tem afiliado, processar comissão
           if (payment.affiliateId) {
             await processAffiliateCommission(payment);
           }
 
-          console.log(`[Webhook] Pagamento ${payment.id} atualizado para PAID`);
+          console.log(`[Webhook] Pagamento ${payment.id} confirmado. Sessão ${session.id} criada. shouldWin=${shouldWin}`);
         }
       }
     }

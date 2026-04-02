@@ -34,7 +34,6 @@ export async function PUT(req: NextRequest) {
     probabilidade: Math.min(1, Math.max(0, Number(body.probabilidade ?? 0.1))),
     modoManual: Boolean(body.modoManual ?? false),
     forcarPremio: Boolean(body.forcarPremio ?? false),
-    modoDemo: Boolean(body.modoDemo ?? true),
   };
 
   console.log("[API Config] Salvando:", data);

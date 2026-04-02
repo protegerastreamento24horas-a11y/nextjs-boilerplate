@@ -181,7 +181,6 @@ export default function AdminDashboardClient() {
   
   // Config states
   const [config, setConfig] = useState({
-    modoDemo: true,
     precoTentativa: 2.50,
     probabilidade: 0.10,
   });
@@ -272,7 +271,6 @@ export default function AdminDashboardClient() {
         const data = await res.json();
         console.log("[Config] Carregado:", data);
         setConfig({
-          modoDemo: data.modoDemo ?? true,
           precoTentativa: data.precoTentativa ?? 2.50,
           probabilidade: data.probabilidade ?? 0.10,
         });
@@ -757,60 +755,6 @@ export default function AdminDashboardClient() {
             <div className="text-zinc-500 animate-pulse">Carregando configurações...</div>
           ) : (
             <div className="space-y-6">
-              {/* Modo Demo/Real Toggle */}
-              <div className="bg-zinc-800 rounded-xl p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h3 className="text-white font-bold text-lg">🎮 Modo de Operação</h3>
-                    <p className="text-zinc-400 text-sm mt-1">
-                      Escolha entre modo Demo (simulação) ou Real (PIX real via Asaas)
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className={`text-sm font-medium ${config.modoDemo ? "text-yellow-400" : "text-zinc-500"}`}>
-                      DEMO
-                    </span>
-                    <button
-                      onClick={() => {
-                        const newValue = !config.modoDemo;
-                        console.log("[Config] Toggle modoDemo:", newValue);
-                        setConfig({ ...config, modoDemo: newValue });
-                      }}
-                      className={`relative w-16 h-8 rounded-full transition-colors duration-300 ${
-                        config.modoDemo ? "bg-yellow-500/20" : "bg-emerald-500/20"
-                      }`}
-                    >
-                      <div
-                        className={`absolute top-1 w-6 h-6 rounded-full transition-all duration-300 ${
-                          config.modoDemo
-                            ? "left-1 bg-yellow-500"
-                            : "left-9 bg-emerald-500"
-                        }`}
-                      />
-                    </button>
-                    <span className={`text-sm font-medium ${!config.modoDemo ? "text-emerald-400" : "text-zinc-500"}`}>
-                      REAL
-                    </span>
-                  </div>
-                </div>
-                
-                <div className={`p-4 rounded-lg ${config.modoDemo ? "bg-yellow-500/10 border border-yellow-500/20" : "bg-emerald-500/10 border border-emerald-500/20"}`}>
-                  <div className="flex items-start gap-3">
-                    <span className="text-2xl">{config.modoDemo ? "🎮" : "💰"}</span>
-                    <div>
-                      <p className={`font-bold ${config.modoDemo ? "text-yellow-400" : "text-emerald-400"}`}>
-                        {config.modoDemo ? "Modo Demo Ativo" : "Modo Real Ativo"}
-                      </p>
-                      <p className="text-zinc-400 text-sm mt-1">
-                        {config.modoDemo
-                          ? "PIX simulado sem cobrança real. Use para testes e demonstrações."
-                          : "PIX real via Asaas. Cobranças reais serão geradas."}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               {/* Preço por Tentativa */}
               <div className="bg-zinc-800 rounded-xl p-5">
                 <h3 className="text-white font-bold mb-3">💵 Preço por Tentativa</h3>

@@ -107,35 +107,8 @@ export async function POST(req: NextRequest) {
     // Log pagamento criado
     await logPaymentCreated(payment.id, payment.amount, payment.attempts, ip);
 
-    // Verificar modo Demo/Real no banco de dados
-    const config = await prisma.config.findUnique({
-      where: { id: "default" },
-    });
-    const isModoDemo = config?.modoDemo ?? true; // Default: Demo
-
-    console.log("[API] Modo de operação:", isModoDemo ? "DEMO (simulado)" : "REAL (Asaas)");
-
-    // Se estiver em modo Demo, usar simulação direto
-    if (isModoDemo) {
-      console.log("[API] Modo Demo ativo - usando PIX simulado");
-      const pixId = crypto.randomUUID();
-      await prisma.payment.update({
-        where: { id: payment.id },
-        data: { pixId },
-      });
-
-      return NextResponse.json({
-        paymentId: payment.id,
-        pixId,
-        amount: payment.amount,
-        isReal: false,
-        isDemo: true,
-        message: "🎮 Modo Demo - PIX simulado sem cobrança real",
-      });
-    }
-
-    // Modo Real - tentar usar Asaas
-    console.log("[API] Modo Real ativo - tentando gerar PIX real");
+    // Modo Real - usar Asaas
+    console.log("[API] Modo Real - tentando gerar PIX real");
 
     // Verificar se tem API key do Asaas configurada
     const hasAsaas = !!process.env.ASAAS_API_KEY;
@@ -145,8 +118,8 @@ export async function POST(req: NextRequest) {
     if (!hasAsaas) {
       return NextResponse.json(
         { 
-          error: "Modo Real ativo mas ASAAS_API_KEY não configurada", 
-          details: "Configure a chave API do Asaas nas variáveis de ambiente ou ative o Modo Demo",
+          error: "ASAAS_API_KEY não configurada", 
+          details: "Configure a chave API do Asaas nas variáveis de ambiente",
         },
         { status: 500 }
       );
