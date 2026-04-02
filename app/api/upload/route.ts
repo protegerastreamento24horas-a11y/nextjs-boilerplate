@@ -1,7 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile } from "fs/promises";
-import { join } from "path";
-import { mkdir } from "fs/promises";
 import { auth } from "@/auth";
 
 export async function POST(request: NextRequest) {
@@ -14,7 +11,6 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File;
-    const folder = formData.get("folder") as string || "uploads";
 
     if (!file) {
       return NextResponse.json({ error: "Nenhum arquivo enviado" }, { status: 400 });
@@ -29,44 +25,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validar tamanho (max 5MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    // Validar tamanho (max 2MB para base64)
+    const maxSize = 2 * 1024 * 1024; // 2MB
     if (file.size > maxSize) {
       return NextResponse.json(
-        { error: "Arquivo muito grande. Máximo: 5MB" },
+        { error: "Arquivo muito grande. Máximo: 2MB" },
         { status: 400 }
       );
     }
 
-    // Criar diretório se não existir
-    const uploadDir = join(process.cwd(), "public", folder);
-    await mkdir(uploadDir, { recursive: true });
-
-    // Gerar nome único
-    const timestamp = Date.now();
-    const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, "-");
-    const fileName = `${timestamp}-${originalName}`;
-    const filePath = join(uploadDir, fileName);
-
-    // Salvar arquivo
+    // Converter para base64
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    await writeFile(filePath, buffer);
-
-    // Retornar URL pública
-    const publicUrl = `/${folder}/${fileName}`;
+    const base64 = buffer.toString("base64");
+    const dataUrl = `data:${file.type};base64,${base64}`;
 
     return NextResponse.json({
       success: true,
-      url: publicUrl,
-      fileName,
+      url: dataUrl,
+      fileName: file.name,
       size: file.size,
       type: file.type,
     });
   } catch (error) {
     console.error("Erro no upload:", error);
     return NextResponse.json(
-      { error: "Erro ao fazer upload do arquivo" },
+      { error: "Erro ao processar imagem" },
       { status: 500 }
     );
   }
