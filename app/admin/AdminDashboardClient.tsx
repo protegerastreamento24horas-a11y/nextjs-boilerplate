@@ -270,11 +270,14 @@ export default function AdminDashboardClient() {
       const res = await fetch("/api/admin/config");
       if (res.ok) {
         const data = await res.json();
+        console.log("[Config] Carregado:", data);
         setConfig({
           modoDemo: data.modoDemo ?? true,
           precoTentativa: data.precoTentativa ?? 2.50,
           probabilidade: data.probabilidade ?? 0.10,
         });
+      } else {
+        console.error("[Config] Erro ao carregar:", res.status);
       }
     } finally {
       setConfigLoading(false);
@@ -283,18 +286,19 @@ export default function AdminDashboardClient() {
 
   async function saveConfig() {
     setConfigSaving(true);
+    console.log("[Config] Enviando:", config);
     try {
       const res = await fetch("/api/admin/config", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(config),
       });
+      const data = await res.json();
+      console.log("[Config] Resposta:", data);
       if (res.ok) {
-        const data = await res.json();
-        alert("✅ Configuração salva com sucesso!");
+        alert("✅ Configuração salva! modoDemo=" + config.modoDemo);
       } else {
-        const error = await res.json();
-        alert("❌ Erro: " + (error.error || "Falha ao salvar"));
+        alert("❌ Erro: " + (data.error || "Falha ao salvar"));
       }
     } catch (err: any) {
       alert("❌ Erro de conexão: " + err.message);
@@ -767,7 +771,11 @@ export default function AdminDashboardClient() {
                       DEMO
                     </span>
                     <button
-                      onClick={() => setConfig({ ...config, modoDemo: !config.modoDemo })}
+                      onClick={() => {
+                        const newValue = !config.modoDemo;
+                        console.log("[Config] Toggle modoDemo:", newValue);
+                        setConfig({ ...config, modoDemo: newValue });
+                      }}
                       className={`relative w-16 h-8 rounded-full transition-colors duration-300 ${
                         config.modoDemo ? "bg-yellow-500/20" : "bg-emerald-500/20"
                       }`}
