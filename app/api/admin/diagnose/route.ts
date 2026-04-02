@@ -30,8 +30,9 @@ export async function GET() {
     });
     diagnostics.config = config;
     
-    if (config?.modoDemo) {
-      diagnostics.errors.push("Modo DEMO está ativo no banco de dados");
+    // Verificar configuração mínima
+    if (!config) {
+      diagnostics.errors.push("Configuração não encontrada no banco de dados");
     }
   } catch (error: any) {
     diagnostics.errors.push(`Erro ao buscar config: ${error.message}`);
