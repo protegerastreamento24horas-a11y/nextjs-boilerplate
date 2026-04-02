@@ -274,6 +274,47 @@ export default function RafflesAdminPage() {
                     </div>
                   </div>
 
+                  {/* Banners e Imagens */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium text-white mb-2">Banners e Imagens</h3>
+                    
+                    <div>
+                      <label className="block text-sm text-zinc-400 mb-1">Banner da Página Inicial (URL)</label>
+                      <input
+                        type="text"
+                        value={formData.homeBanner || ""}
+                        onChange={(e) => setFormData({ ...formData, homeBanner: e.target.value })}
+                        placeholder="/images/banner-corona.jpg"
+                        className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                      />
+                      <p className="text-xs text-zinc-500 mt-1">Cole o caminho da imagem (ex: /images/banner-corona.jpg)</p>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm text-zinc-400 mb-1">Banner da Página do Sorteio (URL)</label>
+                      <input
+                        type="text"
+                        value={formData.pageBanner || ""}
+                        onChange={(e) => setFormData({ ...formData, pageBanner: e.target.value })}
+                        placeholder="/images/page-banner-corona.jpg"
+                        className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                      />
+                      <p className="text-xs text-zinc-500 mt-1">Banner grande no topo da página do sorteio</p>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm text-zinc-400 mb-1">Logo da Marca (URL)</label>
+                      <input
+                        type="text"
+                        value={formData.logoUrl || ""}
+                        onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })}
+                        placeholder="/images/logo-corona.png"
+                        className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                      />
+                      <p className="text-xs text-zinc-500 mt-1">Logo da marca do sorteio</p>
+                    </div>
+                  </div>
+
                   {/* Pacotes */}
                   <div>
                     <h3 className="text-lg font-medium text-white mb-4">Pacotes de Raspadinhas</h3>
