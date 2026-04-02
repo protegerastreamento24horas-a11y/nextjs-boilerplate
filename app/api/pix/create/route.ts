@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
 
     if (hasAsaas) {
       // Criar pagamento real no Asaas
-      console.log("[API] Tentando criar pagamento no Asaas...", { amount: Number(amount), quantity });
+      console.log("[API] Tentando criar pagamento no Asaas...", { amount: Number(amount), quantity, cpf, name });
       const asaasResult = await createAsaasPixPayment(
         Number(amount),
         `Raspadinha - ${quantity} tentativa(s)`,
@@ -59,12 +59,12 @@ export async function POST(req: NextRequest) {
       
       console.log("[API] Resultado Asaas:", JSON.stringify(asaasResult, null, 2));
 
-      if (asaasResult.success && asaasResult.paymentId) {
+      if (asaasResult.success && asaasResult.paymentId && asaasResult.qrCode) {
         // Atualizar com dados do Asaas
         await prisma.payment.update({
           where: { id: payment.id },
           data: {
-            mpPaymentId: asaasResult.paymentId, // Reutilizando campo para Asaas ID
+            mpPaymentId: asaasResult.paymentId,
             qrCode: asaasResult.qrCode,
             qrCodeText: asaasResult.qrCodeText,
           },
@@ -81,6 +81,16 @@ export async function POST(req: NextRequest) {
         });
       } else {
         console.warn("[API] Falha ao criar Pix no Asaas:", asaasResult.error);
+        // Retornar erro ao invés de fallback silencioso
+        return NextResponse.json(
+          { 
+            error: "Falha ao gerar QR Code PIX", 
+            details: asaasResult.error || "Resposta inválida do Asaas",
+            asaasConfigured: true,
+            asaasError: asaasResult.error,
+          },
+          { status: 500 }
+        );
       }
     } else {
       console.log("[API] API key Asaas não configurada");
