@@ -126,13 +126,6 @@ export default function SocialProofSection() {
           {/* Testimonials Carousel */}
           <div className={`transition-all duration-700 delay-400 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <div className="bg-gradient-to-br from-zinc-800/90 to-zinc-900/90 border border-yellow-500/30 rounded-3xl p-8 backdrop-blur-sm shadow-2xl shadow-yellow-500/10">
-              <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-                <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 w-10 h-10 rounded-full flex items-center justify-center text-black text-lg">
-                  ★
-                </span>
-                Depoimentos de Ganhadores
-              </h3>
-
               <div className="relative h-64 overflow-hidden rounded-2xl">
                 <div className="absolute inset-0 transition-transform duration-500 ease-out"
                   style={{ transform: `translateX(-${currentIndex * 100}%)` }}
