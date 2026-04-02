@@ -19,6 +19,7 @@ model Payment {
   expiresAt    DateTime?    // Expiração do Pix
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+  paidAt       DateTime?    // Data do pagamento confirmado
   session      GameSession?
   
   // Campos de cadastro do cliente

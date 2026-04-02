@@ -64,7 +64,7 @@ export default function AdminLoginPage() {
               type="email"
               required
               placeholder="seu@email.com"
-              className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-yellow-500/60 transition-colors"
+              className="w-full bg-zinc-700 border border-zinc-600 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-yellow-500/60 transition-colors placeholder:text-zinc-400"
             />
           </div>
 

@@ -25,12 +25,13 @@ export async function POST(req: NextRequest) {
         });
 
         if (payment) {
-          // Atualizar status do pagamento
+          // Atualizar status do pagamento e data de pagamento
           await prisma.payment.update({
             where: { id: payment.id },
             data: { 
               status: "paid",
-              mpPaymentId: paymentId
+              mpPaymentId: paymentId,
+              paidAt: new Date()
             }
           });
 
