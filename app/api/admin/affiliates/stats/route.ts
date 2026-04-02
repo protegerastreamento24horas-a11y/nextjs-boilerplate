@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { auth } from "@/auth";
 
 const prisma = new PrismaClient();
 
 // GET /api/admin/affiliates/stats - Estatísticas do dashboard
 export async function GET() {
+  // Verificar autenticação
+  const session = await auth();
+  if (!session) {
+    return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  }
+
   try {
     // Total de afiliados
     const totalAffiliates = await prisma.affiliate.count();
