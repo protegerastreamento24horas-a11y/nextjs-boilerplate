@@ -68,24 +68,23 @@ const PIX_PROOFS: PixProof[] = [
 ];
 
 const BADGES = [
-  { icon: "✓", text: "Pagamento Real", color: "from-emerald-500 to-emerald-600" },
-  { icon: "★", text: "Ganhadores Reais", color: "from-yellow-500 to-yellow-600" },
-  { icon: "⚡", text: "Saque Imediato", color: "from-blue-500 to-blue-600" },
+  { icon: "✓", text: "Pagamento Real", color: "from-emerald-500 to-emerald-600", shadow: "shadow-emerald-500/30" },
+  { icon: "★", text: "Ganhadores Reais", color: "from-yellow-500 to-yellow-600", shadow: "shadow-yellow-500/30" },
+  { icon: "⚡", text: "Saque Imediato", color: "from-blue-500 to-blue-600", shadow: "shadow-blue-500/30" },
 ];
 
 export default function SocialProofSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
   const [prizeCount, setPrizeCount] = useState(2847);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [hoveredImage, setHoveredImage] = useState<number | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
-    
-    // Incrementar contador a cada 30 segundos
     const interval = setInterval(() => {
       setPrizeCount((prev) => prev + Math.floor(Math.random() * 3) + 1);
     }, 30000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -103,148 +102,201 @@ export default function SocialProofSection() {
   }, [nextSlide]);
 
   return (
-    <section className="w-full py-12 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950">
-      <div className="max-w-6xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 border border-emerald-500/30 rounded-full px-4 py-2 mb-4">
-            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-            <span className="text-emerald-400 text-sm font-semibold">Ganhadores em tempo real</span>
+    <section className="w-full py-16 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-0 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 relative z-10">
+        {/* Header with animated counter */}
+        <div className={`text-center mb-12 transition-all duration-700 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 border border-emerald-500/30 rounded-full px-5 py-2.5 mb-6">
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+            </span>
+            <span className="text-emerald-400 text-sm font-bold tracking-wide uppercase">Ganhadores em tempo real</span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
-            <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
+
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4">
+            <span className="inline-block bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400 bg-clip-text text-transparent animate-pulse">
               +{prizeCount.toLocaleString()}
-            </span>{" "}
-            prêmios entregues
+            </span>
+            <span className="block md:inline text-2xl md:text-4xl lg:text-5xl md:ml-3 mt-2 md:mt-0">
+              prêmios entregues
+            </span>
           </h2>
-          <p className="text-zinc-400 text-lg">
+          
+          <p className="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto">
             Junte-se aos milhares de ganhadores que já levaram cerveja premium para casa!
           </p>
         </div>
 
-        {/* Badges */}
-        <div className="flex flex-wrap justify-center gap-4 mb-10">
+        {/* Trust Badges */}
+        <div className={`flex flex-wrap justify-center gap-4 mb-12 transition-all duration-700 delay-200 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           {BADGES.map((badge, index) => (
             <div
               key={index}
-              className={`flex items-center gap-2 bg-gradient-to-r ${badge.color} text-white px-5 py-2.5 rounded-full shadow-lg transform hover:scale-105 transition-transform cursor-default`}
+              className={`flex items-center gap-2 bg-gradient-to-r ${badge.color} text-white px-6 py-3 rounded-full ${badge.shadow} shadow-lg transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 cursor-default`}
             >
-              <span className="text-lg">{badge.icon}</span>
-              <span className="font-bold text-sm">{badge.text}</span>
+              <span className="text-xl">{badge.icon}</span>
+              <span className="font-bold text-sm md:text-base">{badge.text}</span>
             </div>
           ))}
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid md:grid-cols-2 gap-8">
+        {/* Photo Gallery Grid */}
+        <div className={`mb-12 transition-all duration-700 delay-300 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <h3 className="text-2xl font-bold text-white mb-6 flex items-center justify-center gap-2">
+            <span className="text-yellow-400 text-3xl">📸</span>
+            Fotos dos Ganhadores
+          </h3>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {TESTIMONIALS.map((testimonial, index) => (
+              <div
+                key={testimonial.id}
+                className="relative aspect-square rounded-2xl overflow-hidden cursor-pointer group shadow-xl transform transition-all duration-500 hover:scale-105 hover:z-10"
+                style={{ transitionDelay: `${index * 100}ms` }}
+                onMouseEnter={() => setHoveredImage(index)}
+                onMouseLeave={() => setHoveredImage(null)}
+                onClick={() => setSelectedImage(testimonial.image)}
+              >
+                <Image
+                  src={testimonial.image}
+                  alt={testimonial.name}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                
+                {hoveredImage === index && (
+                  <div className="absolute bottom-0 left-0 right-0 p-4 animate-fade-in">
+                    <p className="text-white font-bold text-sm">{testimonial.name}</p>
+                    <p className="text-yellow-400 text-xs font-semibold">{testimonial.prize}</p>
+                    <p className="text-zinc-300 text-xs mt-1">{testimonial.timeAgo}</p>
+                  </div>
+                )}
+
+                {/* Winner badge */}
+                <div className="absolute top-2 right-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-black text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+                  🏆
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Main Content - Testimonials + PIX */}
+        <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {/* Testimonials Carousel */}
-          <div className="relative">
-            <div className="bg-gradient-to-br from-zinc-800/80 to-zinc-900/80 border border-yellow-500/20 rounded-2xl p-6 backdrop-blur-sm">
-              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                <span className="text-yellow-400">★</span>
+          <div className={`transition-all duration-700 delay-400 transform ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
+            <div className="bg-gradient-to-br from-zinc-800/90 to-zinc-900/90 border border-yellow-500/30 rounded-3xl p-8 backdrop-blur-sm shadow-2xl shadow-yellow-500/10">
+              <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 w-10 h-10 rounded-full flex items-center justify-center text-black text-lg">
+                  ★
+                </span>
                 Depoimentos de Ganhadores
               </h3>
 
-              <div className="relative overflow-hidden rounded-xl">
-                <div
-                  className="flex transition-transform duration-500 ease-out"
+              <div className="relative h-64 overflow-hidden rounded-2xl">
+                <div className="absolute inset-0 transition-transform duration-500 ease-out"
                   style={{ transform: `translateX(-${currentIndex * 100}%)` }}
                 >
-                  {TESTIMONIALS.map((testimonial) => (
-                    <div
-                      key={testimonial.id}
-                      className="w-full flex-shrink-0 p-2"
-                    >
-                      <div className="bg-zinc-800/50 rounded-xl p-4 border border-zinc-700/50">
-                        <div className="flex items-start gap-4">
-                          <div className="relative w-20 h-20 flex-shrink-0 rounded-full overflow-hidden border-2 border-yellow-500/50">
-                            <Image
-                              src={testimonial.image}
-                              alt={testimonial.name}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="font-bold text-white">{testimonial.name}</span>
-                              <span className="text-xs text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded-full">
-                                ✓ Verificado
-                              </span>
+                  <div className="flex h-full">
+                    {TESTIMONIALS.map((testimonial) => (
+                      <div
+                        key={testimonial.id}
+                        className="w-full flex-shrink-0 p-2"
+                      >
+                        <div className="bg-zinc-800/80 rounded-2xl p-6 border border-zinc-700/50 h-full flex flex-col justify-between">
+                          <div>
+                            <div className="flex items-center gap-4 mb-4">
+                              <div className="relative w-16 h-16 rounded-full overflow-hidden border-3 border-yellow-500/50 shadow-lg">
+                                <Image
+                                  src={testimonial.image}
+                                  alt={testimonial.name}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <span className="font-bold text-white text-lg">{testimonial.name}</span>
+                                  <span className="bg-emerald-500/20 text-emerald-400 text-xs font-bold px-2 py-0.5 rounded-full border border-emerald-500/30">
+                                    ✓ Verificado
+                                  </span>
+                                </div>
+                                <p className="text-zinc-400 text-sm">{testimonial.city}</p>
+                              </div>
                             </div>
-                            <p className="text-zinc-400 text-sm mb-2">{testimonial.city}</p>
-                            <p className="text-yellow-400 font-semibold text-sm mb-2">
-                              🏆 {testimonial.prize}
+                            
+                            <div className="bg-gradient-to-r from-yellow-500/10 to-transparent border-l-4 border-yellow-500 rounded-r-lg p-3 mb-4">
+                              <p className="text-yellow-400 font-bold">{testimonial.prize}</p>
+                            </div>
+                            
+                            <p className="text-zinc-300 text-base italic leading-relaxed">
+                              &ldquo;{testimonial.quote}&rdquo;
                             </p>
-                            <p className="text-zinc-300 text-sm italic">&ldquo;{testimonial.quote}&rdquo;</p>
-                            <p className="text-zinc-500 text-xs mt-2">{testimonial.timeAgo}</p>
                           </div>
+                          
+                          <p className="text-zinc-500 text-sm mt-4">{testimonial.timeAgo}</p>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Navigation */}
-              <div className="flex justify-center gap-2 mt-4">
+              {/* Navigation dots */}
+              <div className="flex justify-center gap-2 mt-6">
                 {TESTIMONIALS.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentIndex(index)}
-                    className={`w-2.5 h-2.5 rounded-full transition-all ${
+                    className={`h-2 rounded-full transition-all duration-300 ${
                       index === currentIndex
-                        ? "bg-yellow-400 w-6"
-                        : "bg-zinc-600 hover:bg-zinc-500"
+                        ? "bg-yellow-400 w-8"
+                        : "bg-zinc-600 hover:bg-zinc-500 w-2"
                     }`}
                   />
                 ))}
-              </div>
-
-              <div className="flex justify-between mt-4">
-                <button
-                  onClick={prevSlide}
-                  title="Depoimento anterior"
-                  className="p-2 bg-zinc-700/50 hover:bg-zinc-600/50 rounded-full text-white transition-colors"
-                >
-                  ←
-                </button>
-                <button
-                  onClick={nextSlide}
-                  title="Próximo depoimento"
-                  className="p-2 bg-zinc-700/50 hover:bg-zinc-600/50 rounded-full text-white transition-colors"
-                >
-                  →
-                </button>
               </div>
             </div>
           </div>
 
           {/* PIX Proofs */}
-          <div className="relative">
-            <div className="bg-gradient-to-br from-zinc-800/80 to-zinc-900/80 border border-emerald-500/20 rounded-2xl p-6 backdrop-blur-sm">
-              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                <span className="text-emerald-400">💰</span>
+          <div className={`transition-all duration-700 delay-500 transform ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
+            <div className="bg-gradient-to-br from-zinc-800/90 to-zinc-900/90 border border-emerald-500/30 rounded-3xl p-8 backdrop-blur-sm shadow-2xl shadow-emerald-500/10">
+              <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                <span className="bg-gradient-to-r from-emerald-400 to-emerald-600 w-10 h-10 rounded-full flex items-center justify-center text-black text-lg">
+                  💰
+                </span>
                 Comprovantes PIX
               </h3>
 
-              <div className="space-y-3">
-                {PIX_PROOFS.map((proof) => (
+              <div className="space-y-4">
+                {PIX_PROOFS.map((proof, index) => (
                   <div
                     key={proof.id}
-                    className="flex items-center justify-between bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-3 hover:border-emerald-500/30 transition-colors"
+                    className="flex items-center justify-between bg-gradient-to-r from-zinc-800/80 to-zinc-900/80 border border-zinc-700/50 hover:border-emerald-500/50 rounded-2xl p-4 transition-all duration-300 group hover:scale-[1.02] hover:translate-x-1"
+                    style={{ transitionDelay: `${index * 50}ms` }}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-emerald-500/20 rounded-full flex items-center justify-center">
-                        <span className="text-emerald-400 text-lg">✓</span>
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 rounded-full flex items-center justify-center border border-emerald-500/30 group-hover:border-emerald-500/60 transition-colors">
+                        <svg className="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
                       </div>
                       <div>
-                        <p className="text-white font-semibold text-sm">{proof.winnerName}</p>
-                        <p className="text-zinc-400 text-xs">Pagamento confirmado</p>
+                        <p className="text-white font-bold">{proof.winnerName}</p>
+                        <p className="text-zinc-400 text-sm">Pagamento confirmado</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-emerald-400 font-bold">{proof.amount}</p>
+                      <p className="text-emerald-400 font-black text-lg">{proof.amount}</p>
                       <p className="text-zinc-500 text-xs">{proof.timeAgo}</p>
                     </div>
                   </div>
@@ -252,25 +304,25 @@ export default function SocialProofSection() {
               </div>
 
               {/* Live indicator */}
-              <div className="mt-6 flex items-center justify-center gap-2 text-sm text-zinc-400">
-                <span className="relative flex h-3 w-3">
+              <div className="mt-8 flex items-center justify-center gap-3 text-sm">
+                <span className="relative flex h-4 w-4">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                  <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500"></span>
                 </span>
-                <span>Atualizando em tempo real...</span>
+                <span className="text-emerald-400 font-semibold">Atualizando em tempo real...</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* CTA Button */}
-        <div className="mt-10 text-center">
+        {/* CTA Section */}
+        <div className={`mt-16 text-center transition-all duration-700 delay-600 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <button
             onClick={() => {
               const element = document.getElementById("comprar");
               element?.scrollIntoView({ behavior: "smooth" });
             }}
-            className="group relative inline-flex items-center gap-3 px-10 py-5 font-bold text-lg rounded-2xl transition-all duration-300 active:scale-[0.98] hover:shadow-2xl"
+            className="group relative inline-flex items-center gap-4 px-12 py-6 font-black text-xl rounded-2xl transition-all duration-300 hover:shadow-2xl hover:scale-105 active:scale-[0.98]"
             style={{
               background: "linear-gradient(135deg, #FCD34D 0%, #F59E0B 40%, #D97706 100%)",
               color: "#000",
@@ -278,16 +330,53 @@ export default function SocialProofSection() {
             }}
           >
             <span>Jogar Agora</span>
-            <span className="text-xl group-hover:translate-x-1 transition-transform">→</span>
-            <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
-              AO VIVO
+            <span className="text-2xl animate-bounce">→</span>
+            <div className="absolute -top-3 -right-3 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-bold px-4 py-1.5 rounded-full shadow-lg animate-pulse">
+              🔥 AO VIVO
             </div>
           </button>
-          <p className="text-zinc-500 text-sm mt-4">
-            Mais de 150 pessoas estão jogando agora!
-          </p>
+          
+          <div className="mt-6 flex items-center justify-center gap-4 text-zinc-400">
+            <div className="flex -space-x-2">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-br from-zinc-700 to-zinc-600 border-2 border-zinc-800 flex items-center justify-center text-xs text-white font-bold">
+                  {i}
+                </div>
+              ))}
+            </div>
+            <p className="text-sm">
+              <span className="text-white font-bold">+150 pessoas</span> estão jogando agora
+            </p>
+          </div>
         </div>
       </div>
+
+      {/* Lightbox Modal */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div
+            className="relative max-w-4xl max-h-[90vh] rounded-2xl overflow-hidden animate-scale-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={selectedImage}
+              alt="Foto do ganhador"
+              width={800}
+              height={600}
+              className="object-contain max-h-[80vh]"
+            />
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white text-xl transition-colors"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
