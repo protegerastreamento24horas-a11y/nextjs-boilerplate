@@ -207,8 +207,7 @@ function LandingPageContent() {
             className="text-xl md:text-2xl font-medium text-zinc-300 mb-3"
             style={{ fontFamily: "var(--font-poppins), sans-serif" }}
           >
-            Raspe e concorra na hora a uma caixa de Corona, Stella ou Heineken long neck.<br />
-            Pagou via PIX, já descobre se ganhou!
+            Raspe, pague via PIX e descubra na hora se ganhou sua caixa de Corona, Stella ou Heineken!
           </h2>
         </div>
 
