@@ -33,6 +33,7 @@ export async function PUT(req: NextRequest) {
     probabilidade: Math.min(1, Math.max(0, Number(body.probabilidade))),
     modoManual: Boolean(body.modoManual),
     forcarPremio: Boolean(body.forcarPremio),
+    modoDemo: Boolean(body.modoDemo),
   };
 
   const config = await prisma.config.upsert({
