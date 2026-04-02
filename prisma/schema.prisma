@@ -114,6 +114,7 @@ model AffiliateCommission {
   commission    Float     // Valor da comissão calculada
   rate          Float     // Taxa aplicada (%)
   status        String    @default("pending") // pending, approved, paid, cancelled
+  notes         String?   // Observações sobre a comissão
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   
