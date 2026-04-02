@@ -20,6 +20,13 @@ function formatDate(dateStr: string) {
   });
 }
 
+function formatDateShort(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "short",
+  });
+}
+
 // Modern Stat Card Component
 function StatCard({ 
   title, 
