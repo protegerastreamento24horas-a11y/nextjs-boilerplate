@@ -12,7 +12,9 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "@types/formidable": "^3.5.0",
     "canvas-confetti": "^1.9.4",
+    "formidable": "^3.5.4",
     "lucide-react": "^1.7.0",
     "mercadopago": "^2.0.15",
     "next": "16.2.0",

@@ -40,6 +40,7 @@ export default function RafflesAdminPage() {
   const [formData, setFormData] = useState<Partial<Raffle>>({});
   const [packages, setPackages] = useState<RafflePackage[]>([]);
   const [message, setMessage] = useState("");
+  const [uploading, setUploading] = useState<{home: boolean; page: boolean; logo: boolean}>({home: false, page: false, logo: false});
   
   // Modal de novo sorteio
   const [showNewRaffleModal, setShowNewRaffleModal] = useState(false);
@@ -147,6 +148,47 @@ export default function RafflesAdminPage() {
       setMessage(`❌ ${error.message}`);
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleUpload(file: File, type: 'home' | 'page' | 'logo') {
+    if (!file) return;
+    
+    setUploading(prev => ({ ...prev, [type]: true }));
+    setMessage("");
+    
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "images");
+      
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Erro no upload");
+      }
+      
+      const data = await res.json();
+      
+      if (selectedRaffle) {
+        if (type === 'home') setFormData(prev => ({ ...prev, homeBanner: data.url }));
+        if (type === 'page') setFormData(prev => ({ ...prev, pageBanner: data.url }));
+        if (type === 'logo') setFormData(prev => ({ ...prev, logoUrl: data.url }));
+      } else {
+        if (type === 'home') setNewRaffleData(prev => ({ ...prev, homeBanner: data.url }));
+        if (type === 'page') setNewRaffleData(prev => ({ ...prev, pageBanner: data.url }));
+        if (type === 'logo') setNewRaffleData(prev => ({ ...prev, logoUrl: data.url }));
+      }
+      
+      setMessage(`✅ Imagem ${type} enviada com sucesso!`);
+    } catch (error: any) {
+      setMessage(`❌ Erro no upload: ${error.message}`);
+    } finally {
+      setUploading(prev => ({ ...prev, [type]: false }));
     }
   }
 
@@ -339,40 +381,97 @@ export default function RafflesAdminPage() {
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium text-white mb-2">Banners e Imagens</h3>
                     
+                    {/* Banner Home */}
                     <div>
-                      <label className="block text-sm text-zinc-400 mb-1">Banner da Página Inicial (URL)</label>
-                      <input
-                        type="text"
-                        value={formData.homeBanner || ""}
-                        onChange={(e) => setFormData({ ...formData, homeBanner: e.target.value })}
-                        placeholder="/images/banner-corona.jpg"
-                        className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
-                      />
-                      <p className="text-xs text-zinc-500 mt-1">Cole o caminho da imagem (ex: /images/banner-corona.jpg)</p>
+                      <label className="block text-sm text-zinc-400 mb-1">Banner da Página Inicial</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={formData.homeBanner || ""}
+                          onChange={(e) => setFormData({ ...formData, homeBanner: e.target.value })}
+                          placeholder="/images/banner-corona.jpg"
+                          className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                        />
+                        <label className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg cursor-pointer transition-colors flex items-center gap-2">
+                          {uploading.home ? (
+                            <span className="animate-spin">⏳</span>
+                          ) : (
+                            <span>📁</span>
+                          )}
+                          <span>Upload</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0], 'home')}
+                            className="hidden"
+                          />
+                        </label>
+                      </div>
+                      {formData.homeBanner && (
+                        <img src={formData.homeBanner} alt="Preview" className="mt-2 h-20 rounded-lg object-cover" />
+                      )}
                     </div>
                     
+                    {/* Banner Página */}
                     <div>
-                      <label className="block text-sm text-zinc-400 mb-1">Banner da Página do Sorteio (URL)</label>
-                      <input
-                        type="text"
-                        value={formData.pageBanner || ""}
-                        onChange={(e) => setFormData({ ...formData, pageBanner: e.target.value })}
-                        placeholder="/images/page-banner-corona.jpg"
-                        className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
-                      />
-                      <p className="text-xs text-zinc-500 mt-1">Banner grande no topo da página do sorteio</p>
+                      <label className="block text-sm text-zinc-400 mb-1">Banner da Página do Sorteio</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={formData.pageBanner || ""}
+                          onChange={(e) => setFormData({ ...formData, pageBanner: e.target.value })}
+                          placeholder="/images/page-banner-corona.jpg"
+                          className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                        />
+                        <label className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg cursor-pointer transition-colors flex items-center gap-2">
+                          {uploading.page ? (
+                            <span className="animate-spin">⏳</span>
+                          ) : (
+                            <span>📁</span>
+                          )}
+                          <span>Upload</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0], 'page')}
+                            className="hidden"
+                          />
+                        </label>
+                      </div>
+                      {formData.pageBanner && (
+                        <img src={formData.pageBanner} alt="Preview" className="mt-2 h-20 rounded-lg object-cover" />
+                      )}
                     </div>
                     
+                    {/* Logo */}
                     <div>
-                      <label className="block text-sm text-zinc-400 mb-1">Logo da Marca (URL)</label>
-                      <input
-                        type="text"
-                        value={formData.logoUrl || ""}
-                        onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })}
-                        placeholder="/images/logo-corona.png"
-                        className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
-                      />
-                      <p className="text-xs text-zinc-500 mt-1">Logo da marca do sorteio</p>
+                      <label className="block text-sm text-zinc-400 mb-1">Logo da Marca</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={formData.logoUrl || ""}
+                          onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })}
+                          placeholder="/images/logo-corona.png"
+                          className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                        />
+                        <label className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg cursor-pointer transition-colors flex items-center gap-2">
+                          {uploading.logo ? (
+                            <span className="animate-spin">⏳</span>
+                          ) : (
+                            <span>📁</span>
+                          )}
+                          <span>Upload</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0], 'logo')}
+                            className="hidden"
+                          />
+                        </label>
+                      </div>
+                      {formData.logoUrl && (
+                        <img src={formData.logoUrl} alt="Preview" className="mt-2 h-16 rounded-lg object-contain bg-zinc-800 px-4" />
+                      )}
                     </div>
                   </div>
 
