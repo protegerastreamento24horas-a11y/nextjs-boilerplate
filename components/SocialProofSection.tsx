@@ -13,13 +13,6 @@ interface Testimonial {
   timeAgo: string;
 }
 
-interface PixProof {
-  id: number;
-  amount: string;
-  timeAgo: string;
-  winnerName: string;
-}
-
 const TESTIMONIALS: Testimonial[] = [
   {
     id: 1,
@@ -57,14 +50,6 @@ const TESTIMONIALS: Testimonial[] = [
     quote: "Rápido, fácil e confiável! Já ganhei 2 vezes essa semana!",
     timeAgo: "18 minutos atrás",
   },
-];
-
-const PIX_PROOFS: PixProof[] = [
-  { id: 1, amount: "R$ 5,00", timeAgo: "Agora mesmo", winnerName: "Carlos S." },
-  { id: 2, amount: "R$ 12,00", timeAgo: "2 min atrás", winnerName: "Mariana C." },
-  { id: 3, amount: "R$ 5,00", timeAgo: "5 min atrás", winnerName: "João P." },
-  { id: 4, amount: "R$ 20,00", timeAgo: "8 min atrás", winnerName: "Ana L." },
-  { id: 5, amount: "R$ 12,00", timeAgo: "12 min atrás", winnerName: "Pedro M." },
 ];
 
 const BADGES = [
@@ -189,10 +174,10 @@ export default function SocialProofSection() {
           </div>
         </div>
 
-        {/* Main Content - Testimonials + PIX */}
-        <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        {/* Main Content - Testimonials */}
+        <div className="max-w-2xl mx-auto">
           {/* Testimonials Carousel */}
-          <div className={`transition-all duration-700 delay-400 transform ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
+          <div className={`transition-all duration-700 delay-400 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <div className="bg-gradient-to-br from-zinc-800/90 to-zinc-900/90 border border-yellow-500/30 rounded-3xl p-8 backdrop-blur-sm shadow-2xl shadow-yellow-500/10">
               <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
                 <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 w-10 h-10 rounded-full flex items-center justify-center text-black text-lg">
@@ -263,53 +248,6 @@ export default function SocialProofSection() {
                     }`}
                   />
                 ))}
-              </div>
-            </div>
-          </div>
-
-          {/* PIX Proofs */}
-          <div className={`transition-all duration-700 delay-500 transform ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
-            <div className="bg-gradient-to-br from-zinc-800/90 to-zinc-900/90 border border-emerald-500/30 rounded-3xl p-8 backdrop-blur-sm shadow-2xl shadow-emerald-500/10">
-              <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-                <span className="bg-gradient-to-r from-emerald-400 to-emerald-600 w-10 h-10 rounded-full flex items-center justify-center text-black text-lg">
-                  💰
-                </span>
-                Comprovantes PIX
-              </h3>
-
-              <div className="space-y-4">
-                {PIX_PROOFS.map((proof, index) => (
-                  <div
-                    key={proof.id}
-                    className="flex items-center justify-between bg-gradient-to-r from-zinc-800/80 to-zinc-900/80 border border-zinc-700/50 hover:border-emerald-500/50 rounded-2xl p-4 transition-all duration-300 group hover:scale-[1.02] hover:translate-x-1"
-                    style={{ transitionDelay: `${index * 50}ms` }}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 rounded-full flex items-center justify-center border border-emerald-500/30 group-hover:border-emerald-500/60 transition-colors">
-                        <svg className="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-white font-bold">{proof.winnerName}</p>
-                        <p className="text-zinc-400 text-sm">Pagamento confirmado</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-emerald-400 font-black text-lg">{proof.amount}</p>
-                      <p className="text-zinc-500 text-xs">{proof.timeAgo}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Live indicator */}
-              <div className="mt-8 flex items-center justify-center gap-3 text-sm">
-                <span className="relative flex h-4 w-4">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500"></span>
-                </span>
-                <span className="text-emerald-400 font-semibold">Atualizando em tempo real...</span>
               </div>
             </div>
           </div>
