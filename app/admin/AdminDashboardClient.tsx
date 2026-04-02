@@ -20,11 +20,36 @@ function formatDate(dateStr: string) {
   });
 }
 
-function formatDateShort(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "short",
-  });
+// Modern Stat Card Component
+function StatCard({ 
+  title, 
+  value, 
+  subtitle, 
+  icon, 
+  gradient = "from-zinc-800 to-zinc-900",
+  accentColor = "text-white"
+}: { 
+  title: string; 
+  value: string; 
+  subtitle?: string;
+  icon: string;
+  gradient?: string;
+  accentColor?: string;
+}) {
+  return (
+    <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${gradient} border border-white/10 p-5 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:border-white/20 group`}>
+      <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl -mr-16 -mt-16 transition-all duration-500 group-hover:bg-white/10" />
+      <div className="relative">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-2xl">{icon}</span>
+          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+        </div>
+        <div className={`text-xl md:text-2xl font-black ${accentColor} mb-1 tabular-nums`}>{value}</div>
+        <div className="text-zinc-400 text-sm font-medium">{title}</div>
+        {subtitle && <div className="text-zinc-500 text-xs mt-1">{subtitle}</div>}
+      </div>
+    </div>
+  );
 }
 
 // Simple SVG Bar Chart Component
@@ -241,12 +266,13 @@ export default function AdminDashboardClient() {
 
   if (unauthorized) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-400 mb-4">Acesso não autorizado</p>
+      <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 flex items-center justify-center">
+        <div className="text-center p-8 bg-zinc-900/80 backdrop-blur-xl rounded-3xl border border-white/10">
+          <div className="text-6xl mb-4">🔒</div>
+          <p className="text-red-400 mb-4 text-lg">Acesso não autorizado</p>
           <button
             onClick={() => router.push("/admin/login")}
-            className="px-4 py-2 bg-yellow-500 text-black rounded font-bold"
+            className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-black font-bold rounded-xl hover:opacity-90 transition-all"
           >
             Ir para Login
           </button>
@@ -257,9 +283,13 @@ export default function AdminDashboardClient() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-zinc-500 animate-pulse text-sm">
-          Carregando dados...
+      <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative">
+            <div className="w-12 h-12 border-4 border-yellow-500/20 border-t-yellow-500 rounded-full animate-spin" />
+            <div className="absolute inset-0 w-12 h-12 border-4 border-transparent border-t-yellow-400/50 rounded-full animate-spin" style={{ animationDuration: '1.5s' }} />
+          </div>
+          <p className="text-zinc-500 animate-pulse">Carregando painel...</p>
         </div>
       </div>
     );
@@ -267,128 +297,91 @@ export default function AdminDashboardClient() {
 
   if (!stats) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-red-400 text-sm">Erro ao carregar estatísticas.</div>
+      <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 flex items-center justify-center">
+        <div className="text-center p-8 bg-zinc-900/80 backdrop-blur-xl rounded-3xl border border-red-500/20">
+          <div className="text-6xl mb-4">⚠️</div>
+          <div className="text-red-400 text-lg">Erro ao carregar estatísticas.</div>
+        </div>
       </div>
     );
   }
 
-  const statCards = [
-    {
-      label: "Total Arrecadado",
-      value: formatBRL(stats.totalArrecadado),
-      icon: "💰",
-      color: "text-yellow-400",
-      sub: `${stats.totalPagamentos} pagamentos`,
-    },
-    {
-      label: "Receita Hoje",
-      value: formatBRL(stats.topStats.todayRevenue),
-      icon: "📅",
-      color: "text-emerald-400",
-      sub: "hoje",
-    },
-    {
-      label: "Total de Jogadas",
-      value: String(stats.totalJogadas),
-      icon: "🎮",
-      color: "text-blue-400",
-      sub: "sessões iniciadas",
-    },
-    {
-      label: "Prêmios Pagos",
-      value: String(stats.premiosPagos),
-      icon: "🏆",
-      color: "text-purple-400",
-      sub: "ganhadores",
-    },
-    {
-      label: "Ticket Médio",
-      value: formatBRL(stats.topStats.avgTicket),
-      icon: "🎫",
-      color: "text-cyan-400",
-      sub: "por pagamento",
-    },
-    {
-      label: "Taxa de Conversão",
-      value: `${stats.topStats.conversionRate.toFixed(1)}%`,
-      icon: "📊",
-      color: "text-orange-400",
-      sub: "pagos / total",
-    },
-    {
-      label: "Taxa de Vitória",
-      value: `${stats.topStats.winRate.toFixed(1)}%`,
-      icon: "🎯",
-      color: "text-pink-400",
-      sub: "ganhadores / jogos",
-    },
-    {
-      label: "Lucro Atual",
-      value: formatBRL(stats.lucroAtual),
-      icon: stats.lucroAtual >= 0 ? "📈" : "📉",
-      color: stats.lucroAtual >= 0 ? "text-emerald-400" : "text-red-400",
-      sub: "arrecadado − prêmios",
-    },
+  const statCardsData = [
+    { label: "Total Arrecadado", value: formatBRL(stats.totalArrecadado), icon: "💰", gradient: "from-yellow-600/20 to-yellow-800/20", accentColor: "text-yellow-400", sub: `${stats.totalPagamentos} pagamentos` },
+    { label: "Receita Hoje", value: formatBRL(stats.topStats.todayRevenue), icon: "📅", gradient: "from-emerald-600/20 to-emerald-800/20", accentColor: "text-emerald-400", sub: "hoje" },
+    { label: "Total de Jogadas", value: String(stats.totalJogadas), icon: "🎮", gradient: "from-blue-600/20 to-blue-800/20", accentColor: "text-blue-400", sub: "sessões iniciadas" },
+    { label: "Prêmios Pagos", value: String(stats.premiosPagos), icon: "🏆", gradient: "from-purple-600/20 to-purple-800/20", accentColor: "text-purple-400", sub: "ganhadores" },
+    { label: "Ticket Médio", value: formatBRL(stats.topStats.avgTicket), icon: "🎫", gradient: "from-cyan-600/20 to-cyan-800/20", accentColor: "text-cyan-400", sub: "por pagamento" },
+    { label: "Taxa de Conversão", value: `${stats.topStats.conversionRate.toFixed(1)}%`, icon: "📊", gradient: "from-orange-600/20 to-orange-800/20", accentColor: "text-orange-400", sub: "pagos / total" },
+    { label: "Taxa de Vitória", value: `${stats.topStats.winRate.toFixed(1)}%`, icon: "🎯", gradient: "from-pink-600/20 to-pink-800/20", accentColor: "text-pink-400", sub: "ganhadores / jogos" },
+    { label: "Lucro Atual", value: formatBRL(stats.lucroAtual), icon: stats.lucroAtual >= 0 ? "📈" : "📉", gradient: stats.lucroAtual >= 0 ? "from-emerald-600/20 to-emerald-800/20" : "from-red-600/20 to-red-800/20", accentColor: stats.lucroAtual >= 0 ? "text-emerald-400" : "text-red-400", sub: "arrecadado − prêmios" },
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-black text-white">Painel Administrativo</h1>
-        <p className="text-zinc-500 text-sm mt-1">
-          Visão geral em tempo real · Atualiza a cada 10s
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Header Moderno */}
+        <div className="mb-10">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center text-2xl shadow-lg shadow-yellow-500/20">
+              🎰
+            </div>
+            <div>
+              <h1 className="text-4xl font-black bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-400 bg-clip-text text-transparent">
+                Painel Administrativo
+              </h1>
+              <p className="text-zinc-500 text-sm">
+                Visão geral em tempo real · Atualiza a cada 10s
+              </p>
+            </div>
+          </div>
+        </div>
 
-      {/* Tabs */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        {[
-          { id: "overview", label: "📊 Visão Geral" },
-          { id: "payments", label: "💳 Pagamentos" },
-          { id: "sessions", label: "🎮 Jogos" },
-          { id: "players", label: "👥 Jogadores" },
-          { id: "logs", label: "📋 Logs" },
-          { id: "backup", label: "💾 Backup" },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as typeof activeTab)}
-            className={`px-4 py-2 rounded-xl font-medium text-sm transition-all ${
-              activeTab === tab.id
-                ? "bg-yellow-500 text-black"
-                : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
-            }`}
+        {/* Tabs Modernas */}
+        <div className="flex flex-wrap gap-2 mb-8 p-1.5 bg-zinc-900/80 backdrop-blur-xl rounded-2xl border border-white/5 w-fit">
+          {[
+            { id: "overview", label: "📊 Visão Geral" },
+            { id: "payments", label: "💳 Pagamentos" },
+            { id: "sessions", label: "🎮 Jogos" },
+            { id: "players", label: "👥 Jogadores" },
+            { id: "logs", label: "📋 Logs" },
+            { id: "backup", label: "💾 Backup" },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as typeof activeTab)}
+              className={`relative px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 ${
+                activeTab === tab.id
+                  ? "bg-gradient-to-r from-yellow-500 to-orange-500 text-black shadow-lg shadow-yellow-500/25"
+                  : "text-zinc-400 hover:text-white hover:bg-white/5"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+          {/* Link para Afiliados */}
+          <a
+            href="/admin/affiliates"
+            className="px-5 py-2.5 rounded-xl font-semibold text-sm transition-all bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20"
           >
-            {tab.label}
-          </button>
-        ))}
-        {/* Link para Afiliados */}
-        <a
-          href="/admin/affiliates"
-          className="px-4 py-2 rounded-xl font-medium text-sm transition-all bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-emerald-400"
-        >
-          🎯 Afiliados
-        </a>
-      </div>
+            🎯 Afiliados
+          </a>
+        </div>
 
       {activeTab === "overview" && (
         <>
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-            {statCards.map((card) => (
-              <div
+          {/* Stats Grid Moderno */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            {statCardsData.map((card) => (
+              <StatCard
                 key={card.label}
-                className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5"
-              >
-                <div className="text-2xl mb-2">{card.icon}</div>
-                <div className={`text-xl md:text-2xl font-black ${card.color} mb-0.5 tabular-nums`}>
-                  {card.value}
-                </div>
-                <div className="text-zinc-400 text-xs font-medium">{card.label}</div>
-                <div className="text-zinc-700 text-[11px] mt-0.5">{card.sub}</div>
-              </div>
+                title={card.label}
+                value={card.value}
+                subtitle={card.sub}
+                icon={card.icon}
+                gradient={card.gradient}
+                accentColor={card.accentColor}
+              />
             ))}
           </div>
 
@@ -690,6 +683,7 @@ export default function AdminDashboardClient() {
           )}
         </div>
       )}
+    </div>
     </div>
   );
 }
