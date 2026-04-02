@@ -63,7 +63,7 @@ export default function AdminLoginPage() {
               name="email"
               type="email"
               required
-              defaultValue="admin@raspadinha.com"
+              placeholder="seu@email.com"
               className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-yellow-500/60 transition-colors"
             />
           </div>
@@ -93,7 +93,7 @@ export default function AdminLoginPage() {
         </form>
 
         <p className="text-center text-zinc-700 text-xs mt-4">
-          Credenciais padrão: admin@raspadinha.com / admin123
+          Acesso restrito a administradores autorizados
         </p>
       </div>
     </div>

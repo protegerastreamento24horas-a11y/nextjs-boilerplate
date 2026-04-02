@@ -3,9 +3,75 @@ import { prisma } from "@/lib/prisma";
 import { createAsaasPixPayment } from "@/lib/asaas";
 import { logPaymentCreated } from "@/lib/audit";
 
+// Funções de validação e sanitização
+function sanitizeString(input: string | null | undefined, maxLength: number = 255): string | null {
+  if (!input) return null;
+  // Remove caracteres perigosos e trim
+  let sanitized = input.trim().replace(/[<>\"'%;()&+]/g, "");
+  // Limita tamanho
+  if (sanitized.length > maxLength) {
+    sanitized = sanitized.substring(0, maxLength);
+  }
+  return sanitized || null;
+}
+
+function validateCPF(cpf: string | null | undefined): string | null {
+  if (!cpf) return null;
+  // Remove não-numéricos
+  const cleaned = cpf.replace(/\D/g, "");
+  // Verifica se tem 11 dígitos
+  if (cleaned.length !== 11) return null;
+  // Verifica CPFs inválidos conhecidos
+  if (/^(\d)\1{10}$/.test(cleaned)) return null;
+  return cleaned;
+}
+
+function validateWhatsApp(whatsapp: string | null | undefined): string | null {
+  if (!whatsapp) return null;
+  // Remove não-numéricos
+  const cleaned = whatsapp.replace(/\D/g, "");
+  // Verifica se tem entre 10 e 13 dígitos (com ou sem código do país)
+  if (cleaned.length < 10 || cleaned.length > 13) return null;
+  return cleaned;
+}
+
+function validateName(name: string | null | undefined): string | null {
+  if (!name) return null;
+  const trimmed = name.trim();
+  // Mínimo 2 caracteres, máximo 100
+  if (trimmed.length < 2 || trimmed.length > 100) return null;
+  // Apenas letras, espaços e caracteres comuns de nomes
+  if (!/^[\p{L}\s'-]+$/u.test(trimmed)) return null;
+  return trimmed;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { quantity, amount, cpf, name, whatsapp, affiliateCode } = await req.json();
+
+    // Validar e sanitizar entradas
+    const sanitizedName = validateName(name);
+    const sanitizedCPF = validateCPF(cpf);
+    const sanitizedWhatsApp = validateWhatsApp(whatsapp);
+    const sanitizedAffiliateCode = sanitizeString(affiliateCode, 20);
+
+    // Validar amount
+    const numAmount = Number(amount);
+    if (isNaN(numAmount) || numAmount <= 0 || numAmount > 1000) {
+      return NextResponse.json(
+        { error: "Valor inválido" },
+        { status: 400 }
+      );
+    }
+
+    // Validar quantity
+    const numQuantity = Number(quantity) || 1;
+    if (numQuantity < 1 || numQuantity > 100) {
+      return NextResponse.json(
+        { error: "Quantidade inválida" },
+        { status: 400 }
+      );
+    }
 
     // Pegar IP do header
     const ip = req.headers.get("x-forwarded-for") || "unknown";
@@ -13,9 +79,9 @@ export async function POST(req: NextRequest) {
     // Buscar afiliado se houver código
     let affiliateId = null;
     let savedAffiliateCode = null;
-    if (affiliateCode) {
+    if (sanitizedAffiliateCode) {
       const affiliate = await prisma.affiliate.findUnique({
-        where: { code: affiliateCode.toUpperCase() },
+        where: { code: sanitizedAffiliateCode.toUpperCase() },
       });
       if (affiliate && affiliate.status === "active") {
         affiliateId = affiliate.id;
@@ -26,13 +92,13 @@ export async function POST(req: NextRequest) {
     // Criar registro no banco
     const payment = await prisma.payment.create({
       data: {
-        amount: Number(amount),
-        attempts: Number(quantity) || 1,
+        amount: numAmount,
+        attempts: numQuantity,
         status: "pending",
         expiresAt: new Date(Date.now() + 30 * 60 * 1000), // 30 minutos
-        name: name || null,
-        cpf: cpf || null,
-        whatsapp: whatsapp || null,
+        name: sanitizedName,
+        cpf: sanitizedCPF,
+        whatsapp: sanitizedWhatsApp,
         affiliateId,
         affiliateCode: savedAffiliateCode,
       },
@@ -87,13 +153,13 @@ export async function POST(req: NextRequest) {
     }
 
     // Criar pagamento real no Asaas
-    console.log("[API] Tentando criar pagamento no Asaas...", { amount: Number(amount), quantity, cpf, name });
+    console.log("[API] Tentando criar pagamento no Asaas...", { amount: numAmount, quantity: numQuantity, cpf: sanitizedCPF, name: sanitizedName });
     const asaasResult = await createAsaasPixPayment(
-      Number(amount),
-      `Raspadinha - ${quantity} tentativa(s)`,
+      numAmount,
+      `Raspadinha - ${numQuantity} tentativa(s)`,
       payment.id,
-      cpf || undefined,
-      name || undefined
+      sanitizedCPF || undefined,
+      sanitizedName || undefined
     );
     
     console.log("[API] Resultado Asaas:", JSON.stringify(asaasResult, null, 2));
