@@ -162,7 +162,7 @@ export default function RafflesAdminPage() {
     <div className="min-h-screen bg-zinc-950 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-white">Gerenciamento de Sorteios</h1>
+          <h1 className="text-3xl font-bold text-white">🎰 Gerenciamento de Sorteios (v2.1)</h1>
           <div className="flex gap-2">
             <button
               onClick={() => setShowNewRaffleModal(true)}
