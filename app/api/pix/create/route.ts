@@ -47,13 +47,14 @@ function validateName(name: string | null | undefined): string | null {
 
 export async function POST(req: NextRequest) {
   try {
-    const { quantity, amount, cpf, name, whatsapp, affiliateCode } = await req.json();
+    const { quantity, amount, cpf, name, whatsapp, affiliateCode, raffleId } = await req.json();
 
     // Validar e sanitizar entradas
     const sanitizedName = validateName(name);
     const sanitizedCPF = validateCPF(cpf);
     const sanitizedWhatsApp = validateWhatsApp(whatsapp);
     const sanitizedAffiliateCode = sanitizeString(affiliateCode, 20);
+    const sanitizedRaffleId = sanitizeString(raffleId, 100);
 
     // Validar amount
     const numAmount = Number(amount);
@@ -101,6 +102,7 @@ export async function POST(req: NextRequest) {
         whatsapp: sanitizedWhatsApp,
         affiliateId,
         affiliateCode: savedAffiliateCode,
+        raffleId: sanitizedRaffleId,
       },
     });
 

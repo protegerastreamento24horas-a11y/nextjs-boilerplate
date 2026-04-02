@@ -1,0 +1,367 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+interface Raffle {
+  id: string;
+  slug: string;
+  name: string;
+  description: string | null;
+  fullDescription: string | null;
+  isActive: boolean;
+  order: number;
+  homeBanner: string | null;
+  pageBanner: string | null;
+  logoUrl: string | null;
+  primaryColor: string;
+  secondaryColor: string;
+  packages: string;
+  totalParticipants: number;
+  totalWinners: number;
+  createdAt: string;
+}
+
+interface RafflePackage {
+  id: number;
+  quantity: number;
+  price: number;
+  label: string;
+  popular: boolean;
+  save?: number;
+}
+
+export default function RafflesAdminPage() {
+  const router = useRouter();
+  const [raffles, setRaffles] = useState<Raffle[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [selectedRaffle, setSelectedRaffle] = useState<Raffle | null>(null);
+  const [formData, setFormData] = useState<Partial<Raffle>>({});
+  const [packages, setPackages] = useState<RafflePackage[]>([]);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    fetchRaffles();
+  }, []);
+
+  async function fetchRaffles() {
+    try {
+      const res = await fetch("/api/raffles?all=true");
+      if (!res.ok) throw new Error("Erro ao carregar sorteios");
+      const data = await res.json();
+      setRaffles(data);
+    } catch (error) {
+      console.error("Erro:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function selectRaffle(raffle: Raffle) {
+    setSelectedRaffle(raffle);
+    setFormData({ ...raffle });
+    setPackages(JSON.parse(raffle.packages));
+  }
+
+  function updatePackage(index: number, field: keyof RafflePackage, value: any) {
+    const updated = [...packages];
+    updated[index] = { ...updated[index], [field]: value };
+    setPackages(updated);
+  }
+
+  async function handleSave() {
+    if (!selectedRaffle) return;
+    
+    setSaving(true);
+    setMessage("");
+    
+    try {
+      const res = await fetch(`/api/raffles/${selectedRaffle.slug}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          packages,
+        }),
+      });
+      
+      if (!res.ok) throw new Error("Erro ao salvar");
+      
+      setMessage("✅ Sorteio atualizado com sucesso!");
+      fetchRaffles();
+    } catch (error) {
+      setMessage("❌ Erro ao salvar sorteio");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-zinc-950 p-6">
+      <div className="max-w-6xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-white">Gerenciamento de Sorteios</h1>
+          <button
+            onClick={() => router.push("/admin")}
+            className="px-4 py-2 bg-zinc-800 text-zinc-300 rounded-lg hover:bg-zinc-700"
+          >
+            ← Voltar ao Dashboard
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Lista de Sorteios */}
+          <div className="lg:col-span-1">
+            <div className="bg-zinc-900 rounded-xl p-4">
+              <h2 className="text-lg font-semibold text-white mb-4">Sorteios</h2>
+              <div className="space-y-2">
+                {raffles.map((raffle) => (
+                  <button
+                    key={raffle.id}
+                    onClick={() => selectRaffle(raffle)}
+                    className={`w-full p-4 rounded-lg text-left transition-all ${
+                      selectedRaffle?.id === raffle.id
+                        ? "bg-yellow-500/20 border border-yellow-500/50"
+                        : "bg-zinc-800 hover:bg-zinc-700"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-white">{raffle.name}</span>
+                      <span
+                        className={`px-2 py-1 rounded text-xs ${
+                          raffle.isActive
+                            ? "bg-green-500/20 text-green-400"
+                            : "bg-red-500/20 text-red-400"
+                        }`}
+                      >
+                        {raffle.isActive ? "Ativo" : "Inativo"}
+                      </span>
+                    </div>
+                    <div className="text-sm text-zinc-500 mt-1">
+                      {raffle.totalParticipants} participantes · {raffle.totalWinners} ganhadores
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Editor de Sorteio */}
+          <div className="lg:col-span-2">
+            {selectedRaffle ? (
+              <div className="bg-zinc-900 rounded-xl p-6">
+                <h2 className="text-xl font-semibold text-white mb-6">
+                  Editar: {selectedRaffle.name}
+                </h2>
+
+                {message && (
+                  <div className="mb-4 p-3 bg-zinc-800 rounded-lg text-sm">
+                    {message}
+                  </div>
+                )}
+
+                <div className="space-y-6">
+                  {/* Informações Básicas */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm text-zinc-400 mb-1">Nome</label>
+                      <input
+                        type="text"
+                        value={formData.name || ""}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-zinc-400 mb-1">Slug</label>
+                      <input
+                        type="text"
+                        value={selectedRaffle.slug}
+                        disabled
+                        className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-500 cursor-not-allowed"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm text-zinc-400 mb-1">Descrição Curta</label>
+                    <input
+                      type="text"
+                      value={formData.description || ""}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm text-zinc-400 mb-1">Descrição Completa</label>
+                    <textarea
+                      value={formData.fullDescription || ""}
+                      onChange={(e) => setFormData({ ...formData, fullDescription: e.target.value })}
+                      rows={3}
+                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                    />
+                  </div>
+
+                  {/* Status e Ordem */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm text-zinc-400 mb-1">Status</label>
+                      <select
+                        value={formData.isActive ? "true" : "false"}
+                        onChange={(e) => setFormData({ ...formData, isActive: e.target.value === "true" })}
+                        className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                      >
+                        <option value="true">Ativo</option>
+                        <option value="false">Inativo</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm text-zinc-400 mb-1">Ordem de Exibição</label>
+                      <input
+                        type="number"
+                        value={formData.order || 0}
+                        onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })}
+                        className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Cores */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm text-zinc-400 mb-1">Cor Primária</label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="color"
+                          value={formData.primaryColor || "#FFD700"}
+                          onChange={(e) => setFormData({ ...formData, primaryColor: e.target.value })}
+                          className="w-12 h-10 rounded cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          value={formData.primaryColor || ""}
+                          onChange={(e) => setFormData({ ...formData, primaryColor: e.target.value })}
+                          className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white text-sm"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm text-zinc-400 mb-1">Cor Secundária</label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="color"
+                          value={formData.secondaryColor || "#FFA500"}
+                          onChange={(e) => setFormData({ ...formData, secondaryColor: e.target.value })}
+                          className="w-12 h-10 rounded cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          value={formData.secondaryColor || ""}
+                          onChange={(e) => setFormData({ ...formData, secondaryColor: e.target.value })}
+                          className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white text-sm"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Pacotes */}
+                  <div>
+                    <h3 className="text-lg font-medium text-white mb-4">Pacotes de Raspadinhas</h3>
+                    <div className="space-y-3">
+                      {packages.map((pkg, index) => (
+                        <div key={pkg.id} className="grid grid-cols-5 gap-2 items-center bg-zinc-800/50 p-3 rounded-lg">
+                          <div>
+                            <label className="block text-xs text-zinc-500 mb-1">Qtd</label>
+                            <input
+                              type="number"
+                              value={pkg.quantity}
+                              onChange={(e) => updatePackage(index, "quantity", parseInt(e.target.value))}
+                              className="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-zinc-500 mb-1">Preço R$</label>
+                            <input
+                              type="number"
+                              value={pkg.price}
+                              onChange={(e) => updatePackage(index, "price", parseInt(e.target.value))}
+                              className="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-zinc-500 mb-1">Label</label>
+                            <input
+                              type="text"
+                              value={pkg.label}
+                              onChange={(e) => updatePackage(index, "label", e.target.value)}
+                              className="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-zinc-500 mb-1">Economia R$</label>
+                            <input
+                              type="number"
+                              value={pkg.save || 0}
+                              onChange={(e) => updatePackage(index, "save", parseInt(e.target.value) || undefined)}
+                              className="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-white text-sm"
+                            />
+                          </div>
+                          <div className="flex items-center justify-center">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={pkg.popular}
+                                onChange={(e) => updatePackage(index, "popular", e.target.checked)}
+                                className="w-4 h-4 rounded border-zinc-600"
+                              />
+                              <span className="text-xs text-zinc-400">Popular</span>
+                            </label>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Botões */}
+                  <div className="flex gap-3 pt-4">
+                    <button
+                      onClick={handleSave}
+                      disabled={saving}
+                      className="flex-1 py-3 bg-yellow-500 hover:bg-yellow-400 disabled:opacity-50 text-black font-bold rounded-lg transition-colors"
+                    >
+                      {saving ? "Salvando..." : "💾 Salvar Alterações"}
+                    </button>
+                    <button
+                      onClick={() => setSelectedRaffle(null)}
+                      className="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium rounded-lg transition-colors"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-zinc-900 rounded-xl p-8 text-center">
+                <div className="text-6xl mb-4">🎁</div>
+                <h2 className="text-xl font-semibold text-white mb-2">Selecione um Sorteio</h2>
+                <p className="text-zinc-500">
+                  Clique em um sorteio da lista à esquerda para editar suas configurações.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

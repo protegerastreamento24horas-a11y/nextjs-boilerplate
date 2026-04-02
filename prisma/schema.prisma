@@ -31,8 +31,13 @@ model Payment {
   affiliateId  String?      // ID do afiliado que indicou
   affiliateCode String?     // Código usado na URL (?ref=CODE)
   
+  // Campo de sorteio
+  raffleId     String?      // ID do sorteio escolhido
+  raffle       Raffle?      @relation(fields: [raffleId], references: [id])
+  
   @@index([affiliateId])
   @@index([cpf])
+  @@index([raffleId])
 }
 
 model GameSession {
@@ -57,6 +62,45 @@ model Config {
   metaJackpot       Float   @default(500)    // Meta para liberar jackpot
   rtpTarget         Float   @default(0.70)    // % retorno ao jogador (0-1)
   sequenciaSemPremio Int    @default(0)      // Contador para controle
+}
+
+// ========== SISTEMA DE SORTEIOS ==========
+
+model Raffle {
+  id                String    @id @default(cuid())
+  slug              String    @unique // stella, heineken, corona
+  name              String    // Nome exibido: "Sorteio Stella Artois"
+  description       String?   // Descrição curta
+  fullDescription   String?   // Descrição completa com regras
+  
+  // Status
+  isActive          Boolean   @default(true)
+  order             Int       @default(0) // Ordem de exibição
+  
+  // Banners
+  homeBanner        String?   // Banner na página inicial
+  pageBanner        String?   // Banner na página do sorteio
+  logoUrl           String?   // Logo da marca
+  
+  // Cores de branding (hex)
+  primaryColor      String    @default("#FFD700")
+  secondaryColor    String    @default("#FFA500")
+  
+  // Preços dos pacotes (JSON)
+  packages          String    @default("[{\"id\":1,\"quantity\":1,\"price\":5,\"label\":\"1 Tentativa\",\"popular\":false},{\"id\":2,\"quantity\":3,\"price\":12,\"label\":\"3 Tentativas\",\"popular\":true,\"save\":3},{\"id\":3,\"quantity\":5,\"price\":20,\"label\":\"5 Tentativas\",\"popular\":false,\"save\":5}]")
+  
+  // Estatísticas
+  totalParticipants Int       @default(0)
+  totalWinners      Int       @default(0)
+  
+  // Relações
+  payments          Payment[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  @@index([isActive])
+  @@index([order])
 }
 
 model AuditLog {
