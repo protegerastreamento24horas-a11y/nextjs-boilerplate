@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 
 interface Testimonial {
@@ -33,8 +32,6 @@ const TESTIMONIALS: Testimonial[] = [
 ];
 
 export default function SocialProofSection() {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
   return (
     <section className="w-full py-8 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950">
       <div className="max-w-4xl mx-auto px-4">
@@ -42,46 +39,18 @@ export default function SocialProofSection() {
           {TESTIMONIALS.map((testimonial) => (
             <div
               key={testimonial.id}
-              className="relative aspect-square rounded-2xl overflow-hidden cursor-pointer group border-4 border-yellow-500/80 shadow-xl shadow-yellow-500/20"
-              onClick={() => setSelectedImage(testimonial.image)}
+              className="relative aspect-square rounded-2xl overflow-hidden border-4 border-yellow-500/80 shadow-xl shadow-yellow-500/20"
             >
               <Image
                 src={testimonial.image}
                 alt={testimonial.name}
                 fill
-                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                className="object-cover"
               />
             </div>
           ))}
         </div>
       </div>
-
-      {/* Lightbox Modal */}
-      {selectedImage && (
-        <div
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setSelectedImage(null)}
-        >
-          <div
-            className="relative max-w-4xl max-h-[90vh] rounded-2xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Image
-              src={selectedImage}
-              alt="Foto do ganhador"
-              width={800}
-              height={600}
-              className="object-contain max-h-[80vh]"
-            />
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white text-xl transition-colors"
-            >
-              ×
-            </button>
-          </div>
-        </div>
-      )}
     </section>
   );
 }
