@@ -294,7 +294,7 @@ export default function AdminDashboardClient() {
       const data = await res.json();
       console.log("[Config] Resposta:", data);
       if (res.ok) {
-        alert("✅ Configuração salva! modoDemo=" + config.modoDemo);
+        alert("✅ Configuração salva com sucesso!");
       } else {
         alert("❌ Erro: " + (data.error || "Falha ao salvar"));
       }
