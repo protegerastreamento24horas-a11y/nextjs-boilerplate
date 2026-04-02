@@ -25,11 +25,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validar tamanho (max 2MB para base64)
-    const maxSize = 2 * 1024 * 1024; // 2MB
+    // Validar tamanho (max 5MB para base64)
+    const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
       return NextResponse.json(
-        { error: "Arquivo muito grande. Máximo: 2MB" },
+        { error: "Arquivo muito grande. Máximo: 5MB" },
         { status: 400 }
       );
     }
