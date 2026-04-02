@@ -11,23 +11,23 @@ interface Testimonial {
 const TESTIMONIALS: Testimonial[] = [
   {
     id: 1,
-    name: "Carlos Silva",
-    image: "/images/social-proof/b_amigos_joves_brasile.png",
+    name: "Parceiro 1",
+    image: "/images/social-proof/171b53b49dcdd25a3449eeadf81b95f0.jpg",
   },
   {
     id: 2,
-    name: "Mariana Costa",
-    image: "/images/social-proof/b_amigos_joves_sentado.jpeg",
+    name: "Ambev",
+    image: "/images/social-proof/ambev.jpg",
   },
   {
     id: 3,
-    name: "João Pedro",
-    image: "/images/social-proof/flux-2-flex-20260129_b_amigos_joves_brasile.jpeg",
+    name: "Heineken",
+    image: "/images/social-proof/desktop-wallpaper-heineken-logo-beer-green-backgrounds-beer-logo.jpg",
   },
   {
     id: 4,
-    name: "Ana Luiza",
-    image: "/images/social-proof/grok-imagine-image-pro-20260306_b_amigos_joves_brasile.jpeg",
+    name: "Zé Delivery",
+    image: "/images/social-proof/ze-delivery-logo-png_seeklogo-621309.png",
   },
 ];
 
