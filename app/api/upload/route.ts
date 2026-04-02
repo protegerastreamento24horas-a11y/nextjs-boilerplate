@@ -25,24 +25,50 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validar tamanho (max 5MB para base64)
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    // Validar tamanho (max 10MB para Imgur)
+    const maxSize = 10 * 1024 * 1024; // 10MB
     if (file.size > maxSize) {
       return NextResponse.json(
-        { error: "Arquivo muito grande. Máximo: 5MB" },
+        { error: "Arquivo muito grande. Máximo: 10MB" },
         { status: 400 }
       );
     }
 
-    // Converter para base64
+    // Converter para base64 para enviar ao Imgur
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     const base64 = buffer.toString("base64");
-    const dataUrl = `data:${file.type};base64,${base64}`;
+
+    // Enviar para Imgur (anônimo, client ID pública)
+    const IMGUR_CLIENT_ID = "546c25a59c58ad7"; // Client ID pública para demos
+    
+    const imgurResponse = await fetch("https://api.imgur.com/3/image", {
+      method: "POST",
+      headers: {
+        "Authorization": `Client-ID ${IMGUR_CLIENT_ID}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        image: base64,
+        type: "base64",
+      }),
+    });
+
+    if (!imgurResponse.ok) {
+      const errorData = await imgurResponse.json();
+      console.error("Erro Imgur:", errorData);
+      return NextResponse.json(
+        { error: "Erro ao fazer upload para Imgur" },
+        { status: 500 }
+      );
+    }
+
+    const imgurData = await imgurResponse.json();
+    const imageUrl = imgurData.data.link;
 
     return NextResponse.json({
       success: true,
-      url: dataUrl,
+      url: imageUrl,
       fileName: file.name,
       size: file.size,
       type: file.type,
