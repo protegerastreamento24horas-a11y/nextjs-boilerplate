@@ -1,0 +1,17 @@
+{
+  "functions": {
+    "app/api/raffles/[slug]/route.ts": {
+      "maxDuration": 30,
+      "memory": 1024
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/raffles/.*",
+      "methods": ["PUT", "POST"],
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    }
+  ]
+}

@@ -151,16 +151,67 @@ export default function RafflesAdminPage() {
     }
   }
 
+  // Função para comprimir imagem
+  async function compressImage(file: File, maxWidth: number = 1200, quality: number = 0.8): Promise<File> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const compressedFile = new File([blob], file.name, {
+                  type: 'image/jpeg',
+                  lastModified: Date.now(),
+                });
+                resolve(compressedFile);
+              } else {
+                reject(new Error('Falha ao comprimir imagem'));
+              }
+            },
+            'image/jpeg',
+            quality
+          );
+        };
+        img.onerror = () => reject(new Error('Falha ao carregar imagem'));
+      };
+      reader.onerror = () => reject(new Error('Falha ao ler arquivo'));
+    });
+  }
+
   async function handleUpload(file: File, type: 'home' | 'page' | 'logo') {
-    console.log(`[Upload] Iniciando upload do tipo: ${type}, arquivo: ${file.name}, tamanho: ${file.size}`);
+    console.log(`[Upload] Iniciando upload do tipo: ${type}, arquivo: ${file.name}, tamanho original: ${file.size}`);
     if (!file) return;
     
     setUploading(prev => ({ ...prev, [type]: true }));
     setMessage("");
     
     try {
+      // Comprimir imagem antes de enviar
+      console.log("[Upload] Comprimindo imagem...");
+      const maxWidth = type === 'logo' ? 400 : 1200;
+      const compressedFile = await compressImage(file, maxWidth, 0.8);
+      console.log(`[Upload] Imagem comprimida: ${compressedFile.size} bytes (${Math.round((1 - compressedFile.size/file.size) * 100)}% redução)`);
+      
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", compressedFile);
       formData.append("folder", "images");
       
       console.log("[Upload] Enviando para /api/upload...");
@@ -190,7 +241,7 @@ export default function RafflesAdminPage() {
         if (type === 'logo') setNewRaffleData(prev => ({ ...prev, logoUrl: data.url }));
       }
       
-      setMessage(`✅ Imagem ${type} enviada com sucesso! (${Math.round(file.size/1024)}KB)`);
+      setMessage(`✅ Imagem ${type} enviada! (${Math.round(compressedFile.size/1024)}KB, ${Math.round((1 - compressedFile.size/file.size) * 100)}% comprimida)`);
     } catch (error: any) {
       console.error("[Upload] Erro completo:", error);
       setMessage(`❌ Erro no upload: ${error.message}`);
