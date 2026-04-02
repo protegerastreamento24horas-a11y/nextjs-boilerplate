@@ -285,14 +285,19 @@ export default function AdminDashboardClient() {
     setConfigSaving(true);
     try {
       const res = await fetch("/api/admin/config", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(config),
       });
       if (res.ok) {
         const data = await res.json();
-        alert(data.message || "Configuração salva!");
+        alert("✅ Configuração salva com sucesso!");
+      } else {
+        const error = await res.json();
+        alert("❌ Erro: " + (error.error || "Falha ao salvar"));
       }
+    } catch (err: any) {
+      alert("❌ Erro de conexão: " + err.message);
     } finally {
       setConfigSaving(false);
     }
