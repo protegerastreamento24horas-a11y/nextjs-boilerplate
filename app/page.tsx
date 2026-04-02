@@ -7,6 +7,7 @@ import FloatingBeers from "@/components/FloatingBeers";
 import RecentWinnersTicker from "@/components/RecentWinnersTicker";
 import PromoPopup from "@/components/PromoPopup";
 import SocialProofSection from "@/components/SocialProofSection";
+import BannerCarousel from "@/components/BannerCarousel";
 
 interface Raffle {
   id: string;
@@ -19,6 +20,13 @@ interface Raffle {
   secondaryColor: string;
   totalParticipants: number;
 }
+
+// Configuração das imagens do banner
+const BANNER_IMAGES: { src: string; alt: string; type?: "video" | "image" }[] = [
+  { src: "/images/banner1.jpg", alt: "Raspadinha da Sorte - A sorte está em suas mãos!" },
+  { src: "/images/banner2.jpg", alt: "Raspadinha da Sorte - Concorra a prêmios incríveis!" },
+  { src: "/images/banner3.jpg", alt: "Raspadinha da Sorte - Heineken, Stella Artois e Corona!" },
+];
 
 function LandingPageContent() {
   const router = useRouter();
@@ -68,6 +76,11 @@ function LandingPageContent() {
       />
 
       <main className="relative flex-1 flex flex-col items-center justify-center px-4 py-12 text-center">
+        {/* Banner Carousel no topo */}
+        <div className="w-full -mt-4 mb-8">
+          <BannerCarousel images={BANNER_IMAGES} autoPlayInterval={6000} />
+        </div>
+
         {/* Title */}
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white">
