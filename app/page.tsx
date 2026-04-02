@@ -420,11 +420,48 @@ function LandingPageContent() {
       </main>
 
       {/* Footer */}
-      <footer className="relative py-4 text-center text-zinc-700 text-xs border-t border-zinc-900">
-        Raspadinha da Sorte &copy; {new Date().getFullYear()} &nbsp;·&nbsp;
-        <a href="/admin" className="hover:text-zinc-500 transition-colors">
-          Admin
-        </a>
+      <footer className="relative py-6 text-center border-t border-zinc-900">
+        {/* Security Badges */}
+        <div className="flex flex-wrap justify-center items-center gap-4 mb-4 px-4">
+          {/* Google Safe Browsing */}
+          <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2">
+            <svg className="w-5 h-5 text-green-500" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+            </svg>
+            <span className="text-zinc-400 text-xs font-medium">Google Safe Browsing</span>
+          </div>
+          
+          {/* SSL Secure */}
+          <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2">
+            <svg className="w-5 h-5 text-emerald-500" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+            </svg>
+            <span className="text-zinc-400 text-xs font-medium">SSL 256-bit Secure</span>
+          </div>
+          
+          {/* Verified Payment */}
+          <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2">
+            <svg className="w-5 h-5 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+            </svg>
+            <span className="text-zinc-400 text-xs font-medium">Pagamento Verificado</span>
+          </div>
+          
+          {/* Trusted Site */}
+          <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2">
+            <svg className="w-5 h-5 text-yellow-500" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+            </svg>
+            <span className="text-zinc-400 text-xs font-medium">Site Confiança 100%</span>
+          </div>
+        </div>
+        
+        <div className="text-zinc-700 text-xs">
+          Raspadinha da Sorte &copy; {new Date().getFullYear()} &nbsp;·&nbsp;
+          <a href="/admin" className="hover:text-zinc-500 transition-colors">
+            Admin
+          </a>
+        </div>
       </footer>
 
       {/* Modal */}
