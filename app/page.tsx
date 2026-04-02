@@ -471,10 +471,7 @@ function LandingPageContent() {
         </div>
         
         <div className="text-zinc-700 text-xs">
-          Raspadinha da Sorte &copy; {new Date().getFullYear()} &nbsp;·&nbsp;
-          <a href="/admin" className="hover:text-zinc-500 transition-colors">
-            Admin
-          </a>
+          Raspadinha da Sorte &copy; {new Date().getFullYear()}
         </div>
       </footer>
 
