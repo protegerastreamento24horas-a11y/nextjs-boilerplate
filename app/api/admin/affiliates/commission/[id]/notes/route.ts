@@ -5,10 +5,10 @@ import { prisma } from "@/lib/prisma";
 // Adicionar ou atualizar nota em uma comissão específica
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const { notes } = await req.json();
 
     // Validar entrada
