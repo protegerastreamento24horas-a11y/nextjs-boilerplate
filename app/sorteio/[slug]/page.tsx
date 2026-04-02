@@ -35,7 +35,7 @@ export default function RafflePage() {
   const params = useParams();
   const router = useRouter();
   const { addToast } = useToast();
-  const slug = params.slug as string;
+  const slug = params?.slug as string;
 
   const [raffle, setRaffle] = useState<Raffle | null>(null);
   const [packages, setPackages] = useState<RafflePackage[]>([]);
