@@ -86,11 +86,6 @@ export default function SocialProofSection() {
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         {/* Photo Gallery Grid */}
         <div className={`mb-12 transition-all duration-700 delay-300 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <h3 className="text-2xl font-bold text-white mb-6 flex items-center justify-center gap-2">
-            <span className="text-yellow-400 text-3xl">📸</span>
-            Fotos dos Ganhadores
-          </h3>
-          
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
             {TESTIMONIALS.map((testimonial, index) => (
               <div
