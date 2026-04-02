@@ -40,6 +40,19 @@ export default function RafflesAdminPage() {
   const [formData, setFormData] = useState<Partial<Raffle>>({});
   const [packages, setPackages] = useState<RafflePackage[]>([]);
   const [message, setMessage] = useState("");
+  
+  // Modal de novo sorteio
+  const [showNewRaffleModal, setShowNewRaffleModal] = useState(false);
+  const [newRaffleData, setNewRaffleData] = useState<Partial<Raffle>>({
+    primaryColor: "#FFD700",
+    secondaryColor: "#FFA500",
+    isActive: true,
+  });
+  const [newPackages, setNewPackages] = useState<RafflePackage[]>([
+    { id: 1, quantity: 1, price: 5, label: "1 Tentativa", popular: false },
+    { id: 2, quantity: 3, price: 12, label: "3 Tentativas", popular: true, save: 3 },
+    { id: 3, quantity: 5, price: 20, label: "5 Tentativas", popular: false, save: 5 },
+  ]);
 
   useEffect(() => {
     fetchRaffles();
@@ -97,6 +110,45 @@ export default function RafflesAdminPage() {
     }
   }
 
+  async function handleCreateRaffle() {
+    if (!newRaffleData.slug || !newRaffleData.name) {
+      setMessage("❌ Slug e nome são obrigatórios");
+      return;
+    }
+    
+    setSaving(true);
+    setMessage("");
+    
+    try {
+      const res = await fetch("/api/admin/raffles", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...newRaffleData,
+          packages: newPackages,
+        }),
+      });
+      
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Erro ao criar");
+      }
+      
+      setMessage("✅ Sorteio criado com sucesso!");
+      setShowNewRaffleModal(false);
+      setNewRaffleData({
+        primaryColor: "#FFD700",
+        secondaryColor: "#FFA500",
+        isActive: true,
+      });
+      fetchRaffles();
+    } catch (error: any) {
+      setMessage(`❌ ${error.message}`);
+    } finally {
+      setSaving(false);
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
@@ -110,12 +162,20 @@ export default function RafflesAdminPage() {
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-white">Gerenciamento de Sorteios</h1>
-          <button
-            onClick={() => router.push("/admin")}
-            className="px-4 py-2 bg-zinc-800 text-zinc-300 rounded-lg hover:bg-zinc-700"
-          >
-            ← Voltar ao Dashboard
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowNewRaffleModal(true)}
+              className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white font-medium rounded-lg transition-colors"
+            >
+              + Criar Novo Sorteio
+            </button>
+            <button
+              onClick={() => router.push("/admin")}
+              className="px-4 py-2 bg-zinc-800 text-zinc-300 rounded-lg hover:bg-zinc-700"
+            >
+              ← Voltar
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -402,6 +462,226 @@ export default function RafflesAdminPage() {
             )}
           </div>
         </div>
+
+        {/* Modal de Novo Sorteio */}
+        {showNewRaffleModal && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+            <div className="bg-zinc-900 rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              <h2 className="text-2xl font-semibold text-white mb-6">Criar Novo Sorteio</h2>
+              
+              <div className="space-y-4">
+                {/* Slug e Nome */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-zinc-400 mb-1">Slug *</label>
+                    <input
+                      type="text"
+                      value={newRaffleData.slug || ""}
+                      onChange={(e) => setNewRaffleData({ ...newRaffleData, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })}
+                      placeholder="novo-sorteio"
+                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                    />
+                    <p className="text-xs text-zinc-500 mt-1">URL única (ex: novo-sorteio)</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-zinc-400 mb-1">Nome *</label>
+                    <input
+                      type="text"
+                      value={newRaffleData.name || ""}
+                      onChange={(e) => setNewRaffleData({ ...newRaffleData, name: e.target.value })}
+                      placeholder="Nome do Sorteio"
+                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                    />
+                  </div>
+                </div>
+
+                {/* Descrições */}
+                <div>
+                  <label className="block text-sm text-zinc-400 mb-1">Descrição Curta</label>
+                  <input
+                    type="text"
+                    value={newRaffleData.description || ""}
+                    onChange={(e) => setNewRaffleData({ ...newRaffleData, description: e.target.value })}
+                    placeholder="Breve descrição do sorteio"
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-zinc-400 mb-1">Descrição Completa</label>
+                  <textarea
+                    value={newRaffleData.fullDescription || ""}
+                    onChange={(e) => setNewRaffleData({ ...newRaffleData, fullDescription: e.target.value })}
+                    placeholder="Descrição detalhada com regras"
+                    rows={3}
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                  />
+                </div>
+
+                {/* Banners */}
+                <div className="space-y-3">
+                  <h3 className="text-lg font-medium text-white">Banners</h3>
+                  
+                  <div>
+                    <label className="block text-sm text-zinc-400 mb-1">Banner Home (URL)</label>
+                    <input
+                      type="text"
+                      value={newRaffleData.homeBanner || ""}
+                      onChange={(e) => setNewRaffleData({ ...newRaffleData, homeBanner: e.target.value })}
+                      placeholder="/images/banner-novo.jpg"
+                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm text-zinc-400 mb-1">Banner Página (URL)</label>
+                    <input
+                      type="text"
+                      value={newRaffleData.pageBanner || ""}
+                      onChange={(e) => setNewRaffleData({ ...newRaffleData, pageBanner: e.target.value })}
+                      placeholder="/images/page-banner-novo.jpg"
+                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm text-zinc-400 mb-1">Logo (URL)</label>
+                    <input
+                      type="text"
+                      value={newRaffleData.logoUrl || ""}
+                      onChange={(e) => setNewRaffleData({ ...newRaffleData, logoUrl: e.target.value })}
+                      placeholder="/images/logo-novo.png"
+                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                    />
+                  </div>
+                </div>
+
+                {/* Cores */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-zinc-400 mb-1">Cor Primária</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={newRaffleData.primaryColor || "#FFD700"}
+                        onChange={(e) => setNewRaffleData({ ...newRaffleData, primaryColor: e.target.value })}
+                        className="w-12 h-10 rounded cursor-pointer"
+                      />
+                      <input
+                        type="text"
+                        value={newRaffleData.primaryColor || ""}
+                        onChange={(e) => setNewRaffleData({ ...newRaffleData, primaryColor: e.target.value })}
+                        className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white text-sm"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-zinc-400 mb-1">Cor Secundária</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={newRaffleData.secondaryColor || "#FFA500"}
+                        onChange={(e) => setNewRaffleData({ ...newRaffleData, secondaryColor: e.target.value })}
+                        className="w-12 h-10 rounded cursor-pointer"
+                      />
+                      <input
+                        type="text"
+                        value={newRaffleData.secondaryColor || ""}
+                        onChange={(e) => setNewRaffleData({ ...newRaffleData, secondaryColor: e.target.value })}
+                        className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white text-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pacotes */}
+                <div>
+                  <h3 className="text-lg font-medium text-white mb-3">Pacotes de Raspadinhas</h3>
+                  <div className="space-y-2">
+                    {newPackages.map((pkg, index) => (
+                      <div key={pkg.id} className="grid grid-cols-5 gap-2 items-center bg-zinc-800/50 p-2 rounded-lg">
+                        <input
+                          type="number"
+                          value={pkg.quantity}
+                          onChange={(e) => {
+                            const updated = [...newPackages];
+                            updated[index] = { ...pkg, quantity: parseInt(e.target.value) };
+                            setNewPackages(updated);
+                          }}
+                          className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-white text-sm"
+                          placeholder="Qtd"
+                        />
+                        <input
+                          type="number"
+                          value={pkg.price}
+                          onChange={(e) => {
+                            const updated = [...newPackages];
+                            updated[index] = { ...pkg, price: parseInt(e.target.value) };
+                            setNewPackages(updated);
+                          }}
+                          className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-white text-sm"
+                          placeholder="Preço"
+                        />
+                        <input
+                          type="text"
+                          value={pkg.label}
+                          onChange={(e) => {
+                            const updated = [...newPackages];
+                            updated[index] = { ...pkg, label: e.target.value };
+                            setNewPackages(updated);
+                          }}
+                          className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-white text-sm"
+                          placeholder="Label"
+                        />
+                        <input
+                          type="number"
+                          value={pkg.save || 0}
+                          onChange={(e) => {
+                            const updated = [...newPackages];
+                            updated[index] = { ...pkg, save: parseInt(e.target.value) || undefined };
+                            setNewPackages(updated);
+                          }}
+                          className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-white text-sm"
+                          placeholder="Economia"
+                        />
+                        <label className="flex items-center gap-1 cursor-pointer justify-center">
+                          <input
+                            type="checkbox"
+                            checked={pkg.popular}
+                            onChange={(e) => {
+                              const updated = [...newPackages];
+                              updated[index] = { ...pkg, popular: e.target.checked };
+                              setNewPackages(updated);
+                            }}
+                            className="w-4 h-4 rounded border-zinc-600"
+                          />
+                          <span className="text-xs text-zinc-400">Pop</span>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Botões */}
+                <div className="flex gap-3 pt-4">
+                  <button
+                    onClick={handleCreateRaffle}
+                    disabled={saving}
+                    className="flex-1 py-3 bg-green-600 hover:bg-green-500 disabled:opacity-50 text-white font-bold rounded-lg transition-colors"
+                  >
+                    {saving ? "Criando..." : "✅ Criar Sorteio"}
+                  </button>
+                  <button
+                    onClick={() => setShowNewRaffleModal(false)}
+                    className="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium rounded-lg transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
