@@ -55,6 +55,7 @@ export default function RafflesAdminPage() {
   ]);
 
   useEffect(() => {
+    console.log("[Admin Raffles] Componente montado - v2");
     fetchRaffles();
   }, []);
 
