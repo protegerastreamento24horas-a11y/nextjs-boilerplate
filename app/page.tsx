@@ -206,17 +206,6 @@ function LandingPageContent() {
           Raspadinha da Sorte &copy; {new Date().getFullYear()}
         </div>
       </footer>
-
-      {/* Modal */}
-      {showModal && paymentId && (
-        <PixModal
-          paymentId={paymentId}
-          amount={total}
-          qrCode={qrCode}
-          qrCodeText={qrCodeText}
-          onClose={() => setShowModal(false)}
-        />
-      )}
     </div>
   );
 }
