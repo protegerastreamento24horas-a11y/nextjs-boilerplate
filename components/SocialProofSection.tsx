@@ -52,12 +52,6 @@ const TESTIMONIALS: Testimonial[] = [
   },
 ];
 
-const BADGES = [
-  { icon: "✓", text: "Pagamento Real", color: "from-emerald-500 to-emerald-600", shadow: "shadow-emerald-500/30" },
-  { icon: "★", text: "Ganhadores Reais", color: "from-yellow-500 to-yellow-600", shadow: "shadow-yellow-500/30" },
-  { icon: "⚡", text: "Saque Imediato", color: "from-blue-500 to-blue-600", shadow: "shadow-blue-500/30" },
-];
-
 export default function SocialProofSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -90,40 +84,6 @@ export default function SocialProofSection() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
-        {/* Header */}
-        <div className={`text-center mb-12 transition-all duration-700 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 border border-emerald-500/30 rounded-full px-5 py-2.5 mb-6">
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-            </span>
-            <span className="text-emerald-400 text-sm font-bold tracking-wide uppercase">Ganhadores em tempo real</span>
-          </div>
-
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4">
-            <span className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400 bg-clip-text text-transparent">
-              Depoimentos de Ganhadores
-            </span>
-          </h2>
-          
-          <p className="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto">
-            Junte-se aos milhares de ganhadores que já levaram cerveja premium para casa!
-          </p>
-        </div>
-
-        {/* Trust Badges */}
-        <div className={`flex flex-wrap justify-center gap-4 mb-12 transition-all duration-700 delay-200 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          {BADGES.map((badge, index) => (
-            <div
-              key={index}
-              className={`flex items-center gap-2 bg-gradient-to-r ${badge.color} text-white px-6 py-3 rounded-full ${badge.shadow} shadow-lg transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 cursor-default`}
-            >
-              <span className="text-xl">{badge.icon}</span>
-              <span className="font-bold text-sm md:text-base">{badge.text}</span>
-            </div>
-          ))}
-        </div>
-
         {/* Photo Gallery Grid */}
         <div className={`mb-12 transition-all duration-700 delay-300 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <h3 className="text-2xl font-bold text-white mb-6 flex items-center justify-center gap-2">
