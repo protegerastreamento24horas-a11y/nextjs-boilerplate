@@ -5,7 +5,7 @@ import { logPaymentCreated } from "@/lib/audit";
 
 export async function POST(req: NextRequest) {
   try {
-    const { quantity, amount, cpf, name, affiliateCode } = await req.json();
+    const { quantity, amount, cpf, name, whatsapp, affiliateCode } = await req.json();
 
     // Pegar IP do header
     const ip = req.headers.get("x-forwarded-for") || "unknown";
@@ -30,6 +30,9 @@ export async function POST(req: NextRequest) {
         attempts: Number(quantity) || 1,
         status: "pending",
         expiresAt: new Date(Date.now() + 30 * 60 * 1000), // 30 minutos
+        name: name || null,
+        cpf: cpf || null,
+        whatsapp: whatsapp || null,
         affiliateId,
         affiliateCode: savedAffiliateCode,
       },

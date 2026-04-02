@@ -21,11 +21,17 @@ model Payment {
   updatedAt    DateTime     @updatedAt
   session      GameSession?
   
+  // Campos de cadastro do cliente
+  name         String?      // Nome do cliente
+  cpf          String?      // CPF do cliente
+  whatsapp     String?      // WhatsApp do cliente
+  
   // Campos de afiliado
   affiliateId  String?      // ID do afiliado que indicou
-  affiliateCode String?      // Código usado na URL (?ref=CODE)
+  affiliateCode String?     // Código usado na URL (?ref=CODE)
   
   @@index([affiliateId])
+  @@index([cpf])
 }
 
 model GameSession {

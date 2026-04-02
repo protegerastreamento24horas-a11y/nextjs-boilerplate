@@ -121,11 +121,31 @@ export default function AdminDashboardClient() {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [unauthorized, setUnauthorized] = useState(false);
-  const [activeTab, setActiveTab] = useState<"overview" | "payments" | "sessions" | "logs" | "backup">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "payments" | "sessions" | "logs" | "backup" | "players">("overview");
   const [logs, setLogs] = useState<Array<{ id: string; event: string; data: unknown; ip: string | null; createdAt: string }>>([]);
   const [logsLoading, setLogsLoading] = useState(false);
   const [backupStats, setBackupStats] = useState<{ total: { payments: number; sessions: number; configs: number; auditLogs: number; transactions: number }; paid: number; pending: number } | null>(null);
   const [backupLoading, setBackupLoading] = useState(false);
+  const [players, setPlayers] = useState<Array<{
+    cpf: string;
+    name: string;
+    whatsapp: string;
+    totalGames: number;
+    totalWins: number;
+    totalSpent: number;
+    firstGame: string;
+    lastGame: string;
+    games: Array<{
+      id: string;
+      date: string;
+      amount: number;
+      status: string;
+      isWinner: boolean;
+      attempts: number;
+    }>;
+  }>>([]);
+  const [playersLoading, setPlayersLoading] = useState(false);
+  const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -139,6 +159,8 @@ export default function AdminDashboardClient() {
       fetchLogs();
     } else if (activeTab === "backup") {
       fetchBackupStats();
+    } else if (activeTab === "players") {
+      fetchPlayers();
     }
   }, [activeTab]);
 
@@ -182,6 +204,19 @@ export default function AdminDashboardClient() {
       }
     } finally {
       setBackupLoading(false);
+    }
+  }
+
+  async function fetchPlayers() {
+    setPlayersLoading(true);
+    try {
+      const res = await fetch("/api/admin/players");
+      if (res.ok) {
+        const data = await res.json();
+        setPlayers(data.players);
+      }
+    } finally {
+      setPlayersLoading(false);
     }
   }
 
@@ -313,6 +348,7 @@ export default function AdminDashboardClient() {
           { id: "overview", label: "📊 Visão Geral" },
           { id: "payments", label: "💳 Pagamentos" },
           { id: "sessions", label: "🎮 Jogos" },
+          { id: "players", label: "👥 Jogadores" },
           { id: "logs", label: "📋 Logs" },
           { id: "backup", label: "💾 Backup" },
         ].map((tab) => (
@@ -516,6 +552,67 @@ export default function AdminDashboardClient() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {activeTab === "players" && (
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+          <h2 className="text-lg font-bold text-white mb-4">
+            👥 Jogadores Cadastrados
+          </h2>
+          {playersLoading ? (
+            <div className="text-zinc-500 animate-pulse">Carregando jogadores...</div>
+          ) : players.length === 0 ? (
+            <div className="text-zinc-500">Nenhum jogador cadastrado ainda.</div>
+          ) : (
+            <div className="space-y-4">
+              {players.map((player) => (
+                <div key={player.cpf} className="bg-zinc-800 rounded-xl p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <div className="text-white font-bold">{player.name}</div>
+                      <div className="text-zinc-400 text-sm">CPF: {player.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")}</div>
+                      <div className="text-emerald-400 text-sm">📱 {player.whatsapp.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3")}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-yellow-400 font-bold">{player.totalGames} jogos</div>
+                      <div className="text-emerald-400 text-sm">{player.totalWins} vitórias</div>
+                      <div className="text-zinc-500 text-xs">Total: {formatBRL(player.totalSpent)}</div>
+                    </div>
+                  </div>
+                  
+                  <button
+                    onClick={() => setSelectedPlayer(selectedPlayer === player.cpf ? null : player.cpf)}
+                    className="text-yellow-500 text-sm hover:text-yellow-400 transition-colors"
+                  >
+                    {selectedPlayer === player.cpf ? "▲ Ocultar histórico" : "▼ Ver histórico de jogos"}
+                  </button>
+                  
+                  {selectedPlayer === player.cpf && (
+                    <div className="mt-3 pt-3 border-t border-zinc-700">
+                      <div className="space-y-2">
+                        {player.games.map((game) => (
+                          <div key={game.id} className="flex items-center justify-between text-sm bg-zinc-900 rounded-lg p-2">
+                            <div className="flex items-center gap-2">
+                              <span>{game.isWinner ? "🏆" : "❌"}</span>
+                              <span className="text-zinc-400">{formatDate(game.date)}</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className="text-zinc-300">{formatBRL(game.amount)}</span>
+                              <span className={game.isWinner ? "text-emerald-400" : "text-zinc-500"}>
+                                {game.isWinner ? "Ganhou" : "Perdeu"}
+                              </span>
+                              <StatusBadge status={game.status} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
