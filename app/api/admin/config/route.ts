@@ -24,17 +24,20 @@ export async function PUT(req: NextRequest) {
   }
 
   const body = await req.json();
+  console.log("[API Config] Recebido:", body);
 
-  // Sanitize inputs
+  // Sanitize inputs com valores padrão
   const data = {
-    precoTentativa: Number(body.precoTentativa),
-    custoPremio: Number(body.custoPremio),
-    lucroMinimo: Number(body.lucroMinimo),
-    probabilidade: Math.min(1, Math.max(0, Number(body.probabilidade))),
-    modoManual: Boolean(body.modoManual),
-    forcarPremio: Boolean(body.forcarPremio),
-    modoDemo: Boolean(body.modoDemo),
+    precoTentativa: Number(body.precoTentativa ?? 2.5),
+    custoPremio: Number(body.custoPremio ?? 50),
+    lucroMinimo: Number(body.lucroMinimo ?? 20),
+    probabilidade: Math.min(1, Math.max(0, Number(body.probabilidade ?? 0.1))),
+    modoManual: Boolean(body.modoManual ?? false),
+    forcarPremio: Boolean(body.forcarPremio ?? false),
+    modoDemo: Boolean(body.modoDemo ?? true),
   };
+
+  console.log("[API Config] Salvando:", data);
 
   const config = await prisma.config.upsert({
     where: { id: "default" },
