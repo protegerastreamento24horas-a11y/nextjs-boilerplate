@@ -152,6 +152,7 @@ export default function RafflesAdminPage() {
   }
 
   async function handleUpload(file: File, type: 'home' | 'page' | 'logo') {
+    console.log(`[Upload] Iniciando upload do tipo: ${type}, arquivo: ${file.name}, tamanho: ${file.size}`);
     if (!file) return;
     
     setUploading(prev => ({ ...prev, [type]: true }));
@@ -162,17 +163,22 @@ export default function RafflesAdminPage() {
       formData.append("file", file);
       formData.append("folder", "images");
       
+      console.log("[Upload] Enviando para /api/upload...");
       const res = await fetch("/api/upload", {
         method: "POST",
         body: formData,
       });
       
+      console.log(`[Upload] Resposta status: ${res.status}`);
+      
       if (!res.ok) {
         const err = await res.json();
+        console.error("[Upload] Erro na resposta:", err);
         throw new Error(err.error || "Erro no upload");
       }
       
       const data = await res.json();
+      console.log("[Upload] Sucesso! URL recebida:", data.url?.substring(0, 50) + "...");
       
       if (selectedRaffle) {
         if (type === 'home') setFormData(prev => ({ ...prev, homeBanner: data.url }));
@@ -184,8 +190,9 @@ export default function RafflesAdminPage() {
         if (type === 'logo') setNewRaffleData(prev => ({ ...prev, logoUrl: data.url }));
       }
       
-      setMessage(`✅ Imagem ${type} enviada com sucesso!`);
+      setMessage(`✅ Imagem ${type} enviada com sucesso! (${Math.round(file.size/1024)}KB)`);
     } catch (error: any) {
+      console.error("[Upload] Erro completo:", error);
       setMessage(`❌ Erro no upload: ${error.message}`);
     } finally {
       setUploading(prev => ({ ...prev, [type]: false }));

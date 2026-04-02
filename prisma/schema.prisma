@@ -77,10 +77,10 @@ model Raffle {
   isActive          Boolean   @default(true)
   order             Int       @default(0) // Ordem de exibição
   
-  // Banners
-  homeBanner        String?   // Banner na página inicial
-  pageBanner        String?   // Banner na página do sorteio
-  logoUrl           String?   // Logo da marca
+  // Banners (base64 ou URL)
+  homeBanner        String?   @db.Text
+  pageBanner        String?   @db.Text
+  logoUrl           String?   @db.Text
   
   // Cores de branding (hex)
   primaryColor      String    @default("#FFD700")
