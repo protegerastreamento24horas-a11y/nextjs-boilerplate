@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { QRCodeSVG } from "qrcode.react";
 import LoadingSpinner from "./LoadingSpinner";
 
 interface PixModalProps {
@@ -78,40 +78,15 @@ export default function PixModal({ paymentId, amount, qrCode, qrCodeText, onClos
         </p>
 
         {/* QR Code */}
-        <div className="mx-auto mb-4 w-44 h-44 bg-white rounded-2xl flex items-center justify-center shadow-inner overflow-hidden">
+        <div className="mx-auto mb-4 w-44 h-44 bg-white rounded-2xl flex items-center justify-center shadow-inner overflow-hidden p-2">
           {isRealPix ? (
-            (() => {
-              // Detectar formato do QR code
-              let imageSrc = qrCode || '';
-              
-              console.log('[PixModal] QR Code raw:', qrCode?.slice(0, 50));
-              
-              // Se já é data URL, usar direto
-              if (qrCode?.startsWith('data:image')) {
-                imageSrc = qrCode;
-              } 
-              // Se é base64 puro (não contém ://), adicionar prefixo
-              else if (qrCode && !qrCode.includes('://') && qrCode.length > 100) {
-                imageSrc = `data:image/png;base64,${qrCode}`;
-              }
-              // Se é URL normal
-              else if (qrCode?.startsWith('http')) {
-                imageSrc = qrCode;
-              }
-              
-              console.log('[PixModal] QR Code final:', imageSrc.slice(0, 50));
-              
-              return (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={imageSrc}
-                  alt="QR Code Pix"
-                  width={160}
-                  height={160}
-                  className="w-full h-full object-contain p-2"
-                />
-              );
-            })()
+            // Usar QRCodeSVG para gerar o QR code a partir do payload
+            <QRCodeSVG
+              value={qrCodeText || qrCode || ''}
+              size={160}
+              level="M"
+              includeMargin={false}
+            />
           ) : (
             <div className="flex flex-col items-center justify-center p-3">
               <div className="text-4xl mb-1">📱</div>
