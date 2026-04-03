@@ -11,23 +11,23 @@ interface Testimonial {
 const TESTIMONIALS: Testimonial[] = [
   {
     id: 1,
-    name: "Parceiro 1",
-    image: "/images/social-proof/171b53b49dcdd25a3449eeadf81b95f0.jpg",
+    name: "Parceiro Premium",
+    image: "/images/social-proof/7222d1c16ce25b203d0504ea00db3773.jpg",
   },
   {
     id: 2,
-    name: "Ambev",
-    image: "/images/social-proof/ambev.jpg",
+    name: "Capas Janeiro",
+    image: "/images/social-proof/CAPAS-JANEIRO-2024-51.png",
   },
   {
     id: 3,
-    name: "Heineken",
-    image: "/images/social-proof/desktop-wallpaper-heineken-logo-beer-green-backgrounds-beer-logo.jpg",
+    name: "Pay4Fun",
+    image: "/images/social-proof/LOTEP-autoriza-Pay4Fun-e-mais-4-empresas-para-testes-de-sistema-de-pagamentos.jpg",
   },
   {
     id: 4,
-    name: "Zé Delivery",
-    image: "/images/social-proof/ze-delivery-logo-png_seeklogo-621309.png",
+    name: "Google Safe",
+    image: "/images/social-proof/google-safe-browsing.webp",
   },
 ];
 
