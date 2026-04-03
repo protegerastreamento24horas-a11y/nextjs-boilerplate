@@ -11,6 +11,7 @@ import { useToast } from "@/components/ToastContext";
 interface GameSession {
   sessionId: string;
   revealed: number[];
+  results: boolean[]; // array completo de onde estavam os prêmios
   maxReveals: number;
   isDone: boolean;
   isWinner: boolean;
@@ -225,7 +226,7 @@ function GameContent() {
         {/* Done state */}
         {session?.isDone && (
           <div className="flex flex-col items-center gap-4">
-            {session.isWinner && (
+            {session.isWinner ? (
               <div className="w-full p-5 bg-emerald-900/30 border border-emerald-500/40 rounded-2xl text-center">
                 <div className="text-4xl mb-2">🏆</div>
                 <div className="text-emerald-400 font-black text-lg">
@@ -233,6 +234,34 @@ function GameContent() {
                 </div>
                 <div className="text-zinc-400 text-sm mt-1">
                   Entre em contato com o bar para retirar
+                </div>
+              </div>
+            ) : (
+              <div className="w-full p-4 bg-zinc-900/50 border border-zinc-700/50 rounded-2xl">
+                <div classText="text-center mb-3">
+                  <span className="text-yellow-400 font-bold text-sm">👀 Veja onde estavam os prêmios:</span>
+                </div>
+                <div className="grid grid-cols-5 gap-2">
+                  {session.results.map((isWinner, idx) => {
+                    const wasRevealed = session.revealed.includes(idx);
+                    const isUnrevealedWinner = isWinner && !wasRevealed;
+                    return (
+                      <div
+                        key={idx}
+                        className={`aspect-square rounded-lg flex items-center justify-center text-lg ${
+                          isUnrevealedWinner
+                            ? "bg-emerald-600/80 border-2 border-emerald-400 animate-pulse"
+                            : wasRevealed && isWinner
+                            ? "bg-emerald-900/50 border border-emerald-500/30"
+                            : wasRevealed
+                            ? "bg-red-900/30 border border-red-500/20"
+                            : "bg-zinc-800/30 border border-zinc-700/30"
+                        }`}
+                      >
+                        {isUnrevealedWinner ? "🎁" : wasRevealed ? (isWinner ? "✓" : "✗") : "?"}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
