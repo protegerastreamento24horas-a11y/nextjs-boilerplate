@@ -45,62 +45,50 @@ export function Countdown3D() {
 
   return (
     <div 
-      className="w-full rounded-2xl p-5 mb-6 relative overflow-hidden"
+      className="w-full rounded-xl py-2 px-3 mb-4 relative overflow-hidden flex items-center justify-between"
       style={{
         background: "linear-gradient(135deg, rgba(24,24,27,0.95) 0%, rgba(39,39,42,0.9) 100%)",
         border: "1px solid rgba(255,107,107,0.4)",
         boxShadow: `
-          0 0 40px rgba(255,107,107,0.2),
-          0 15px 50px rgba(0,0,0,0.5),
+          0 0 20px rgba(255,107,107,0.15),
+          0 4px 15px rgba(0,0,0,0.3),
           inset 0 1px 0 rgba(255,255,255,0.1)
         `,
-        transform: "perspective(1000px) rotateX(3deg)",
-        transformOrigin: "center top",
       }}
     >
       {/* Glow effect */}
       <div 
-        className="absolute inset-0 rounded-2xl opacity-30 pointer-events-none"
+        className="absolute inset-0 rounded-xl opacity-30 pointer-events-none"
         style={{
-          background: "linear-gradient(135deg, rgba(255,107,107,0.2) 0%, transparent 50%, rgba(255,165,0,0.1) 100%)",
+          background: "linear-gradient(135deg, rgba(255,107,107,0.15) 0%, transparent 50%, rgba(255,165,0,0.1) 100%)",
         }}
       />
 
-      {/* Title */}
-      <div className="text-center mb-4 relative" style={{ transform: "translateZ(10px)" }}>
-        <span className="text-xs text-zinc-400 uppercase tracking-wider">Tempo restante para o sorteio</span>
+      {/* Left - Title */}
+      <div className="relative z-10 flex items-center gap-2">
+        <span className="text-[10px] text-zinc-400 uppercase tracking-wider">Termina em</span>
       </div>
 
-      {/* Countdown digits */}
-      <div className="flex justify-center items-center gap-3 relative" style={{ transform: "translateZ(15px)" }}>
+      {/* Center - Countdown digits */}
+      <div className="flex items-center gap-1 relative z-10">
         {/* Hours */}
-        <div className="flex flex-col items-center">
-          <div 
-            className="relative px-4 py-3 rounded-xl"
+        <div className="flex items-baseline gap-0.5">
+          <span 
+            className="text-xl font-black"
             style={{
-              background: "linear-gradient(135deg, rgba(255,107,107,0.2) 0%, rgba(255,165,0,0.1) 100%)",
-              border: "1px solid rgba(255,107,107,0.3)",
-              boxShadow: "0 4px 15px rgba(255,107,107,0.2), inset 0 1px 0 rgba(255,255,255,0.1)",
+              background: "linear-gradient(135deg, #FF6B6B 0%, #FFD93D 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
             }}
           >
-            <span 
-              className="text-3xl md:text-4xl font-black"
-              style={{
-                background: "linear-gradient(135deg, #FF6B6B 0%, #FFD93D 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                textShadow: "0 0 20px rgba(255,107,107,0.4)",
-              }}
-            >
-              {padNumber(timeLeft.hours)}
-            </span>
-          </div>
-          <span className="text-[10px] text-zinc-500 mt-1">horas</span>
+            {padNumber(timeLeft.hours)}
+          </span>
+          <span className="text-[8px] text-zinc-500">h</span>
         </div>
 
         {/* Separator */}
         <span 
-          className="text-2xl font-bold self-start mt-2"
+          className="text-lg font-bold"
           style={{
             background: "linear-gradient(135deg, #FF6B6B 0%, #FFD93D 100%)",
             WebkitBackgroundClip: "text",
@@ -111,33 +99,23 @@ export function Countdown3D() {
         </span>
 
         {/* Minutes */}
-        <div className="flex flex-col items-center">
-          <div 
-            className="relative px-4 py-3 rounded-xl"
+        <div className="flex items-baseline gap-0.5">
+          <span 
+            className="text-xl font-black"
             style={{
-              background: "linear-gradient(135deg, rgba(255,107,107,0.2) 0%, rgba(255,165,0,0.1) 100%)",
-              border: "1px solid rgba(255,107,107,0.3)",
-              boxShadow: "0 4px 15px rgba(255,107,107,0.2), inset 0 1px 0 rgba(255,255,255,0.1)",
+              background: "linear-gradient(135deg, #FF6B6B 0%, #FFD93D 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
             }}
           >
-            <span 
-              className="text-3xl md:text-4xl font-black"
-              style={{
-                background: "linear-gradient(135deg, #FF6B6B 0%, #FFD93D 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                textShadow: "0 0 20px rgba(255,107,107,0.4)",
-              }}
-            >
-              {padNumber(timeLeft.minutes)}
-            </span>
-          </div>
-          <span className="text-[10px] text-zinc-500 mt-1">minutos</span>
+            {padNumber(timeLeft.minutes)}
+          </span>
+          <span className="text-[8px] text-zinc-500">m</span>
         </div>
 
         {/* Separator */}
         <span 
-          className="text-2xl font-bold self-start mt-2"
+          className="text-lg font-bold"
           style={{
             background: "linear-gradient(135deg, #FF6B6B 0%, #FFD93D 100%)",
             WebkitBackgroundClip: "text",
@@ -148,41 +126,31 @@ export function Countdown3D() {
         </span>
 
         {/* Seconds */}
-        <div className="flex flex-col items-center">
-          <div 
-            className="relative px-4 py-3 rounded-xl"
+        <div className="flex items-baseline gap-0.5">
+          <span 
+            className="text-xl font-black"
             style={{
-              background: "linear-gradient(135deg, rgba(255,107,107,0.2) 0%, rgba(255,165,0,0.1) 100%)",
-              border: "1px solid rgba(255,107,107,0.3)",
-              boxShadow: "0 4px 15px rgba(255,107,107,0.2), inset 0 1px 0 rgba(255,255,255,0.1)",
+              background: "linear-gradient(135deg, #FF6B6B 0%, #FFD93D 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
             }}
           >
-            <span 
-              className="text-3xl md:text-4xl font-black"
-              style={{
-                background: "linear-gradient(135deg, #FF6B6B 0%, #FFD93D 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                textShadow: "0 0 20px rgba(255,107,107,0.4)",
-              }}
-            >
-              {padNumber(timeLeft.seconds)}
-            </span>
-          </div>
-          <span className="text-[10px] text-zinc-500 mt-1">segundos</span>
+            {padNumber(timeLeft.seconds)}
+          </span>
+          <span className="text-[8px] text-zinc-500">s</span>
         </div>
       </div>
 
-      {/* Urgency text */}
-      <div className="text-center mt-3 relative" style={{ transform: "translateZ(5px)" }}>
-        <span className="text-xs text-red-400 font-semibold animate-pulse">
-          Corra! As raspadinhas estão acabando 🔥
+      {/* Right - Urgency */}
+      <div className="relative z-10">
+        <span className="text-[10px] text-red-400 font-semibold animate-pulse">
+          🔥 Acabando
         </span>
       </div>
 
       {/* Shine effect */}
       <div 
-        className="absolute inset-0 rounded-2xl pointer-events-none overflow-hidden"
+        className="absolute inset-0 rounded-xl pointer-events-none overflow-hidden"
         style={{
           background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.1) 50%, transparent 60%)",
           animation: "shine 4s ease-in-out infinite",
