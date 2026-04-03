@@ -179,9 +179,25 @@ export default function RecentWinnersStack() {
                 className="absolute inset-0 rounded-2xl overflow-hidden"
                 style={style}
               >
-                {/* Card Background - Simple Golden Gradient */}
+                {/* Card Background - Golden Gradient */}
                 <div
-                  className="absolute inset-0 rounded-2xl bg-gradient-to-br from-yellow-500 via-yellow-600 to-yellow-700"
+                  className="absolute inset-0 rounded-2xl bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600"
+                />
+
+                {/* Glow effect for all cards */}
+                <div
+                  className="absolute -inset-1 rounded-2xl opacity-60 blur-md"
+                  style={{
+                    background: "radial-gradient(circle, rgba(255,215,0,0.4) 0%, transparent 70%)",
+                  }}
+                />
+
+                {/* Glassmorphism layer - no border */}
+                <div
+                  className="absolute inset-1 rounded-xl backdrop-blur-sm"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)",
+                  }}
                 />
 
                 {/* Content */}
