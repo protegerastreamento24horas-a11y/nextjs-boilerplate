@@ -36,12 +36,14 @@ function getColorConfig() {
 export default function RecentWinnersStack() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [totalPrizes, setTotalPrizes] = useState(WINNERS.length * 12);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setIsAnimating(true);
       setTimeout(() => {
         setCurrentIndex((prev) => (prev + 1) % WINNERS.length);
+        setTotalPrizes((prev) => prev + 1); // Incrementa o contador a cada novo "prêmio"
         setIsAnimating(false);
       }, 500);
     }, 2500);
@@ -262,7 +264,7 @@ export default function RecentWinnersStack() {
       {/* Stats footer */}
       <div className="mt-4 text-center">
         <span className="text-zinc-500 text-xs">Total de prêmios hoje: </span>
-        <span className="text-emerald-400 font-bold">{WINNERS.length * 12}</span>
+        <span className="text-emerald-400 font-bold">{totalPrizes.toLocaleString()}</span>
       </div>
 
       {/* CSS for shine animation */}
