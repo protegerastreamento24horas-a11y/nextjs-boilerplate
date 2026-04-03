@@ -57,8 +57,8 @@ export default function BannerCarousel({
               index === currentIndex ? "opacity-100" : "opacity-0"
             }`}
           >
-            {image.src.endsWith('.gif') ? (
-              // GIF animado usa tag img
+            {image.src.endsWith('.gif') || image.src.startsWith('http') ? (
+              // GIFs e imagens externas (Imgur) usam tag img
               <img
                 src={image.src}
                 alt={image.alt}

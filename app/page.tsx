@@ -59,7 +59,10 @@ function LandingPageContent() {
         
         if (configRes.ok) {
           const configData = await configRes.json();
+          console.log("[DEBUG] SiteConfig carregado:", configData);
           setSiteConfig(configData);
+        } else {
+          console.error("[DEBUG] Erro ao carregar site config:", configRes.status);
         }
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
@@ -79,9 +82,14 @@ function LandingPageContent() {
   }
 
   // Monta array de banners (dinâmico + fallbacks)
-  const bannerImages = siteConfig?.mainBannerUrl && siteConfig?.mainBannerActive
+  const hasCustomBanner = siteConfig?.mainBannerUrl && siteConfig?.mainBannerActive;
+  console.log("[DEBUG] Has custom banner:", hasCustomBanner, "URL:", siteConfig?.mainBannerUrl, "Active:", siteConfig?.mainBannerActive);
+  
+  const bannerImages = hasCustomBanner
     ? [{ src: siteConfig.mainBannerUrl, alt: "Banner Principal", type: "image" as const }]
     : FALLBACK_BANNER_IMAGES;
+  
+  console.log("[DEBUG] Banner images:", bannerImages);
 
   return (
     <div className="min-h-screen bg-zinc-950 flex flex-col">
