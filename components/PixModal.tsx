@@ -80,12 +80,15 @@ export default function PixModal({ paymentId, amount, qrCode, qrCodeText, onClos
         {/* QR Code */}
         <div className="mx-auto mb-4 w-44 h-44 bg-white rounded-2xl flex items-center justify-center shadow-inner overflow-hidden p-2">
           {isRealPix ? (
-            // Usar QRCodeSVG para gerar o QR code a partir do payload
+            // Gerar QR code a partir do payload PIX usando qrcode.react
             <QRCodeSVG
+              key={paymentId} // Força re-render quando muda o pagamento
               value={qrCodeText || qrCode || ''}
               size={160}
               level="M"
               includeMargin={false}
+              bgColor="#FFFFFF"
+              fgColor="#000000"
             />
           ) : (
             <div className="flex flex-col items-center justify-center p-3">
