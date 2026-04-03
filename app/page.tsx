@@ -8,6 +8,7 @@ import RecentWinnersTicker from "@/components/RecentWinnersTicker";
 import PromoPopup from "@/components/PromoPopup";
 import SocialProofSection from "@/components/SocialProofSection";
 import BannerCarousel from "@/components/BannerCarousel";
+import { FakeLiveCounter } from "@/components/FakeLiveCounter";
 
 interface Raffle {
   id: string;
@@ -115,6 +116,9 @@ function LandingPageContent() {
         isActive={siteConfig?.popupActive}
         delay={siteConfig?.popupDelay}
       />
+
+      {/* Contador fake de pessoas jogando */}
+      <FakeLiveCounter />
 
       {/* Floating beer particles background */}
       <FloatingBeers />
