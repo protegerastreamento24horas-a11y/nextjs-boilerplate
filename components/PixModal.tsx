@@ -80,13 +80,33 @@ export default function PixModal({ paymentId, amount, qrCode, qrCodeText, onClos
         {/* QR Code */}
         <div className="mx-auto mb-4 w-44 h-44 bg-white rounded-2xl flex items-center justify-center shadow-inner overflow-hidden">
           {isRealPix ? (
-            <Image
-              src={`data:image/png;base64,${qrCode}`}
-              alt="QR Code Pix"
-              width={160}
-              height={160}
-              className="w-full h-full object-contain p-2"
-            />
+            (() => {
+              // Detectar formato do QR code
+              let imageSrc = qrCode;
+              
+              // Se já é data URL, usar direto
+              if (qrCode?.startsWith('data:image')) {
+                imageSrc = qrCode;
+              } 
+              // Se é base64 puro, adicionar prefixo
+              else if (qrCode && !qrCode.includes('://')) {
+                imageSrc = `data:image/png;base64,${qrCode}`;
+              }
+              // Se é URL normal, usar direto
+              else if (qrCode?.startsWith('http')) {
+                imageSrc = qrCode;
+              }
+              
+              return (
+                <Image
+                  src={imageSrc || ''}
+                  alt="QR Code Pix"
+                  width={160}
+                  height={160}
+                  className="w-full h-full object-contain p-2"
+                />
+              );
+            })()
           ) : (
             <div className="flex flex-col items-center justify-center p-3">
               <div className="text-4xl mb-1">📱</div>
