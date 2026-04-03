@@ -42,17 +42,17 @@ export default function SocialProofSection() {
           </span>
         </h2>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {TESTIMONIALS.map((testimonial) => (
             <div
               key={testimonial.id}
-              className="relative aspect-square rounded-2xl overflow-hidden border-4 border-yellow-500/80 shadow-xl shadow-yellow-500/20"
+              className="relative aspect-video rounded-lg overflow-hidden bg-zinc-800 shadow-lg hover:shadow-xl transition-shadow"
             >
               <Image
                 src={testimonial.image}
                 alt={testimonial.name}
                 fill
-                className="object-cover"
+                className="object-contain p-2"
               />
             </div>
           ))}
