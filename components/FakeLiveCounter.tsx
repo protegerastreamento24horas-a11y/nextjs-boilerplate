@@ -3,23 +3,23 @@
 import { useState, useEffect } from "react";
 
 export function FakeLiveCounter() {
-  const [count, setCount] = useState(42);
+  const [count, setCount] = useState(1247);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Show after 3 seconds
-    const showTimer = setTimeout(() => setIsVisible(true), 3000);
+    // Show after 2 seconds
+    const showTimer = setTimeout(() => setIsVisible(true), 2000);
     
-    // Update count every 5-15 seconds with random fluctuation
+    // Fluctuate count every 3-8 seconds - more dynamic
     const interval = setInterval(() => {
       setCount(prev => {
-        const change = Math.random() > 0.5 
-          ? Math.floor(Math.random() * 5) + 1  // +1 to +5
-          : -(Math.floor(Math.random() * 3) + 1); // -1 to -3
+        // Random change between -8 and +15
+        const change = Math.floor(Math.random() * 23) - 8;
         const newCount = prev + change;
-        return Math.max(15, Math.min(99, newCount)); // Keep between 15-99
+        // Keep between 1200 and 1350
+        return Math.max(1200, Math.min(1350, newCount));
       });
-    }, Math.random() * 10000 + 5000); // Random interval 5-15s
+    }, Math.random() * 5000 + 3000); // Random interval 3-8s
 
     return () => {
       clearTimeout(showTimer);
@@ -79,7 +79,7 @@ export function FakeLiveCounter() {
               textShadow: "0 0 20px rgba(255,215,0,0.3)",
             }}
           >
-            {count}
+            {count.toLocaleString()}
           </span>
           <span className="text-xs text-zinc-400">pessoas</span>
         </div>
