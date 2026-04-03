@@ -59,6 +59,11 @@ function LandingPageContent() {
         
         if (rafflesRes.ok) {
           const rafflesData = await rafflesRes.json();
+          console.log("[DEBUG] Raffles recebidos:", rafflesData.map((r: any) => ({ 
+            name: r.name, 
+            homeBanner: r.homeBanner?.substring(0, 30),
+            logoUrl: r.logoUrl?.substring(0, 30)
+          })));
           setRaffles(rafflesData);
         }
         
