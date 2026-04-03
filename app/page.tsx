@@ -146,7 +146,7 @@ function LandingPageContent() {
 
         {/* Raffle Selection Cards */}
         <div className="w-full max-w-5xl mb-8">
-          <h2 className="text-2xl font-bold text-white mb-6">Escolha seu Sorteio</h2>
+          <h2 className="text-2xl font-bold text-white mb-6">Escolha sua Raspadinha</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {raffles.map((raffle) => (
               <button
