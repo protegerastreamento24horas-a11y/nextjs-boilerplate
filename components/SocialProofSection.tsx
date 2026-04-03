@@ -26,11 +26,11 @@ export default function SocialProofSection() {
     <section className="w-full py-8 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950">
       <div className="max-w-4xl mx-auto px-4">
         {/* Grid de parceiros - sem título, imagens menores */}
-        <div className="grid grid-cols-2 gap-2 max-w-xs mx-auto">
+        <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto">
           {TESTIMONIALS.map((testimonial) => (
             <div
               key={testimonial.id}
-              className="relative h-12 rounded overflow-hidden bg-zinc-800"
+              className="relative h-16 rounded overflow-hidden bg-zinc-800"
             >
               <Image
                 src={testimonial.image}
