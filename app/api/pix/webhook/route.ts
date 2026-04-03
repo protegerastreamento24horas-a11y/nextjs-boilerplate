@@ -100,7 +100,7 @@ async function handleTransactionPaid(data: CashinPayWebhookEvent["data"]) {
         paymentId: payment.id,
         results: JSON.stringify(results),
         revealed: "[]",
-        isWinner: results.some((r) => r),
+        isWinner: false, // Inicia como não vencedor - só muda quando revelar carta premiada
       },
     });
     
