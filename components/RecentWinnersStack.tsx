@@ -179,40 +179,16 @@ export default function RecentWinnersStack() {
                 className="absolute inset-0 rounded-2xl overflow-hidden"
                 style={style}
               >
-                {/* Card Background with gradient */}
+                {/* Card Background - Simple Golden Gradient */}
                 <div
-                  className={`absolute inset-0 bg-gradient-to-br ${winnerColors.gradient} opacity-20`}
+                  className="absolute inset-0 rounded-2xl bg-gradient-to-br from-yellow-500 via-yellow-600 to-yellow-700"
                 />
-
-                {/* Glassmorphism layer */}
-                <div
-                  className="absolute inset-0 backdrop-blur-xl"
-                  style={{
-                    background: "linear-gradient(135deg, rgba(24,24,27,0.9) 0%, rgba(39,39,42,0.85) 100%)",
-                    border: `2px solid ${winnerColors.glow}`,
-                    borderRadius: "1rem",
-                  }}
-                />
-
-                {/* Animated border glow for current card */}
-                {isCurrent && (
-                  <div
-                    className="absolute -inset-1 rounded-2xl opacity-50 animate-pulse"
-                    style={{
-                      background: `linear-gradient(90deg, ${winnerColors.glow}, transparent, ${winnerColors.glow})`,
-                      filter: "blur(8px)",
-                    }}
-                  />
-                )}
 
                 {/* Content */}
                 <div className="relative z-10 h-full flex flex-col items-center justify-center p-6">
                   {/* Avatar */}
                   <div
-                    className={`w-14 h-14 rounded-full bg-gradient-to-br ${winnerColors.gradient} flex items-center justify-center text-xl font-bold text-white mb-3 shadow-lg`}
-                    style={{
-                      boxShadow: `0 0 20px ${winnerColors.glow}`,
-                    }}
+                    className="w-14 h-14 rounded-full bg-gradient-to-br from-yellow-300 to-yellow-500 flex items-center justify-center text-xl font-bold text-black mb-3 shadow-lg"
                   >
                     {winner.name.charAt(0)}
                   </div>
@@ -221,9 +197,7 @@ export default function RecentWinnersStack() {
                   <p className="text-white font-semibold text-lg mb-1">{winner.name}</p>
 
                   {/* Amount */}
-                  <p
-                    className={`text-3xl font-black bg-gradient-to-r ${winnerColors.gradient} bg-clip-text text-transparent drop-shadow-lg`}
-                  >
+                  <p className="text-3xl font-black text-white drop-shadow-lg">
                     {winner.amount}
                   </p>
 
@@ -237,7 +211,7 @@ export default function RecentWinnersStack() {
                   </div>
                 </div>
 
-                {/* Shine effect */}
+                {/* Shine effect on current card only */}
                 {isCurrent && (
                   <div
                     className="absolute inset-0 rounded-2xl pointer-events-none overflow-hidden"
