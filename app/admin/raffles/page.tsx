@@ -307,9 +307,6 @@ export default function RafflesAdminPage() {
                         {raffle.isActive ? "Ativo" : "Inativo"}
                       </span>
                     </div>
-                    <div className="text-sm text-zinc-500 mt-1">
-                      {raffle.totalParticipants} participantes · {raffle.totalWinners} ganhadores
-                    </div>
                   </button>
                 ))}
               </div>

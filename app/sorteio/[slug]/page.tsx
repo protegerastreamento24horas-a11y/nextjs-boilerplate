@@ -208,22 +208,6 @@ export default function RafflePage() {
             </p>
           </div>
 
-          {/* Estatísticas */}
-          <div className="flex justify-center gap-6 mb-6 text-sm">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-400">
-                {raffle.totalParticipants}
-              </div>
-              <div className="text-zinc-500">Participantes</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-400">
-                {raffle.totalWinners}
-              </div>
-              <div className="text-zinc-500">Ganhadores</div>
-            </div>
-          </div>
-
           {/* Descrição completa */}
           {raffle.fullDescription && (
             <div className="mb-6 p-4 bg-zinc-800/50 rounded-xl">
