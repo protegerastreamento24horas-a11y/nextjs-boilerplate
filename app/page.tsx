@@ -199,7 +199,7 @@ function LandingPageContent() {
                       background: `linear-gradient(135deg, ${raffle.primaryColor} 0%, ${raffle.secondaryColor} 100%)`,
                     }}
                   >
-                    Participar do Sorteio
+                    Raspe aqui
                   </div>
                 </div>
               </button>
