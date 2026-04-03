@@ -4,7 +4,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import FloatingBeers from "@/components/FloatingBeers";
-import RecentWinners3D from "@/components/RecentWinners3D";
+import RecentWinnersStack from "@/components/RecentWinnersStack";
 import PromoPopup from "@/components/PromoPopup";
 import SocialProofSection from "@/components/SocialProofSection";
 import BannerCarousel from "@/components/BannerCarousel";
@@ -228,9 +228,9 @@ function LandingPageContent() {
           </div>
         </div>
 
-        {/* Recent Winners 3D Carousel */}
+        {/* Recent Winners Stack - Notificações sequenciais */}
         <div className="mt-10 w-full flex justify-center">
-          <RecentWinners3D />
+          <RecentWinnersStack />
         </div>
 
         {/* Social Proof Section */}
