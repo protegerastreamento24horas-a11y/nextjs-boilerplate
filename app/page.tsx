@@ -85,9 +85,12 @@ function LandingPageContent() {
   const hasCustomBanner = siteConfig?.mainBannerUrl && siteConfig?.mainBannerActive;
   console.log("[DEBUG] Has custom banner:", hasCustomBanner, "URL:", siteConfig?.mainBannerUrl, "Active:", siteConfig?.mainBannerActive);
   
-  const bannerImages = hasCustomBanner
-    ? [{ src: siteConfig.mainBannerUrl, alt: "Banner Principal", type: "image" as const }]
-    : FALLBACK_BANNER_IMAGES;
+  let bannerImages: { src: string; alt: string; type?: "video" | "image" }[];
+  if (hasCustomBanner) {
+    bannerImages = [{ src: siteConfig!.mainBannerUrl!, alt: "Banner Principal", type: "image" }];
+  } else {
+    bannerImages = FALLBACK_BANNER_IMAGES;
+  }
   
   console.log("[DEBUG] Banner images:", bannerImages);
 
