@@ -179,64 +179,68 @@ export default function RecentWinnersStack() {
                 className="absolute inset-0 rounded-2xl overflow-hidden"
                 style={style}
               >
-                {/* Card Background - Golden Gradient */}
-                <div
-                  className="absolute inset-0 rounded-2xl bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600"
-                />
-
-                {/* Glow effect for all cards */}
-                <div
-                  className="absolute -inset-1 rounded-2xl opacity-60 blur-md"
+                {/* Card Background - Same as Testimonials3D */}
+                <div 
+                  className="relative p-4 rounded-2xl backdrop-blur-md border border-yellow-500/30 h-full flex flex-col items-center justify-center"
                   style={{
-                    background: "radial-gradient(circle, rgba(255,215,0,0.4) 0%, transparent 70%)",
+                    background: "linear-gradient(135deg, rgba(24,24,27,0.9) 0%, rgba(39,39,42,0.8) 100%)",
+                    boxShadow: `
+                      0 0 30px rgba(255,215,0,0.15),
+                      0 10px 40px rgba(0,0,0,0.5),
+                      inset 0 1px 0 rgba(255,255,255,0.1)
+                    `,
                   }}
-                />
-
-                {/* Glassmorphism layer - no border */}
-                <div
-                  className="absolute inset-1 rounded-xl backdrop-blur-sm"
-                  style={{
-                    background: "linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)",
-                  }}
-                />
-
-                {/* Content */}
-                <div className="relative z-10 h-full flex flex-col items-center justify-center p-6">
-                  {/* Avatar */}
-                  <div
-                    className="w-14 h-14 rounded-full bg-gradient-to-br from-yellow-300 to-yellow-500 flex items-center justify-center text-xl font-bold text-black mb-3 shadow-lg"
-                  >
-                    {winner.name.charAt(0)}
-                  </div>
-
-                  {/* Name */}
-                  <p className="text-white font-semibold text-lg mb-1">{winner.name}</p>
-
-                  {/* Amount */}
-                  <p className="text-3xl font-black text-white drop-shadow-lg">
-                    {winner.amount}
-                  </p>
-
-                  {/* Time and badge */}
-                  <div className="flex items-center gap-3 mt-2">
-                    <span className="text-zinc-400 text-xs">{winner.time}</span>
-                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                      Pix Recebido
-                    </span>
-                  </div>
-                </div>
-
-                {/* Shine effect on current card only */}
-                {isCurrent && (
-                  <div
-                    className="absolute inset-0 rounded-2xl pointer-events-none overflow-hidden"
+                >
+                  {/* Glow effect on front */}
+                  <div 
+                    className="absolute inset-0 rounded-2xl opacity-50"
                     style={{
-                      background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%)",
-                      animation: "shine 2s ease-in-out infinite",
+                      background: "linear-gradient(135deg, rgba(255,215,0,0.1) 0%, transparent 50%, rgba(255,165,0,0.1) 100%)",
                     }}
                   />
-                )}
+
+                  {/* Content */}
+                  <div className="relative z-10 flex flex-col items-center justify-center">
+                    {/* Avatar with glow - same as Testimonials3D */}
+                    <div 
+                      className="w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold text-black mb-3"
+                      style={{
+                        background: "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
+                        boxShadow: "0 0 15px rgba(255,215,0,0.5)",
+                      }}
+                    >
+                      {winner.name.charAt(0)}
+                    </div>
+
+                    {/* Name */}
+                    <p className="text-white font-semibold text-lg mb-1">{winner.name}</p>
+
+                    {/* Amount */}
+                    <p className="text-2xl font-black text-yellow-400 drop-shadow-lg">
+                      {winner.amount}
+                    </p>
+
+                    {/* Time and badge */}
+                    <div className="flex items-center gap-3 mt-2">
+                      <span className="text-zinc-400 text-xs">{winner.time}</span>
+                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        Pix Recebido
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Shine effect */}
+                  {isCurrent && (
+                    <div 
+                      className="absolute inset-0 rounded-2xl pointer-events-none overflow-hidden"
+                      style={{
+                        background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.2) 50%, transparent 60%)",
+                        animation: "shine 2s ease-in-out infinite",
+                      }}
+                    />
+                  )}
+                </div>
               </div>
             );
           })}
