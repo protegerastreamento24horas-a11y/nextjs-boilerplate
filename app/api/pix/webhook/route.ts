@@ -93,7 +93,7 @@ async function handleTransactionPaid(data: CashinPayWebhookEvent["data"]) {
     });
     
     // Criar sessão de jogo
-    const results = generateGameResults(payment.attempts);
+    const results = await generateGameResults(payment.attempts);
     
     await prisma.gameSession.create({
       data: {
@@ -158,13 +158,37 @@ async function handleTransactionExpired(data: CashinPayWebhookEvent["data"]) {
   }
 }
 
-function generateGameResults(attempts: number): boolean[] {
+async function generateGameResults(attempts: number): Promise<boolean[]> {
+  // Buscar configuração do sistema
+  const config = await prisma.config.findUnique({
+    where: { id: "default" },
+  });
+  
+  // Probabilidade configurada pelo admin (0 a 1)
+  const probabilidade = config?.probabilidade ?? 0.10; // Default 10% se não configurado
+  
+  console.log("[Game] Probabilidade configurada:", probabilidade);
+  
   // Gera 10 posições (5x2 grid)
   const results: boolean[] = new Array(10).fill(false);
   
-  // Lógica: 1 prêmio entre as 10 posições
-  const prizeIndex = Math.floor(Math.random() * 10);
-  results[prizeIndex] = true;
+  // Se probabilidade for 0, nunca gera prêmio
+  if (probabilidade <= 0) {
+    console.log("[Game] Probabilidade 0% - sem prêmios");
+    return results;
+  }
+  
+  // Decide se vai ter prêmio baseado na probabilidade
+  const hasPrize = Math.random() < probabilidade;
+  
+  if (hasPrize) {
+    // Coloca 1 prêmio em posição aleatória
+    const prizeIndex = Math.floor(Math.random() * 10);
+    results[prizeIndex] = true;
+    console.log("[Game] Prêmio gerado na posição:", prizeIndex);
+  } else {
+    console.log("[Game] Sem prêmio nesta rodada");
+  }
   
   return results;
 }
