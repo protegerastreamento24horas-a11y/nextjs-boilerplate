@@ -26,19 +26,11 @@ const WINNERS: Winner[] = [
 ];
 
 const VALUE_COLORS = {
-  500: { gradient: "from-blue-500 to-blue-600", glow: "rgba(59,130,246,0.6)" },
-  1000: { gradient: "from-emerald-500 to-emerald-600", glow: "rgba(16,185,129,0.6)" },
-  1500: { gradient: "from-orange-500 to-orange-600", glow: "rgba(249,115,22,0.6)" },
-  2000: { gradient: "from-yellow-400 to-yellow-500", glow: "rgba(255,215,0,0.7)" },
-  3000: { gradient: "from-purple-500 to-pink-500", glow: "rgba(168,85,247,0.7)" },
+  gold: { gradient: "from-yellow-400 via-yellow-500 to-yellow-600", glow: "rgba(255,215,0,0.7)", border: "rgba(255,215,0,0.5)" },
 };
 
-function getColorConfig(value: number) {
-  if (value >= 3000) return VALUE_COLORS[3000];
-  if (value >= 2000) return VALUE_COLORS[2000];
-  if (value >= 1500) return VALUE_COLORS[1500];
-  if (value >= 1000) return VALUE_COLORS[1000];
-  return VALUE_COLORS[500];
+function getColorConfig() {
+  return VALUE_COLORS.gold;
 }
 
 export default function RecentWinnersStack() {
@@ -52,30 +44,31 @@ export default function RecentWinnersStack() {
         setCurrentIndex((prev) => (prev + 1) % WINNERS.length);
         setIsAnimating(false);
       }, 500);
-    }, 3500);
+    }, 2500);
 
     return () => clearInterval(interval);
   }, []);
 
   const getCardStyle = (offset: number): React.CSSProperties => {
     const isCurrent = offset === 0;
-    const isNext = offset === 1;
-    const isPrev = offset === -1 || offset === WINNERS.length - 1;
+    const isNext1 = offset === 1;
+    const isNext2 = offset === 2;
+    const isNext3 = offset === 3;
     
     if (isAnimating && isCurrent) {
       return {
-        transform: "translateY(-120%) scale(0.9)",
+        transform: "translateY(-130%) scale(0.85)",
         opacity: 0,
-        zIndex: 30,
+        zIndex: 40,
         transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
       };
     }
     
-    if (isAnimating && isNext) {
+    if (isAnimating && isNext1) {
       return {
         transform: "translateY(0) scale(1)",
         opacity: 1,
-        zIndex: 20,
+        zIndex: 30,
         transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
       };
     }
@@ -84,31 +77,49 @@ export default function RecentWinnersStack() {
       return {
         transform: "translateY(0) scale(1)",
         opacity: 1,
+        zIndex: 30,
+        transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+      };
+    }
+
+    if (isNext1) {
+      return {
+        transform: "translateY(15px) scale(0.95)",
+        opacity: 0.7,
         zIndex: 20,
         transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
       };
     }
 
-    if (isNext) {
+    if (isNext2) {
       return {
-        transform: "translateY(20px) scale(0.95)",
-        opacity: 0.6,
+        transform: "translateY(30px) scale(0.9)",
+        opacity: 0.4,
         zIndex: 10,
         transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
       };
     }
 
+    if (isNext3) {
+      return {
+        transform: "translateY(45px) scale(0.85)",
+        opacity: 0.2,
+        zIndex: 5,
+        transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+      };
+    }
+
     return {
-      transform: "translateY(40px) scale(0.9)",
+      transform: "translateY(60px) scale(0.8)",
       opacity: 0,
-      zIndex: 5,
+      zIndex: 1,
       transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
     };
   };
 
   const getVisibleWinners = () => {
     const result = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       const index = (currentIndex + i) % WINNERS.length;
       result.push({ ...WINNERS[index], displayOffset: i });
     }
@@ -117,7 +128,7 @@ export default function RecentWinnersStack() {
 
   const visibleWinners = getVisibleWinners();
   const currentWinner = visibleWinners[0];
-  const colors = getColorConfig(currentWinner.value);
+  const colors = getColorConfig();
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -159,7 +170,7 @@ export default function RecentWinnersStack() {
         <div className="relative w-72 h-40">
           {visibleWinners.map((winner, index) => {
             const style = getCardStyle(index);
-            const winnerColors = getColorConfig(winner.value);
+            const winnerColors = getColorConfig();
             const isCurrent = index === 0;
 
             return (
