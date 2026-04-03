@@ -6,6 +6,7 @@ import PixModal from "@/components/PixModal";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useToast } from "@/components/ToastContext";
 import FloatingBeers from "@/components/FloatingBeers";
+import { Countdown3D } from "@/components/Countdown3D";
 
 interface RafflePackage {
   id: number;
@@ -237,6 +238,9 @@ export default function RafflePage() {
               </p>
             </div>
           )}
+
+          {/* Countdown 3D */}
+          <Countdown3D />
 
           {/* Seleção de pacotes */}
           <div className="mb-6 relative" style={{ transform: "translateZ(10px)" }}>
