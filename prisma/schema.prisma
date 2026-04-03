@@ -62,6 +62,15 @@ model Config {
   metaJackpot       Float   @default(500)    // Meta para liberar jackpot
   rtpTarget         Float   @default(0.70)    // % retorno ao jogador (0-1)
   sequenciaSemPremio Int    @default(0)      // Contador para controle
+  
+  // Banner Principal da Homepage
+  mainBannerUrl     String? @db.Text         // URL do banner principal
+  mainBannerLink    String?                  // Link para onde o banner direciona
+  mainBannerActive  Boolean @default(true)   // Se o banner está ativo
+  popupImageUrl     String? @db.Text         // URL da imagem do popup
+  popupLink         String?                  // Link do popup
+  popupActive       Boolean @default(false)  // Se o popup está ativo
+  popupDelay        Int     @default(3)      // Delay em segundos para mostrar popup
 }
 
 // ========== SISTEMA DE SORTEIOS ==========

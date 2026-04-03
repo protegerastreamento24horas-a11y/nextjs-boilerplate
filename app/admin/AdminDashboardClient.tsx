@@ -187,6 +187,22 @@ export default function AdminDashboardClient() {
   const [configLoading, setConfigLoading] = useState(false);
   const [configSaving, setConfigSaving] = useState(false);
   
+  // Banner/Popup modal states
+  const [showBannerModal, setShowBannerModal] = useState(false);
+  const [siteConfig, setSiteConfig] = useState({
+    mainBannerUrl: "",
+    mainBannerLink: "",
+    mainBannerActive: true,
+    popupImageUrl: "",
+    popupLink: "",
+    popupActive: false,
+    popupDelay: 3,
+  });
+  const [siteConfigLoading, setSiteConfigLoading] = useState(false);
+  const [siteConfigSaving, setSiteConfigSaving] = useState(false);
+  const [uploadingBanner, setUploadingBanner] = useState(false);
+  const [uploadingPopup, setUploadingPopup] = useState(false);
+  
   const router = useRouter();
 
   useEffect(() => {
@@ -304,6 +320,97 @@ export default function AdminDashboardClient() {
       setConfigSaving(false);
     }
   }
+
+  // Site Config (Banners/Popup) functions
+  async function fetchSiteConfig() {
+    setSiteConfigLoading(true);
+    try {
+      const res = await fetch("/api/admin/site-config");
+      if (res.ok) {
+        const data = await res.json();
+        setSiteConfig({
+          mainBannerUrl: data.mainBannerUrl || "",
+          mainBannerLink: data.mainBannerLink || "",
+          mainBannerActive: data.mainBannerActive ?? true,
+          popupImageUrl: data.popupImageUrl || "",
+          popupLink: data.popupLink || "",
+          popupActive: data.popupActive ?? false,
+          popupDelay: data.popupDelay ?? 3,
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao carregar site config:", error);
+    } finally {
+      setSiteConfigLoading(false);
+    }
+  }
+
+  async function saveSiteConfig() {
+    setSiteConfigSaving(true);
+    try {
+      const res = await fetch("/api/admin/site-config", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(siteConfig),
+      });
+      if (res.ok) {
+        alert("✅ Banners/Popup salvos com sucesso!");
+        setShowBannerModal(false);
+      } else {
+        const err = await res.json();
+        alert("❌ Erro: " + (err.error || "Falha ao salvar"));
+      }
+    } catch (err: any) {
+      alert("❌ Erro de conexão: " + err.message);
+    } finally {
+      setSiteConfigSaving(false);
+    }
+  }
+
+  async function handleBannerUpload(file: File, type: 'banner' | 'popup') {
+    if (!file) return;
+    
+    if (type === 'banner') setUploadingBanner(true);
+    else setUploadingPopup(true);
+    
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "images");
+      
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Erro no upload");
+      }
+      
+      const data = await res.json();
+      
+      if (type === 'banner') {
+        setSiteConfig(prev => ({ ...prev, mainBannerUrl: data.url }));
+      } else {
+        setSiteConfig(prev => ({ ...prev, popupImageUrl: data.url }));
+      }
+      
+      alert(`✅ Imagem ${type === 'banner' ? 'do banner' : 'do popup'} enviada!`);
+    } catch (error: any) {
+      alert(`❌ Erro no upload: ${error.message}`);
+    } finally {
+      if (type === 'banner') setUploadingBanner(false);
+      else setUploadingPopup(false);
+    }
+  }
+
+  // Load site config when modal opens
+  useEffect(() => {
+    if (showBannerModal) {
+      fetchSiteConfig();
+    }
+  }, [showBannerModal]);
 
   async function downloadBackup() {
     try {
@@ -434,6 +541,13 @@ export default function AdminDashboardClient() {
           >
             🎰 Sorteios
           </a>
+          {/* Link para Banners */}
+          <button
+            onClick={() => setShowBannerModal(true)}
+            className="px-5 py-2.5 rounded-xl font-semibold text-sm transition-all bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 border border-purple-500/20"
+          >
+            🖼️ Banners
+          </button>
         </div>
 
       {activeTab === "overview" && (
@@ -806,6 +920,168 @@ export default function AdminDashboardClient() {
               </button>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Modal de Banners e Popup */}
+      {showBannerModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-zinc-900 rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <h2 className="text-2xl font-semibold text-white mb-6">🖼️ Gerenciar Banners</h2>
+            
+            {siteConfigLoading ? (
+              <div className="text-zinc-500 animate-pulse">Carregando...</div>
+            ) : (
+              <div className="space-y-6">
+                {/* Banner Principal */}
+                <div className="bg-zinc-800 rounded-xl p-5">
+                  <h3 className="text-white font-bold mb-4">🏠 Banner Principal da Homepage</h3>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-sm text-zinc-400 mb-1">Imagem do Banner</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={siteConfig.mainBannerUrl}
+                          onChange={(e) => setSiteConfig({ ...siteConfig, mainBannerUrl: e.target.value })}
+                          placeholder="https://exemplo.com/banner.jpg"
+                          className="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                        />
+                        <label className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg cursor-pointer transition-colors flex items-center gap-2">
+                          {uploadingBanner ? (
+                            <span className="animate-spin">⏳</span>
+                          ) : (
+                            <span>📁</span>
+                          )}
+                          <span>Upload</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => e.target.files?.[0] && handleBannerUpload(e.target.files[0], 'banner')}
+                            className="hidden"
+                          />
+                        </label>
+                      </div>
+                      {siteConfig.mainBannerUrl && (
+                        <img src={siteConfig.mainBannerUrl} alt="Banner preview" className="mt-2 h-24 rounded-lg object-cover" />
+                      )}
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm text-zinc-400 mb-1">Link do Banner (opcional)</label>
+                      <input
+                        type="text"
+                        value={siteConfig.mainBannerLink}
+                        onChange={(e) => setSiteConfig({ ...siteConfig, mainBannerLink: e.target.value })}
+                        placeholder="https://exemplo.com/promocao"
+                        className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                      />
+                    </div>
+                    
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={siteConfig.mainBannerActive}
+                        onChange={(e) => setSiteConfig({ ...siteConfig, mainBannerActive: e.target.checked })}
+                        className="w-4 h-4 rounded border-zinc-600"
+                      />
+                      <span className="text-zinc-300">Banner ativo</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Popup */}
+                <div className="bg-zinc-800 rounded-xl p-5">
+                  <h3 className="text-white font-bold mb-4">💬 Popup Promocional</h3>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-sm text-zinc-400 mb-1">Imagem do Popup</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={siteConfig.popupImageUrl}
+                          onChange={(e) => setSiteConfig({ ...siteConfig, popupImageUrl: e.target.value })}
+                          placeholder="https://exemplo.com/popup.jpg"
+                          className="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                        />
+                        <label className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg cursor-pointer transition-colors flex items-center gap-2">
+                          {uploadingPopup ? (
+                            <span className="animate-spin">⏳</span>
+                          ) : (
+                            <span>📁</span>
+                          )}
+                          <span>Upload</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => e.target.files?.[0] && handleBannerUpload(e.target.files[0], 'popup')}
+                            className="hidden"
+                          />
+                        </label>
+                      </div>
+                      {siteConfig.popupImageUrl && (
+                        <img src={siteConfig.popupImageUrl} alt="Popup preview" className="mt-2 h-32 rounded-lg object-contain bg-zinc-900 px-4" />
+                      )}
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm text-zinc-400 mb-1">Link do Popup (opcional)</label>
+                      <input
+                        type="text"
+                        value={siteConfig.popupLink}
+                        onChange={(e) => setSiteConfig({ ...siteConfig, popupLink: e.target.value })}
+                        placeholder="https://exemplo.com/oferta"
+                        className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={siteConfig.popupActive}
+                          onChange={(e) => setSiteConfig({ ...siteConfig, popupActive: e.target.checked })}
+                          className="w-4 h-4 rounded border-zinc-600"
+                        />
+                        <span className="text-zinc-300">Popup ativo</span>
+                      </label>
+                      
+                      <div>
+                        <label className="block text-sm text-zinc-400 mb-1">Delay (segundos)</label>
+                        <input
+                          type="number"
+                          min="0"
+                          max="60"
+                          value={siteConfig.popupDelay}
+                          onChange={(e) => setSiteConfig({ ...siteConfig, popupDelay: parseInt(e.target.value) || 0 })}
+                          className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botões */}
+                <div className="flex gap-3 pt-4">
+                  <button
+                    onClick={saveSiteConfig}
+                    disabled={siteConfigSaving}
+                    className="flex-1 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                  >
+                    {siteConfigSaving ? "💾 Salvando..." : "💾 Salvar Banners"}
+                  </button>
+                  <button
+                    onClick={() => setShowBannerModal(false)}
+                    className="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium rounded-lg transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
