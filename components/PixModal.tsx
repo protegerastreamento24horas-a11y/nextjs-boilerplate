@@ -82,24 +82,29 @@ export default function PixModal({ paymentId, amount, qrCode, qrCodeText, onClos
           {isRealPix ? (
             (() => {
               // Detectar formato do QR code
-              let imageSrc = qrCode;
+              let imageSrc = qrCode || '';
+              
+              console.log('[PixModal] QR Code raw:', qrCode?.slice(0, 50));
               
               // Se já é data URL, usar direto
               if (qrCode?.startsWith('data:image')) {
                 imageSrc = qrCode;
               } 
-              // Se é base64 puro, adicionar prefixo
-              else if (qrCode && !qrCode.includes('://')) {
+              // Se é base64 puro (não contém ://), adicionar prefixo
+              else if (qrCode && !qrCode.includes('://') && qrCode.length > 100) {
                 imageSrc = `data:image/png;base64,${qrCode}`;
               }
-              // Se é URL normal, usar direto
+              // Se é URL normal
               else if (qrCode?.startsWith('http')) {
                 imageSrc = qrCode;
               }
               
+              console.log('[PixModal] QR Code final:', imageSrc.slice(0, 50));
+              
               return (
-                <Image
-                  src={imageSrc || ''}
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={imageSrc}
                   alt="QR Code Pix"
                   width={160}
                   height={160}
