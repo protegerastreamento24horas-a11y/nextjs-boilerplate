@@ -185,13 +185,6 @@ function LandingPageContent() {
                   <h3 className="text-xl font-bold text-white mb-2">{raffle.name}</h3>
                   <p className="text-zinc-400 text-sm mb-4">{raffle.description}</p>
                   
-                  {/* Stats */}
-                  <div className="flex justify-center gap-4 text-sm mb-4">
-                    <span className="text-zinc-500">
-                      <span className="text-yellow-400 font-bold">{raffle.totalParticipants}</span> participantes
-                    </span>
-                  </div>
-                  
                   {/* CTA Button */}
                   <div
                     className="py-3 px-6 rounded-xl font-bold text-black transition-transform active:scale-95"
