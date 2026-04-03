@@ -12,18 +12,18 @@ interface Winner {
 }
 
 const WINNERS: Winner[] = [
-  { id: 1, name: "Maria S.", prize: "Caixa de Corona 330ml", brand: "corona", time: "agora", amount: "24 unidades" },
-  { id: 2, name: "João M.", prize: "Caixa de Heineken 350ml", brand: "heineken", time: "há 2 min", amount: "12 unidades" },
-  { id: 3, name: "Ana P.", prize: "Caixa de Stella Artois 330ml", brand: "stella", time: "há 3 min", amount: "24 unidades" },
-  { id: 4, name: "Carlos R.", prize: "Caixa de Corona 330ml", brand: "corona", time: "há 5 min", amount: "12 unidades" },
-  { id: 5, name: "Fernanda L.", prize: "Caixa de Heineken 350ml", brand: "heineken", time: "há 7 min", amount: "24 unidades" },
-  { id: 6, name: "Pedro H.", prize: "Caixa de Stella Artois 330ml", brand: "stella", time: "há 9 min", amount: "12 unidades" },
-  { id: 7, name: "Juliana M.", prize: "Caixa de Corona 330ml", brand: "corona", time: "há 11 min", amount: "24 unidades" },
-  { id: 8, name: "Ricardo B.", prize: "Caixa de Heineken 350ml", brand: "heineken", time: "há 13 min", amount: "12 unidades" },
-  { id: 9, name: "Camila T.", prize: "Caixa de Stella Artois 330ml", brand: "stella", time: "há 15 min", amount: "24 unidades" },
-  { id: 10, name: "Bruno S.", prize: "Caixa de Corona 330ml", brand: "corona", time: "há 17 min", amount: "12 unidades" },
-  { id: 11, name: "Luiza A.", prize: "Caixa de Heineken 350ml", brand: "heineken", time: "há 19 min", amount: "24 unidades" },
-  { id: 12, name: "Gabriel K.", prize: "Caixa de Stella Artois 330ml", brand: "stella", time: "há 21 min", amount: "12 unidades" },
+  { id: 1, name: "Maria Julia", prize: "R$ 500,00", brand: "corona", time: "agora", amount: "Pix recebido" },
+  { id: 2, name: "Cristian R.", prize: "R$ 1.500,00", brand: "heineken", time: "há 2 min", amount: "Pix recebido" },
+  { id: 3, name: "Ana P.", prize: "R$ 500,00", brand: "stella", time: "há 3 min", amount: "Pix recebido" },
+  { id: 4, name: "Carlos R.", prize: "R$ 1.000,00", brand: "corona", time: "há 5 min", amount: "Pix recebido" },
+  { id: 5, name: "Fernanda L.", prize: "R$ 500,00", brand: "heineken", time: "há 7 min", amount: "Pix recebido" },
+  { id: 6, name: "Pedro H.", prize: "R$ 2.000,00", brand: "stella", time: "há 9 min", amount: "Pix recebido" },
+  { id: 7, name: "Juliana M.", prize: "R$ 500,00", brand: "corona", time: "há 11 min", amount: "Pix recebido" },
+  { id: 8, name: "Ricardo B.", prize: "R$ 1.500,00", brand: "heineken", time: "há 13 min", amount: "Pix recebido" },
+  { id: 9, name: "Camila T.", prize: "R$ 500,00", brand: "stella", time: "há 15 min", amount: "Pix recebido" },
+  { id: 10, name: "Bruno S.", prize: "R$ 1.000,00", brand: "corona", time: "há 17 min", amount: "Pix recebido" },
+  { id: 11, name: "Luiza A.", prize: "R$ 500,00", brand: "heineken", time: "há 19 min", amount: "Pix recebido" },
+  { id: 12, name: "Gabriel K.", prize: "R$ 3.000,00", brand: "stella", time: "há 21 min", amount: "Pix recebido" },
 ];
 
 const BRAND_COLORS = {
@@ -32,21 +32,21 @@ const BRAND_COLORS = {
     border: "border-blue-500/20",
     text: "text-blue-400",
     badge: "bg-blue-500",
-    icon: "🍺",
+    icon: "💰",
   },
   heineken: {
     bg: "bg-green-500/10",
     border: "border-green-500/20",
     text: "text-green-400",
     badge: "bg-green-500",
-    icon: "🍺",
+    icon: "💰",
   },
   stella: {
     bg: "bg-amber-500/10",
     border: "border-amber-500/20",
     text: "text-amber-400",
     badge: "bg-amber-500",
-    icon: "🍺",
+    icon: "💰",
   },
 };
 
@@ -149,8 +149,8 @@ export default function RecentWinnersTicker() {
                     </div>
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <span className="text-lg">{colors.icon}</span>
-                      <span className={`${colors.text} text-xs font-medium`}>
-                        Ganhou: {winner.prize}
+                      <span className={`${colors.text} text-xs font-bold`}>
+                        {winner.prize}
                       </span>
                     </div>
                     <div className="text-zinc-500 text-[10px] mt-0.5">
