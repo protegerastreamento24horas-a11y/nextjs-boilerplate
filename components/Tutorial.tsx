@@ -12,31 +12,31 @@ interface TutorialStep {
 const tutorialSteps: TutorialStep[] = [
   {
     title: "Bem-vindo! 🎉",
-    description: "Vamos te mostrar como jogar a Raspadinha da Sorte em poucos passos.",
+    description: "Vamos te mostrar como funciona a Raspadinha Digital em poucos passos simples.",
     target: "header",
     position: "bottom",
   },
   {
     title: "Cartelas 📱",
-    description: "Estas são suas cartelas. Toque em qualquer uma para revelar o que está escondido.",
+    description: "Você tem 10 cartelas disponíveis. Toque em qualquer uma para revelar o símbolo escondido.",
     target: "grid",
     position: "top",
   },
   {
-    title: "Objetivo 🎯",
-    description: "Encontre 3 cervejas iguais em uma mesma cartela para ganhar uma caixa!",
+    title: "Como Jogar 🎯",
+    description: "Você pode revelar até 3 cartelas. O resultado aparece assim que você tocar.",
     target: "grid",
     position: "top",
   },
   {
-    title: "Progresso 📊",
-    description: "Acompanhe quantas cartelas já abriu aqui em cima.",
+    title: "Suas Tentativas 📊",
+    description: "Acompanhe aqui em cima quantas cartelas você já revelou e quantas ainda pode abrir.",
     target: "progress",
     position: "bottom",
   },
   {
     title: "Pronto! 🚀",
-    description: "Toque nas cartelas para começar. Boa sorte!",
+    description: "Toque nas cartelas para começar. Divirta-se!",
     target: "grid",
     position: "top",
   },
