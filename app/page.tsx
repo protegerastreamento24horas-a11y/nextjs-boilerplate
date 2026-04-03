@@ -8,6 +8,7 @@ import RecentWinnersTicker from "@/components/RecentWinnersTicker";
 import PromoPopup from "@/components/PromoPopup";
 import SocialProofSection from "@/components/SocialProofSection";
 import BannerCarousel from "@/components/BannerCarousel";
+import TestimonialsMarquee from "@/components/TestimonialsMarquee";
 import { FakeLiveCounter } from "@/components/FakeLiveCounter";
 
 interface Raffle {
@@ -139,8 +140,13 @@ function LandingPageContent() {
 
       <main className="relative flex-1 flex flex-col items-center justify-center px-4 py-12 text-center">
         {/* Banner Carousel no topo - Usa banner dinâmico se configurado */}
-        <div className="w-full -mt-4 mb-8">
+        <div className="w-full -mt-4 mb-2">
           <BannerCarousel images={bannerImages} autoPlayInterval={6000} />
+        </div>
+
+        {/* Testimonials Marquee - Abaixo do banner, movimento rápido */}
+        <div className="w-full mb-8">
+          <TestimonialsMarquee />
         </div>
 
         {/* Title */}
