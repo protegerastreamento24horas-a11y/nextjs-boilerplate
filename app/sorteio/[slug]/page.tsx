@@ -189,8 +189,29 @@ export default function RafflePage() {
       </div>
 
       <main className="relative flex-1 flex flex-col items-center px-4 py-8 text-center -mt-16">
-        {/* Card principal */}
-        <div className="w-full max-w-2xl bg-zinc-900/90 backdrop-blur-sm border border-zinc-800 rounded-3xl p-6 md:p-8 shadow-2xl">
+        {/* Card principal - Estilo 3D Glassmorphism */}
+        <div 
+          className="w-full max-w-2xl rounded-3xl p-6 md:p-8 relative"
+          style={{
+            background: "linear-gradient(135deg, rgba(24,24,27,0.95) 0%, rgba(39,39,42,0.9) 100%)",
+            border: "1px solid rgba(255,215,0,0.3)",
+            boxShadow: `
+              0 0 40px rgba(255,215,0,0.15),
+              0 20px 60px rgba(0,0,0,0.5),
+              0 40px 80px rgba(0,0,0,0.3),
+              inset 0 1px 0 rgba(255,255,255,0.1)
+            `,
+            transform: "perspective(1000px) rotateX(2deg)",
+            transformOrigin: "center top",
+          }}
+        >
+          {/* Glow effect */}
+          <div 
+            className="absolute inset-0 rounded-3xl opacity-30 pointer-events-none"
+            style={{
+              background: "linear-gradient(135deg, rgba(255,215,0,0.15) 0%, transparent 50%, rgba(255,165,0,0.15) 100%)",
+            }}
+          />
           {/* Logo e título */}
           <div className="mb-6">
             {!raffle.pageBanner && raffle.logoUrl && (
@@ -218,7 +239,7 @@ export default function RafflePage() {
           )}
 
           {/* Seleção de pacotes */}
-          <div className="mb-6">
+          <div className="mb-6 relative" style={{ transform: "translateZ(10px)" }}>
             <h3 className="text-lg font-semibold text-white mb-4">
               Escolha seu pacote de raspadinhas
             </h3>
@@ -228,14 +249,29 @@ export default function RafflePage() {
                 <button
                   key={pkg.id}
                   onClick={() => setSelectedPackage(pkg)}
-                  className={`relative p-4 rounded-xl border-2 transition-all ${
+                  className={`relative p-4 rounded-xl border-2 transition-all duration-300 ${
                     selectedPackage?.id === pkg.id
-                      ? "border-yellow-400 bg-yellow-400/10"
-                      : "border-zinc-700 bg-zinc-800 hover:border-zinc-600"
+                      ? "border-yellow-400"
+                      : "border-zinc-700 hover:border-zinc-600"
                   }`}
+                  style={{
+                    background: selectedPackage?.id === pkg.id
+                      ? "linear-gradient(135deg, rgba(255,215,0,0.15) 0%, rgba(255,165,0,0.1) 100%)"
+                      : "linear-gradient(135deg, rgba(39,39,42,0.8) 0%, rgba(24,24,27,0.9) 100%)",
+                    boxShadow: selectedPackage?.id === pkg.id
+                      ? "0 0 20px rgba(255,215,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)"
+                      : "0 4px 15px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05)",
+                    transform: selectedPackage?.id === pkg.id ? "translateY(-2px)" : "translateY(0)",
+                  }}
                 >
                   {pkg.popular && (
-                    <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                    <div 
+                      className="absolute -top-2 left-1/2 -translate-x-1/2 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"
+                      style={{
+                        background: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
+                        boxShadow: "0 2px 8px rgba(16,185,129,0.4)",
+                      }}
+                    >
                       POPULAR
                     </div>
                   )}
@@ -254,7 +290,7 @@ export default function RafflePage() {
                     R$ {pkg.price}
                   </div>
                   {pkg.save && (
-                    <div className="mt-1 text-[10px] text-green-400">
+                    <div className="mt-1 text-[10px] text-emerald-400 font-semibold">
                       Economize R$ {pkg.save}
                     </div>
                   )}
@@ -304,14 +340,28 @@ export default function RafflePage() {
               <button
                 onClick={handlePay}
                 disabled={submitting || cpf.length < 11 || whatsapp.length < 11}
-                className="w-full py-4 font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-4 font-bold rounded-xl transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
                 style={{
                   background: submitting || cpf.length < 11 || whatsapp.length < 11
                     ? "#374151"
-                    : `linear-gradient(135deg, ${raffle.primaryColor} 0%, ${raffle.secondaryColor} 100%)`,
+                    : "linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%)",
                   color: submitting || cpf.length < 11 || whatsapp.length < 11 ? "#9CA3AF" : "#000",
+                  boxShadow: submitting || cpf.length < 11 || whatsapp.length < 11
+                    ? "none"
+                    : "0 6px 0 #B8860B, 0 8px 20px rgba(255,215,0,0.4), inset 0 1px 0 rgba(255,255,255,0.4)",
+                  textShadow: submitting || cpf.length < 11 || whatsapp.length < 11 ? "none" : "0 1px 0 rgba(255,255,255,0.3)",
+                  transform: "translateY(0)",
                 }}
               >
+                {/* Shine effect */}
+                {!submitting && cpf.length >= 11 && whatsapp.length >= 11 && (
+                  <div 
+                    className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                    style={{
+                      background: "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.5) 50%, transparent 70%)",
+                    }}
+                  />
+                )}
                 {submitting ? (
                   <LoadingSpinner size="sm" color="white" />
                 ) : (
@@ -329,12 +379,21 @@ export default function RafflePage() {
           ) : (
             <button
               onClick={handlePay}
-              className="w-full py-4 font-bold text-lg rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full py-4 font-bold text-lg rounded-xl transition-all duration-150 relative overflow-hidden group"
               style={{
-                background: `linear-gradient(135deg, ${raffle.primaryColor} 0%, ${raffle.secondaryColor} 100%)`,
+                background: "linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%)",
                 color: "#000",
+                boxShadow: "0 6px 0 #B8860B, 0 8px 20px rgba(255,215,0,0.4), inset 0 1px 0 rgba(255,255,255,0.4)",
+                textShadow: "0 1px 0 rgba(255,255,255,0.3)",
               }}
             >
+              {/* Shine effect */}
+              <div 
+                className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                style={{
+                  background: "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.5) 50%, transparent 70%)",
+                }}
+              />
               {selectedPackage ? (
                 `Comprar ${selectedPackage.label} - R$ ${selectedPackage.price.toFixed(2).replace(".", ",")}`
               ) : (
