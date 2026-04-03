@@ -11,23 +11,13 @@ interface Testimonial {
 const TESTIMONIALS: Testimonial[] = [
   {
     id: 1,
-    name: "Parceiro Premium",
-    image: "/images/social-proof/7222d1c16ce25b203d0504ea00db3773.jpg",
+    name: "Google Safe",
+    image: "/images/social-proof/google-safe-browsing.webp",
   },
   {
     id: 2,
-    name: "Capas Janeiro",
-    image: "/images/social-proof/CAPAS-JANEIRO-2024-51.png",
-  },
-  {
-    id: 3,
-    name: "Pay4Fun",
+    name: "Lotep",
     image: "/images/social-proof/LOTEP-autoriza-Pay4Fun-e-mais-4-empresas-para-testes-de-sistema-de-pagamentos.jpg",
-  },
-  {
-    id: 4,
-    name: "Google Safe",
-    image: "/images/social-proof/google-safe-browsing.webp",
   },
 ];
 
@@ -42,7 +32,7 @@ export default function SocialProofSection() {
           </span>
         </h2>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 gap-4 md:gap-6 max-w-2xl mx-auto">
           {TESTIMONIALS.map((testimonial) => (
             <div
               key={testimonial.id}
