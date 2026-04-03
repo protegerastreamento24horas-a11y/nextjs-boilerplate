@@ -38,6 +38,10 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const {
       mainBannerUrl,
+      mainBannerUrl2,
+      mainBannerUrl3,
+      mainBannerUrl4,
+      mainBannerUrl5,
       mainBannerLink,
       mainBannerActive,
       popupImageUrl,
@@ -50,6 +54,10 @@ export async function PUT(request: NextRequest) {
       where: { id: "default" },
       update: {
         ...(mainBannerUrl !== undefined && { mainBannerUrl }),
+        ...(mainBannerUrl2 !== undefined && { mainBannerUrl2 }),
+        ...(mainBannerUrl3 !== undefined && { mainBannerUrl3 }),
+        ...(mainBannerUrl4 !== undefined && { mainBannerUrl4 }),
+        ...(mainBannerUrl5 !== undefined && { mainBannerUrl5 }),
         ...(mainBannerLink !== undefined && { mainBannerLink }),
         ...(mainBannerActive !== undefined && { mainBannerActive }),
         ...(popupImageUrl !== undefined && { popupImageUrl }),
@@ -60,6 +68,10 @@ export async function PUT(request: NextRequest) {
       create: {
         id: "default",
         mainBannerUrl,
+        mainBannerUrl2,
+        mainBannerUrl3,
+        mainBannerUrl4,
+        mainBannerUrl5,
         mainBannerLink,
         mainBannerActive: mainBannerActive ?? true,
         popupImageUrl,

@@ -23,6 +23,10 @@ interface Raffle {
 
 interface SiteConfig {
   mainBannerUrl?: string;
+  mainBannerUrl2?: string;
+  mainBannerUrl3?: string;
+  mainBannerUrl4?: string;
+  mainBannerUrl5?: string;
   mainBannerLink?: string;
   mainBannerActive?: boolean;
   popupImageUrl?: string;
@@ -82,15 +86,23 @@ function LandingPageContent() {
   }
 
   // Monta array de banners (dinâmico + fallbacks)
-  const hasCustomBanner = siteConfig?.mainBannerUrl && siteConfig?.mainBannerActive;
-  console.log("[DEBUG] Has custom banner:", hasCustomBanner, "URL:", siteConfig?.mainBannerUrl, "Active:", siteConfig?.mainBannerActive);
+  const customBanners: { src: string; alt: string; type?: "video" | "image" }[] = [];
   
-  let bannerImages: { src: string; alt: string; type?: "video" | "image" }[];
-  if (hasCustomBanner) {
-    bannerImages = [{ src: siteConfig!.mainBannerUrl!, alt: "Banner Principal", type: "image" }];
-  } else {
-    bannerImages = FALLBACK_BANNER_IMAGES;
+  if (siteConfig?.mainBannerActive) {
+    const bannerUrls = [
+      siteConfig?.mainBannerUrl,
+      siteConfig?.mainBannerUrl2,
+      siteConfig?.mainBannerUrl3,
+      siteConfig?.mainBannerUrl4,
+      siteConfig?.mainBannerUrl5,
+    ].filter(Boolean) as string[];
+    
+    bannerUrls.forEach((url, index) => {
+      customBanners.push({ src: url, alt: `Banner ${index + 1}`, type: "image" });
+    });
   }
+  
+  const bannerImages = customBanners.length > 0 ? customBanners : FALLBACK_BANNER_IMAGES;
   
   console.log("[DEBUG] Banner images:", bannerImages);
 

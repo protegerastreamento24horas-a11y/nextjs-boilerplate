@@ -63,8 +63,12 @@ model Config {
   rtpTarget         Float   @default(0.70)    // % retorno ao jogador (0-1)
   sequenciaSemPremio Int    @default(0)      // Contador para controle
   
-  // Banner Principal da Homepage
-  mainBannerUrl     String? @db.Text         // URL do banner principal
+  // Banner Principal da Homepage (até 5 imagens)
+  mainBannerUrl     String? @db.Text         // URL do banner 1
+  mainBannerUrl2    String? @db.Text         // URL do banner 2
+  mainBannerUrl3    String? @db.Text         // URL do banner 3
+  mainBannerUrl4    String? @db.Text         // URL do banner 4
+  mainBannerUrl5    String? @db.Text         // URL do banner 5
   mainBannerLink    String?                  // Link para onde o banner direciona
   mainBannerActive  Boolean @default(true)   // Se o banner está ativo
   popupImageUrl     String? @db.Text         // URL da imagem do popup
