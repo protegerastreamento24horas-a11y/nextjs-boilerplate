@@ -136,7 +136,7 @@ function LandingPageContent() {
 
         {/* Title */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-[#EFB810] to-[#DEA900] bg-clip-text text-transparent">
             Raspadinha da Sorte
           </h1>
           <p className="text-xl text-zinc-400 max-w-2xl">
