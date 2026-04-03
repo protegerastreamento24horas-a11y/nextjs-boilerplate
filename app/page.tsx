@@ -8,7 +8,7 @@ import RecentWinnersTicker from "@/components/RecentWinnersTicker";
 import PromoPopup from "@/components/PromoPopup";
 import SocialProofSection from "@/components/SocialProofSection";
 import BannerCarousel from "@/components/BannerCarousel";
-import TestimonialsMarquee from "@/components/TestimonialsMarquee";
+import Testimonials3D from "@/components/Testimonials3D";
 import { FakeLiveCounter } from "@/components/FakeLiveCounter";
 
 interface Raffle {
@@ -144,9 +144,9 @@ function LandingPageContent() {
           <BannerCarousel images={bannerImages} autoPlayInterval={6000} />
         </div>
 
-        {/* Testimonials Marquee - Abaixo do banner, movimento rápido */}
-        <div className="w-full mb-8">
-          <TestimonialsMarquee />
+        {/* Testimonials 3D Carousel - Abaixo do banner */}
+        <div className="w-full mb-4">
+          <Testimonials3D />
         </div>
 
         {/* Title */}
