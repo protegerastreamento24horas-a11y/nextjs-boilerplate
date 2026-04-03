@@ -238,7 +238,7 @@ function GameContent() {
               </div>
             ) : (
               <div className="w-full p-4 bg-zinc-900/50 border border-zinc-700/50 rounded-2xl">
-                <div classText="text-center mb-3">
+                <div className="text-center mb-3">
                   <span className="text-yellow-400 font-bold text-sm">👀 Veja onde estavam os prêmios:</span>
                 </div>
                 <div className="grid grid-cols-5 gap-2">
