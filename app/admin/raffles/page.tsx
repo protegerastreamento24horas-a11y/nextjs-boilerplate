@@ -675,39 +675,99 @@ export default function RafflesAdminPage() {
 
                 {/* Banners */}
                 <div className="space-y-3">
-                  <h3 className="text-lg font-medium text-white">Banners</h3>
+                  <h3 className="text-lg font-medium text-white">Banners e Imagens</h3>
                   
+                  {/* Banner Home */}
                   <div>
-                    <label className="block text-sm text-zinc-400 mb-1">Banner Home (URL)</label>
-                    <input
-                      type="text"
-                      value={newRaffleData.homeBanner || ""}
-                      onChange={(e) => setNewRaffleData({ ...newRaffleData, homeBanner: e.target.value })}
-                      placeholder="/images/banner-novo.jpg"
-                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
-                    />
+                    <label className="block text-sm text-zinc-400 mb-1">Banner da Página Inicial</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={newRaffleData.homeBanner || ""}
+                        onChange={(e) => setNewRaffleData({ ...newRaffleData, homeBanner: e.target.value })}
+                        placeholder="/images/banner-novo.jpg"
+                        className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                      />
+                      <label className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg cursor-pointer transition-colors flex items-center gap-2">
+                        {uploading.home ? (
+                          <span className="animate-spin">⏳</span>
+                        ) : (
+                          <span>📁</span>
+                        )}
+                        <span>Upload</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0], 'home')}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                    {newRaffleData.homeBanner && (
+                      <img src={newRaffleData.homeBanner} alt="Preview" className="mt-2 h-20 rounded-lg object-cover" />
+                    )}
                   </div>
                   
+                  {/* Banner Página */}
                   <div>
-                    <label className="block text-sm text-zinc-400 mb-1">Banner Página (URL)</label>
-                    <input
-                      type="text"
-                      value={newRaffleData.pageBanner || ""}
-                      onChange={(e) => setNewRaffleData({ ...newRaffleData, pageBanner: e.target.value })}
-                      placeholder="/images/page-banner-novo.jpg"
-                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
-                    />
+                    <label className="block text-sm text-zinc-400 mb-1">Banner da Página do Sorteio</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={newRaffleData.pageBanner || ""}
+                        onChange={(e) => setNewRaffleData({ ...newRaffleData, pageBanner: e.target.value })}
+                        placeholder="/images/page-banner-novo.jpg"
+                        className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                      />
+                      <label className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg cursor-pointer transition-colors flex items-center gap-2">
+                        {uploading.page ? (
+                          <span className="animate-spin">⏳</span>
+                        ) : (
+                          <span>📁</span>
+                        )}
+                        <span>Upload</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0], 'page')}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                    {newRaffleData.pageBanner && (
+                      <img src={newRaffleData.pageBanner} alt="Preview" className="mt-2 h-20 rounded-lg object-cover" />
+                    )}
                   </div>
                   
+                  {/* Logo */}
                   <div>
-                    <label className="block text-sm text-zinc-400 mb-1">Logo (URL)</label>
-                    <input
-                      type="text"
-                      value={newRaffleData.logoUrl || ""}
-                      onChange={(e) => setNewRaffleData({ ...newRaffleData, logoUrl: e.target.value })}
-                      placeholder="/images/logo-novo.png"
-                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
-                    />
+                    <label className="block text-sm text-zinc-400 mb-1">Logo da Marca</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={newRaffleData.logoUrl || ""}
+                        onChange={(e) => setNewRaffleData({ ...newRaffleData, logoUrl: e.target.value })}
+                        placeholder="/images/logo-novo.png"
+                        className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white"
+                      />
+                      <label className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg cursor-pointer transition-colors flex items-center gap-2">
+                        {uploading.logo ? (
+                          <span className="animate-spin">⏳</span>
+                        ) : (
+                          <span>📁</span>
+                        )}
+                        <span>Upload</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0], 'logo')}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                    {newRaffleData.logoUrl && (
+                      <img src={newRaffleData.logoUrl} alt="Preview" className="mt-2 h-16 rounded-lg object-contain bg-zinc-800 px-4" />
+                    )}
                   </div>
                 </div>
 
