@@ -149,16 +149,6 @@ function LandingPageContent() {
           <Testimonials3D />
         </div>
 
-        {/* Title */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-[#EFB810] to-[#DEA900] bg-clip-text text-transparent">
-            Raspadinha da Sorte
-          </h1>
-          <p className="text-xl text-zinc-400 max-w-2xl">
-            Escolha uma Raspadinha e participe! Raspe, pague via PIX e descubra na hora se ganhou.
-          </p>
-        </div>
-
         {/* Raffle Selection Cards */}
         <div className="w-full max-w-5xl mb-8">
           <h2 className="text-2xl font-bold text-white mb-6">Escolha sua Raspadinha</h2>
