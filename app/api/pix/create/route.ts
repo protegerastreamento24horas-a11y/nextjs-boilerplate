@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { createAsaasPixPayment } from "@/lib/asaas";
+import { createCashinPayPixPayment } from "@/lib/cashinpay";
 import { logPaymentCreated } from "@/lib/audit";
 
 // Funções de validação e sanitização
@@ -41,18 +41,27 @@ function validateName(name: string | null | undefined): string | null {
   // Mínimo 2 caracteres, máximo 100
   if (trimmed.length < 2 || trimmed.length > 100) return null;
   // Apenas letras, espaços e caracteres comuns de nomes
-  if (!/^[\p{L}\s'-]+$/u.test(trimmed)) return null;
+  if (!/[\p{L}\s'-]+/u.test(trimmed)) return null;
+  return trimmed;
+}
+
+function validateEmail(email: string | null | undefined): string | null {
+  if (!email) return null;
+  const trimmed = email.trim().toLowerCase();
+  // Regex simples para validação de email
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return null;
   return trimmed;
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const { quantity, amount, cpf, name, whatsapp, affiliateCode, raffleId } = await req.json();
+    const { quantity, amount, cpf, name, whatsapp, email, affiliateCode, raffleId } = await req.json();
 
     // Validar e sanitizar entradas
     const sanitizedName = validateName(name);
     const sanitizedCPF = validateCPF(cpf);
     const sanitizedWhatsApp = validateWhatsApp(whatsapp);
+    const sanitizedEmail = validateEmail(email);
     const sanitizedAffiliateCode = sanitizeString(affiliateCode, 20);
     const sanitizedRaffleId = sanitizeString(raffleId, 100);
 
@@ -100,6 +109,7 @@ export async function POST(req: NextRequest) {
         name: sanitizedName,
         cpf: sanitizedCPF,
         whatsapp: sanitizedWhatsApp,
+        email: sanitizedEmail,
         affiliateId,
         affiliateCode: savedAffiliateCode,
         raffleId: sanitizedRaffleId,
@@ -109,74 +119,85 @@ export async function POST(req: NextRequest) {
     // Log pagamento criado
     await logPaymentCreated(payment.id, payment.amount, payment.attempts, ip);
 
-    // Modo Real - usar Asaas
-    console.log("[API] Modo Real - tentando gerar PIX real");
+    // Usar CashinPay
+    console.log("[API] Modo CashinPay - criando transação PIX");
 
-    // Verificar se tem API key do Asaas configurada
-    const hasAsaas = !!process.env.ASAAS_API_KEY;
-    console.log("[API] ASAAS_API_KEY configurada:", hasAsaas);
-    console.log("[API] ASAAS_SANDBOX:", process.env.ASAAS_SANDBOX);
+    // Verificar se tem API key do CashinPay configurada
+    const hasCashinPay = !!process.env.CASHINPAY_API_KEY;
+    console.log("[API] CASHINPAY_API_KEY configurada:", hasCashinPay);
 
-    if (!hasAsaas) {
+    if (!hasCashinPay) {
       return NextResponse.json(
         { 
-          error: "ASAAS_API_KEY não configurada", 
-          details: "Configure a chave API do Asaas nas variáveis de ambiente",
+          error: "CASHINPAY_API_KEY não configurada", 
+          details: "Configure a chave API da CashinPay nas variáveis de ambiente",
         },
         { status: 500 }
       );
     }
 
-    // Criar pagamento real no Asaas
-    console.log("[API] Tentando criar pagamento no Asaas...", { amount: numAmount, quantity: numQuantity, cpf: sanitizedCPF, name: sanitizedName });
-    const asaasResult = await createAsaasPixPayment(
+    // Criar transação no CashinPay
+    const customerName = sanitizedName || `Cliente ${payment.id.slice(-8)}`;
+    const customerEmail = sanitizedEmail || `cliente-${payment.id.slice(-8)}@raspadinha.com`;
+    const customerPhone = sanitizedWhatsApp || "11999999999";
+
+    console.log("[API] Tentando criar transação no CashinPay...", { 
+      amount: numAmount, 
+      quantity: numQuantity,
+      paymentId: payment.id 
+    });
+
+    const cashinPayResult = await createCashinPayPixPayment(
       numAmount,
       `Raspadinha - ${numQuantity} tentativa(s)`,
       payment.id,
-      sanitizedCPF || undefined,
-      sanitizedName || undefined
+      {
+        name: customerName,
+        email: customerEmail,
+        phone: customerPhone,
+        document: sanitizedCPF || undefined,
+      }
     );
     
-    console.log("[API] Resultado Asaas:", JSON.stringify(asaasResult, null, 2));
+    console.log("[API] Resultado CashinPay:", JSON.stringify(cashinPayResult, null, 2));
 
-    if (asaasResult.success && asaasResult.paymentId && asaasResult.qrCode) {
-      // Atualizar com dados do Asaas
+    if (cashinPayResult.success && cashinPayResult.paymentId && cashinPayResult.qrCode) {
+      // Atualizar com dados do CashinPay
       await prisma.payment.update({
         where: { id: payment.id },
         data: {
-          mpPaymentId: asaasResult.paymentId,
-          qrCode: asaasResult.qrCode,
-          qrCodeText: asaasResult.qrCodeText,
+          mpPaymentId: cashinPayResult.paymentId,
+          qrCode: cashinPayResult.qrCode,
+          qrCodeText: cashinPayResult.qrCode,
         },
       });
 
       return NextResponse.json({
         paymentId: payment.id,
-        mpPaymentId: asaasResult.paymentId,
-        qrCode: asaasResult.qrCode,
-        qrCodeText: asaasResult.qrCodeText,
-        ticketUrl: asaasResult.invoiceUrl,
+        mpPaymentId: cashinPayResult.paymentId,
+        qrCode: cashinPayResult.qrCode,
+        qrCodeText: cashinPayResult.qrCode,
         amount: payment.amount,
         isReal: true,
       });
     } else {
-      console.warn("[API] Falha ao criar Pix no Asaas:", asaasResult.error);
-      // Retornar erro ao invés de fallback silencioso
+      console.warn("[API] Falha ao criar Pix no CashinPay:", cashinPayResult.error);
       return NextResponse.json(
         { 
           error: "Falha ao gerar QR Code PIX", 
-          details: asaasResult.error || "Resposta inválida do Asaas",
-          asaasConfigured: true,
-          asaasError: asaasResult.error,
+          details: cashinPayResult.error || "Resposta inválida da CashinPay",
+          cashinPayConfigured: true,
+          cashinPayError: cashinPayResult.error,
         },
         { status: 500 }
       );
     }
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao criar pagamento:", error);
+    const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
     return NextResponse.json(
-      { error: "Erro ao criar pagamento", details: error.message },
+      { error: "Erro ao criar pagamento", details: errorMessage },
       { status: 500 }
     );
   }

@@ -24,6 +24,7 @@ model Payment {
   
   // Campos de cadastro do cliente
   name         String?      // Nome do cliente
+  email        String?      // Email do cliente
   cpf          String?      // CPF do cliente
   whatsapp     String?      // WhatsApp do cliente
   
