@@ -140,7 +140,7 @@ function LandingPageContent() {
             Raspadinha da Sorte
           </h1>
           <p className="text-xl text-zinc-400 max-w-2xl">
-            Escolha um sorteio e participe! Raspe, pague via PIX e descubra na hora se ganhou.
+            Escolha uma Raspadinha e participe! Raspe, pague via PIX e descubra na hora se ganhou.
           </p>
         </div>
 
