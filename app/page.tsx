@@ -21,8 +21,18 @@ interface Raffle {
   totalParticipants: number;
 }
 
-// Configuração das imagens do banner
-const BANNER_IMAGES: { src: string; alt: string; type?: "video" | "image" }[] = [
+interface SiteConfig {
+  mainBannerUrl?: string;
+  mainBannerLink?: string;
+  mainBannerActive?: boolean;
+  popupImageUrl?: string;
+  popupLink?: string;
+  popupActive?: boolean;
+  popupDelay?: number;
+}
+
+// Configuração fallback das imagens do banner
+const FALLBACK_BANNER_IMAGES: { src: string; alt: string; type?: "video" | "image" }[] = [
   { src: "/images/banner1.jpg", alt: "Raspadinha da Sorte - A sorte está em suas mãos!" },
   { src: "/images/banner2.jpg", alt: "Raspadinha da Sorte - Concorra a prêmios incríveis!" },
   { src: "/images/banner3.jpg", alt: "Raspadinha da Sorte - Heineken, Stella Artois e Corona!" },
@@ -31,23 +41,33 @@ const BANNER_IMAGES: { src: string; alt: string; type?: "video" | "image" }[] = 
 function LandingPageContent() {
   const router = useRouter();
   const [raffles, setRaffles] = useState<Raffle[]>([]);
+  const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchRaffles() {
+    async function fetchData() {
       try {
-        const res = await fetch("/api/raffles");
-        if (res.ok) {
-          const data = await res.json();
-          setRaffles(data);
+        const [rafflesRes, configRes] = await Promise.all([
+          fetch("/api/raffles"),
+          fetch("/api/admin/site-config"),
+        ]);
+        
+        if (rafflesRes.ok) {
+          const rafflesData = await rafflesRes.json();
+          setRaffles(rafflesData);
+        }
+        
+        if (configRes.ok) {
+          const configData = await configRes.json();
+          setSiteConfig(configData);
         }
       } catch (error) {
-        console.error("Erro ao carregar sorteios:", error);
+        console.error("Erro ao carregar dados:", error);
       } finally {
         setLoading(false);
       }
     }
-    fetchRaffles();
+    fetchData();
   }, []);
 
   if (loading) {
@@ -57,6 +77,11 @@ function LandingPageContent() {
       </div>
     );
   }
+
+  // Monta array de banners (dinâmico + fallbacks)
+  const bannerImages = siteConfig?.mainBannerUrl && siteConfig?.mainBannerActive
+    ? [{ src: siteConfig.mainBannerUrl, alt: "Banner Principal", type: "image" as const }]
+    : FALLBACK_BANNER_IMAGES;
 
   return (
     <div className="min-h-screen bg-zinc-950 flex flex-col">
@@ -76,9 +101,9 @@ function LandingPageContent() {
       />
 
       <main className="relative flex-1 flex flex-col items-center justify-center px-4 py-12 text-center">
-        {/* Banner Carousel no topo */}
+        {/* Banner Carousel no topo - Usa banner dinâmico se configurado */}
         <div className="w-full -mt-4 mb-8">
-          <BannerCarousel images={BANNER_IMAGES} autoPlayInterval={6000} />
+          <BannerCarousel images={bannerImages} autoPlayInterval={6000} />
         </div>
 
         {/* Title */}
