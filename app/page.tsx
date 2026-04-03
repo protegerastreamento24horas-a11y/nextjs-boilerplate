@@ -200,14 +200,26 @@ function LandingPageContent() {
                   <h3 className="text-xl font-bold text-white mb-2">{raffle.name}</h3>
                   <p className="text-zinc-400 text-sm mb-4">{raffle.description}</p>
                   
-                  {/* CTA Button - Estilo dourado */}
+                  {/* CTA Button - Estilo 3D dourado */}
                   <div
-                    className="py-3 px-6 rounded-xl font-bold text-black transition-transform active:scale-95"
+                    className="relative py-3 px-6 rounded-xl font-bold text-black transition-all duration-150 group-hover:-translate-y-1 active:translate-y-0.5"
                     style={{
-                      background: "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
-                      boxShadow: "0 0 15px rgba(255,215,0,0.5)",
+                      background: "linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%)",
+                      boxShadow: `
+                        0 6px 0 #B8860B,
+                        0 8px 20px rgba(255,215,0,0.4),
+                        inset 0 1px 0 rgba(255,255,255,0.4)
+                      `,
+                      textShadow: "0 1px 0 rgba(255,255,255,0.3)",
                     }}
                   >
+                    {/* Shine overlay */}
+                    <div 
+                      className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                      style={{
+                        background: "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.4) 50%, transparent 70%)",
+                      }}
+                    />
                     Raspe aqui
                   </div>
                 </div>
