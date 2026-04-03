@@ -3,19 +3,44 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
-export default function PromoPopup() {
+interface PromoPopupProps {
+  imageUrl?: string;
+  link?: string;
+  isActive?: boolean;
+  delay?: number;
+}
+
+export default function PromoPopup({ 
+  imageUrl = "/images/promo-popup.png", 
+  link, 
+  isActive = true,
+  delay = 0 
+}: PromoPopupProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Abrir pop-up imediatamente ao montar o componente
-    setIsOpen(true);
-  }, []);
+    if (!isActive) return;
+    
+    // Abrir pop-up após o delay configurado
+    const timer = setTimeout(() => {
+      setIsOpen(true);
+    }, delay * 1000);
+    
+    return () => clearTimeout(timer);
+  }, [isActive, delay]);
 
   const handleClose = () => {
     setIsOpen(false);
   };
 
-  if (!isOpen) return null;
+  const handleClick = () => {
+    if (link) {
+      window.open(link, '_blank');
+    }
+    handleClose();
+  };
+
+  if (!isOpen || !isActive) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -35,24 +60,28 @@ export default function PromoPopup() {
           ×
         </button>
         
-        {/* Imagem promocional */}
-        <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden shadow-2xl">
+        {/* Imagem promocional - clícavel se tiver link */}
+        <div 
+          className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden shadow-2xl cursor-pointer"
+          onClick={handleClick}
+        >
           <Image
-            src="/images/promo-popup.png"
-            alt="Ganhe 24 Coronas Agora!"
+            src={imageUrl}
+            alt="Promoção especial!"
             fill
             className="object-cover"
             priority
+            unoptimized // Para imagens externas do Imgur
           />
         </div>
         
-        {/* Botão de ação opcional */}
+        {/* Botão de ação */}
         <div className="mt-4 text-center">
           <button
-            onClick={handleClose}
+            onClick={handleClick}
             className="px-8 py-3 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black font-bold rounded-xl shadow-lg hover:scale-105 transition-transform"
           >
-            PARTICIPAR AGORA
+            {link ? "PARTICIPAR AGORA" : "FECHAR"}
           </button>
         </div>
       </div>

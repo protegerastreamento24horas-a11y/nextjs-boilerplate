@@ -85,8 +85,13 @@ function LandingPageContent() {
 
   return (
     <div className="min-h-screen bg-zinc-950 flex flex-col">
-      {/* Pop-up Promocional - aparece imediatamente */}
-      <PromoPopup />
+      {/* Pop-up Promocional - configurável via admin */}
+      <PromoPopup 
+        imageUrl={siteConfig?.popupImageUrl}
+        link={siteConfig?.popupLink}
+        isActive={siteConfig?.popupActive}
+        delay={siteConfig?.popupDelay}
+      />
 
       {/* Floating beer particles background */}
       <FloatingBeers />
