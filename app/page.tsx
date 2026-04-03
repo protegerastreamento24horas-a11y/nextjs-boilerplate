@@ -149,7 +149,7 @@ function LandingPageContent() {
           <Testimonials3D />
         </div>
 
-        {/* Raffle Selection Cards */}
+        {/* Raffle Selection Cards - Estilo Depoimentos */}
         <div className="w-full max-w-5xl mb-8">
           <h2 className="text-2xl font-bold text-white mb-6">Escolha sua Raspadinha</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -157,13 +157,23 @@ function LandingPageContent() {
               <button
                 key={raffle.id}
                 onClick={() => router.push(`/sorteio/${raffle.slug}`)}
-                className="group relative overflow-hidden rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                className="group relative overflow-hidden rounded-2xl transition-all duration-300 hover:scale-105"
                 style={{
-                  background: `linear-gradient(135deg, ${raffle.primaryColor} 0%, ${raffle.secondaryColor} 100%)`,
+                  background: "linear-gradient(135deg, rgba(24,24,27,0.9) 0%, rgba(39,39,42,0.8) 100%)",
+                  border: "1px solid rgba(255,215,0,0.3)",
+                  boxShadow: "0 0 30px rgba(255,215,0,0.15), 0 10px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)",
                 }}
               >
+                {/* Glow effect */}
+                <div 
+                  className="absolute inset-0 rounded-2xl opacity-50"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(255,215,0,0.1) 0%, transparent 50%, rgba(255,165,0,0.1) 100%)",
+                  }}
+                />
+
                 {/* Banner/Image */}
-                <div className="h-48 overflow-hidden">
+                <div className="h-48 overflow-hidden relative">
                   {raffle.homeBanner ? (
                     <img
                       src={raffle.homeBanner}
@@ -186,15 +196,16 @@ function LandingPageContent() {
                 </div>
                 
                 {/* Content */}
-                <div className="p-6 bg-zinc-900/90 backdrop-blur-sm">
+                <div className="p-6 relative">
                   <h3 className="text-xl font-bold text-white mb-2">{raffle.name}</h3>
                   <p className="text-zinc-400 text-sm mb-4">{raffle.description}</p>
                   
-                  {/* CTA Button */}
+                  {/* CTA Button - Estilo dourado */}
                   <div
                     className="py-3 px-6 rounded-xl font-bold text-black transition-transform active:scale-95"
                     style={{
-                      background: `linear-gradient(135deg, ${raffle.primaryColor} 0%, ${raffle.secondaryColor} 100%)`,
+                      background: "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
+                      boxShadow: "0 0 15px rgba(255,215,0,0.5)",
                     }}
                   >
                     Raspe aqui
