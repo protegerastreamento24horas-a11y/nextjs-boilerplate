@@ -408,6 +408,37 @@ export default function AdminDashboardClient() {
     }
   }
 
+  async function handlePopupUpload(file: File) {
+    if (!file) return;
+    
+    setUploadingPopup(true);
+    
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "images");
+      
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Erro no upload");
+      }
+      
+      const data = await res.json();
+      setSiteConfig(prev => ({ ...prev, popupImageUrl: data.url }));
+      
+      alert(`✅ Imagem do popup enviada!`);
+    } catch (error: any) {
+      alert(`❌ Erro no upload: ${error.message}`);
+    } finally {
+      setUploadingPopup(false);
+    }
+  }
+
   // Load site config when modal opens
   useEffect(() => {
     if (showBannerModal) {
@@ -1026,7 +1057,7 @@ export default function AdminDashboardClient() {
                           <input
                             type="file"
                             accept="image/*"
-                            onChange={(e) => e.target.files?.[0] && handleBannerUpload(e.target.files[0], 'popup')}
+                            onChange={(e) => e.target.files?.[0] && handlePopupUpload(e.target.files[0])}
                             className="hidden"
                           />
                         </label>
