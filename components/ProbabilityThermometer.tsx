@@ -137,15 +137,13 @@ export function ProbabilityThermometer({
           transform: compact ? "none" : "perspective(800px) rotateX(5deg)",
           transformOrigin: "center bottom",
           transition: "all 0.3s ease",
-          backdropFilter: "blur(10px)",
         }}
       >
-        {/* Glass distortion overlay */}
+        {/* Glass overlay - sem blur */}
         <div 
           className="absolute inset-0 pointer-events-none z-10"
           style={{
             background: "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.05) 100%)",
-            backdropFilter: "blur(1px)",
           }}
         />
         {/* Glass tube effect */}
