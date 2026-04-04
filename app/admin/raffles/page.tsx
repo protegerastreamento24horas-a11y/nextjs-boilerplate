@@ -204,14 +204,24 @@ export default function RafflesAdminPage() {
     setMessage("");
     
     try {
-      // Comprimir imagem antes de enviar
-      console.log("[Upload] Comprimindo imagem...");
-      const maxWidth = type === 'logo' ? 400 : 1200;
-      const compressedFile = await compressImage(file, maxWidth, 0.8);
-      console.log(`[Upload] Imagem comprimida: ${compressedFile.size} bytes (${Math.round((1 - compressedFile.size/file.size) * 100)}% redução)`);
+      let fileToUpload = file;
+      
+      // Se NÃO for GIF, comprimir normalmente
+      if (!file.name.toLowerCase().endsWith('.gif')) {
+        console.log("[Upload] Comprimindo imagem...");
+        const maxWidth = type === 'logo' ? 400 : 1200;
+        fileToUpload = await compressImage(file, maxWidth, 0.8);
+        console.log(`[Upload] Imagem comprimida: ${fileToUpload.size} bytes (${Math.round((1 - fileToUpload.size/file.size) * 100)}% redução)`);
+      } else {
+        console.log("[Upload] Arquivo GIF detectado - upload sem compressão");
+        // Verificar tamanho do GIF (limite de 10MB)
+        if (file.size > 10 * 1024 * 1024) {
+          throw new Error('GIF muito grande. Limite: 10MB');
+        }
+      }
       
       const formData = new FormData();
-      formData.append("file", compressedFile);
+      formData.append("file", fileToUpload);
       formData.append("folder", "images");
       
       console.log("[Upload] Enviando para /api/upload...");
@@ -241,7 +251,7 @@ export default function RafflesAdminPage() {
         if (type === 'logo') setNewRaffleData(prev => ({ ...prev, logoUrl: data.url }));
       }
       
-      setMessage(`✅ Imagem ${type} enviada! (${Math.round(compressedFile.size/1024)}KB, ${Math.round((1 - compressedFile.size/file.size) * 100)}% comprimida)`);
+      setMessage(`✅ Imagem ${type} enviada! ${file.name.toLowerCase().endsWith('.gif') ? '(GIF animado)' : `(${Math.round(fileToUpload.size/1024)}KB, ${Math.round((1 - fileToUpload.size/file.size) * 100)}% comprimida)`}`);
     } catch (error: any) {
       console.error("[Upload] Erro completo:", error);
       setMessage(`❌ Erro no upload: ${error.message}`);
