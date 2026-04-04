@@ -2,15 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 
-// Configurar limite do body parser
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-  },
-};
-
 // GET /api/raffles/[slug] - Detalhes de um sorteio específico
 export async function GET(
   request: NextRequest,
