@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 
+// Upload de imagens para banners - suporta GIF, JPG, PNG, WebP
 export async function POST(request: NextRequest) {
   // Verificar autenticação
   const session = await auth();
