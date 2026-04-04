@@ -8,7 +8,7 @@ interface ProbabilityThermometerProps {
 }
 
 export function ProbabilityThermometer({ 
-  minProbability = 95, 
+  minProbability = 90, 
   maxProbability = 98 
 }: ProbabilityThermometerProps) {
   const [probability, setProbability] = useState(minProbability);
@@ -44,9 +44,9 @@ export function ProbabilityThermometer({
         className="relative rounded-xl overflow-hidden"
         style={{
           background: "linear-gradient(135deg, rgba(20,20,25,0.95) 0%, rgba(35,35,40,0.9) 100%)",
-          border: "2px solid rgba(255,215,0,0.4)",
+          border: "2px solid rgba(16,185,129,0.4)",
           boxShadow: `
-            0 0 30px rgba(255,215,0,0.2),
+            0 0 30px rgba(16,185,129,0.2),
             inset 0 1px 0 rgba(255,255,255,0.1),
             0 10px 40px rgba(0,0,0,0.5)
           `,
@@ -80,23 +80,23 @@ export function ProbabilityThermometer({
               }}
             />
 
-            {/* Animated golden liquid */}
+            {/* Animated green liquid */}
             <div
               className="absolute left-0 top-0 h-full rounded-full transition-all duration-[2000ms] ease-out"
               style={{
                 width: `${probability}%`,
                 background: `
                   linear-gradient(90deg, 
-                    #B8860B 0%, 
-                    #FFD700 25%, 
-                    #FFA500 50%, 
-                    #FFD700 75%, 
-                    #B8860B 100%
+                    #059669 0%, 
+                    #10B981 25%, 
+                    #34D399 50%, 
+                    #10B981 75%, 
+                    #059669 100%
                   )
                 `,
                 boxShadow: `
-                  0 0 20px rgba(255,215,0,0.6),
-                  0 0 40px rgba(255,215,0,0.3),
+                  0 0 20px rgba(16,185,129,0.6),
+                  0 0 40px rgba(16,185,129,0.3),
                   inset 0 1px 0 rgba(255,255,255,0.3)
                 `,
               }}
@@ -149,10 +149,10 @@ export function ProbabilityThermometer({
             <span 
               className="text-2xl font-black"
               style={{
-                background: "linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)",
+                background: "linear-gradient(135deg, #10B981 0%, #34D399 50%, #10B981 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
-                textShadow: "0 0 20px rgba(255,215,0,0.5)",
+                textShadow: "0 0 20px rgba(16,185,129,0.5)",
               }}
             >
               {probability}%
@@ -164,7 +164,7 @@ export function ProbabilityThermometer({
         <div 
           className="absolute inset-0 rounded-xl pointer-events-none"
           style={{
-            border: "2px solid rgba(255,215,0,0.3)",
+            border: "2px solid rgba(16,185,129,0.3)",
             animation: "pulse-glow 2s ease-in-out infinite",
           }}
         />
@@ -190,10 +190,10 @@ export function ProbabilityThermometer({
         
         @keyframes pulse-glow {
           0%, 100% { 
-            box-shadow: 0 0 20px rgba(255,215,0,0.2), inset 0 0 20px rgba(255,215,0,0.1);
+            box-shadow: 0 0 20px rgba(16,185,129,0.2), inset 0 0 20px rgba(16,185,129,0.1);
           }
           50% { 
-            box-shadow: 0 0 40px rgba(255,215,0,0.4), inset 0 0 30px rgba(255,215,0,0.2);
+            box-shadow: 0 0 40px rgba(16,185,129,0.4), inset 0 0 30px rgba(16,185,129,0.2);
           }
         }
       `}</style>
