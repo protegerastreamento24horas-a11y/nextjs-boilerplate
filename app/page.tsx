@@ -10,6 +10,7 @@ import SocialProofSection from "@/components/SocialProofSection";
 import BannerCarousel from "@/components/BannerCarousel";
 import Testimonials3D from "@/components/Testimonials3D";
 import { FakeLiveCounter } from "@/components/FakeLiveCounter";
+import { ProbabilityThermometer } from "@/components/ProbabilityThermometer";
 
 interface Raffle {
   id: string;
@@ -193,6 +194,11 @@ function LandingPageContent() {
                       )}
                     </div>
                   )}
+                </div>
+                
+                {/* Termômetro de Probabilidade - abaixo do banner */}
+                <div className="px-3 pt-2 pb-1">
+                  <ProbabilityThermometer compact />
                 </div>
                 
                 {/* Content */}
