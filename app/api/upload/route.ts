@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 
+// Aumentar limite de tamanho do body para 15MB
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '15mb',
+    },
+  },
+};
+
 export async function POST(request: NextRequest) {
   // Verificar autenticação
   const session = await auth();
