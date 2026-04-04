@@ -11,6 +11,7 @@ import BannerCarousel from "@/components/BannerCarousel";
 import Testimonials3D from "@/components/Testimonials3D";
 import { FakeLiveCounter } from "@/components/FakeLiveCounter";
 import { ProbabilityThermometer } from "@/components/ProbabilityThermometer";
+import { RaffleBadge3D } from "@/components/RaffleBadge3D";
 
 interface Raffle {
   id: string;
@@ -154,7 +155,7 @@ function LandingPageContent() {
         <div className="w-full max-w-5xl mb-8">
           <h2 className="text-2xl font-bold text-white mb-6">Escolha sua Raspadinha</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {raffles.map((raffle) => (
+            {raffles.map((raffle, index) => (
               <button
                 key={raffle.id}
                 onClick={() => router.push(`/sorteio/${raffle.slug}`)}
@@ -175,6 +176,10 @@ function LandingPageContent() {
 
                 {/* Banner/Image */}
                 <div className="h-48 overflow-hidden relative">
+                  <RaffleBadge3D 
+                    totalParticipants={raffle.totalParticipants}
+                    index={index}
+                  />
                   {raffle.homeBanner ? (
                     <img
                       src={raffle.homeBanner}
