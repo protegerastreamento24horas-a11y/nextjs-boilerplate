@@ -7,6 +7,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { useToast } from "@/components/ToastContext";
 import FloatingBeers from "@/components/FloatingBeers";
 import { Countdown3D } from "@/components/Countdown3D";
+import { ProbabilityThermometer } from "@/components/ProbabilityThermometer";
 
 interface RafflePackage {
   id: number;
@@ -302,6 +303,9 @@ export default function RafflePage() {
               ))}
             </div>
           </div>
+
+          {/* Termômetro de Probabilidade */}
+          <ProbabilityThermometer minProbability={95} maxProbability={98} />
 
           {/* Formulário de cadastro ou botão de compra */}
           {showCpfForm ? (
